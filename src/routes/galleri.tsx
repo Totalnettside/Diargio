@@ -31,7 +31,9 @@ export const Route = createFileRoute("/galleri")({
 });
 
 const SPACING = 1400;
-const WALL = 560;
+const WALL = 480;
+const ROOM_W = WALL * 2;
+const ROOM_H = 900;
 const FRAME_W = 380;
 const CAM_OFFSET = 900;
 const TURN = 45;
@@ -160,7 +162,7 @@ function GalleriPage() {
           isFs ? "h-full w-full" : "h-[72vh] min-h-[460px] rounded-3xl"
         }`}
         style={{
-          perspective: "1500px",
+          perspective: "1000px",
           perspectiveOrigin: "50% 46%",
           background: "linear-gradient(180deg, oklch(0.24 0.03 292), oklch(0.14 0.02 292))",
         }}
@@ -182,9 +184,9 @@ function GalleriPage() {
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
-                    width: WALL * 2 + 400,
+                    width: ROOM_W,
                     height: SPACING,
-                    transform: `translate(-50%, -50%) translate3d(0, 300px, ${z}px) rotateX(90deg)`,
+                    transform: `translate(-50%, -50%) translate3d(0, ${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
                     background:
                       "linear-gradient(90deg, oklch(0.26 0.02 60) 0%, oklch(0.32 0.025 60) 50%, oklch(0.26 0.02 60) 100%)",
                     backgroundImage:
@@ -196,9 +198,9 @@ function GalleriPage() {
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
-                    width: WALL * 2 + 400,
+                    width: ROOM_W,
                     height: SPACING,
-                    transform: `translate(-50%, -50%) translate3d(0, -300px, ${z}px) rotateX(90deg)`,
+                    transform: `translate(-50%, -50%) translate3d(0, -${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
                     background:
                       "linear-gradient(90deg, oklch(0.2 0.02 292) 0%, oklch(0.86 0.02 100) 44%, oklch(0.95 0.015 100) 50%, oklch(0.86 0.02 100) 56%, oklch(0.2 0.02 292) 100%)",
                   }}
@@ -209,7 +211,7 @@ function GalleriPage() {
                     className="absolute left-1/2 top-1/2"
                     style={{
                       width: SPACING,
-                      height: 600,
+                      height: ROOM_H,
                       transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
                       background:
                         "linear-gradient(180deg, oklch(0.62 0.02 292) 0%, oklch(0.88 0.012 292) 22%, oklch(0.82 0.012 292) 78%, oklch(0.42 0.02 292) 96%, oklch(0.3 0.02 292) 100%)",
@@ -223,8 +225,8 @@ function GalleriPage() {
           <div
             className="absolute left-1/2 top-1/2"
             style={{
-              width: WALL * 2 + 400,
-              height: 600,
+              width: ROOM_W,
+              height: ROOM_H,
               transform: `translate(-50%, -50%) translateZ(${SPACING * 2}px)`,
               background:
                 "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
@@ -234,8 +236,8 @@ function GalleriPage() {
           <div
             className="absolute left-1/2 top-1/2"
             style={{
-              width: WALL * 2 + 400,
-              height: 600,
+              width: ROOM_W,
+              height: ROOM_H,
               transform: `translate(-50%, -50%) translateZ(${-(works.length + 1.5) * SPACING}px)`,
               background:
                 "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
