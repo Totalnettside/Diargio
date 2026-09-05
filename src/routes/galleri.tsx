@@ -182,8 +182,8 @@ function GalleriPage() {
           />
           {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
           {[
-            { w: works[4]!, z: SPACING * 0.9 - 5, face: 180 },
-            { w: works[7]!, z: -(works.length + 1.5) * SPACING + 5, face: 0 },
+            { w: works[4]!, z: SPACING * 0.9 - 40, face: 180 },
+            { w: works[7]!, z: -(works.length + 1.5) * SPACING + 40, face: 0 },
           ].map(({ w, z, face }) => (
             <div
               key={`end-${w.id}-${face}`}
