@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as MeldingerRouteImport } from './routes/meldinger'
+import { Route as MinSideRouteImport } from './routes/min-side'
+import { Route as SelgRouteImport } from './routes/selg'
+import { Route as SokRouteImport } from './routes/sok'
+import { Route as VarslerRouteImport } from './routes/varsler'
+import { Route as KjopSlugRouteImport } from './routes/kjop.$slug'
+import { Route as KunstIndexRouteImport } from './routes/kunst.index'
+import { Route as KunstSlugRouteImport } from './routes/kunst.$slug'
+import { Route as KunstnerSlugRouteImport } from './routes/kunstner.$slug'
+import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeldingerRoute = MeldingerRouteImport.update({
+  id: '/meldinger',
+  path: '/meldinger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinSideRoute = MinSideRouteImport.update({
+  id: '/min-side',
+  path: '/min-side',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SelgRoute = SelgRouteImport.update({
+  id: '/selg',
+  path: '/selg',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SokRoute = SokRouteImport.update({
+  id: '/sok',
+  path: '/sok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VarslerRoute = VarslerRouteImport.update({
+  id: '/varsler',
+  path: '/varsler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KjopSlugRoute = KjopSlugRouteImport.update({
+  id: '/kjop/$slug',
+  path: '/kjop/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KunstIndexRoute = KunstIndexRouteImport.update({
+  id: '/kunst/',
+  path: '/kunst/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KunstSlugRoute = KunstSlugRouteImport.update({
+  id: '/kunst/$slug',
+  path: '/kunst/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KunstnerSlugRoute = KunstnerSlugRouteImport.update({
+  id: '/kunstner/$slug',
+  path: '/kunstner/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilSlugRoute = ProfilSlugRouteImport.update({
+  id: '/profil/$slug',
+  path: '/profil/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/meldinger': typeof MeldingerRoute
+  '/min-side': typeof MinSideRoute
+  '/selg': typeof SelgRoute
+  '/sok': typeof SokRoute
+  '/varsler': typeof VarslerRoute
+  '/kjop/$slug': typeof KjopSlugRoute
+  '/kunst/$slug': typeof KunstSlugRoute
+  '/kunstner/$slug': typeof KunstnerSlugRoute
+  '/profil/$slug': typeof ProfilSlugRoute
+  '/kunst/': typeof KunstIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/meldinger': typeof MeldingerRoute
+  '/min-side': typeof MinSideRoute
+  '/selg': typeof SelgRoute
+  '/sok': typeof SokRoute
+  '/varsler': typeof VarslerRoute
+  '/kjop/$slug': typeof KjopSlugRoute
+  '/kunst/$slug': typeof KunstSlugRoute
+  '/kunstner/$slug': typeof KunstnerSlugRoute
+  '/profil/$slug': typeof ProfilSlugRoute
+  '/kunst': typeof KunstIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/meldinger': typeof MeldingerRoute
+  '/min-side': typeof MinSideRoute
+  '/selg': typeof SelgRoute
+  '/sok': typeof SokRoute
+  '/varsler': typeof VarslerRoute
+  '/kjop/$slug': typeof KjopSlugRoute
+  '/kunst/$slug': typeof KunstSlugRoute
+  '/kunstner/$slug': typeof KunstnerSlugRoute
+  '/profil/$slug': typeof ProfilSlugRoute
+  '/kunst/': typeof KunstIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/meldinger'
+    | '/min-side'
+    | '/selg'
+    | '/sok'
+    | '/varsler'
+    | '/kjop/$slug'
+    | '/kunst/$slug'
+    | '/kunstner/$slug'
+    | '/profil/$slug'
+    | '/kunst/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/meldinger'
+    | '/min-side'
+    | '/selg'
+    | '/sok'
+    | '/varsler'
+    | '/kjop/$slug'
+    | '/kunst/$slug'
+    | '/kunstner/$slug'
+    | '/profil/$slug'
+    | '/kunst'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/meldinger'
+    | '/min-side'
+    | '/selg'
+    | '/sok'
+    | '/varsler'
+    | '/kjop/$slug'
+    | '/kunst/$slug'
+    | '/kunstner/$slug'
+    | '/profil/$slug'
+    | '/kunst/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  MeldingerRoute: typeof MeldingerRoute
+  MinSideRoute: typeof MinSideRoute
+  SelgRoute: typeof SelgRoute
+  SokRoute: typeof SokRoute
+  VarslerRoute: typeof VarslerRoute
+  KjopSlugRoute: typeof KjopSlugRoute
+  KunstSlugRoute: typeof KunstSlugRoute
+  KunstnerSlugRoute: typeof KunstnerSlugRoute
+  ProfilSlugRoute: typeof ProfilSlugRoute
+  KunstIndexRoute: typeof KunstIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +195,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meldinger': {
+      id: '/meldinger'
+      path: '/meldinger'
+      fullPath: '/meldinger'
+      preLoaderRoute: typeof MeldingerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/min-side': {
+      id: '/min-side'
+      path: '/min-side'
+      fullPath: '/min-side'
+      preLoaderRoute: typeof MinSideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/selg': {
+      id: '/selg'
+      path: '/selg'
+      fullPath: '/selg'
+      preLoaderRoute: typeof SelgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sok': {
+      id: '/sok'
+      path: '/sok'
+      fullPath: '/sok'
+      preLoaderRoute: typeof SokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/varsler': {
+      id: '/varsler'
+      path: '/varsler'
+      fullPath: '/varsler'
+      preLoaderRoute: typeof VarslerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kjop/$slug': {
+      id: '/kjop/$slug'
+      path: '/kjop/$slug'
+      fullPath: '/kjop/$slug'
+      preLoaderRoute: typeof KjopSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kunst/': {
+      id: '/kunst/'
+      path: '/kunst'
+      fullPath: '/kunst/'
+      preLoaderRoute: typeof KunstIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kunst/$slug': {
+      id: '/kunst/$slug'
+      path: '/kunst/$slug'
+      fullPath: '/kunst/$slug'
+      preLoaderRoute: typeof KunstSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kunstner/$slug': {
+      id: '/kunstner/$slug'
+      path: '/kunstner/$slug'
+      fullPath: '/kunstner/$slug'
+      preLoaderRoute: typeof KunstnerSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil/$slug': {
+      id: '/profil/$slug'
+      path: '/profil/$slug'
+      fullPath: '/profil/$slug'
+      preLoaderRoute: typeof ProfilSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  MeldingerRoute: MeldingerRoute,
+  MinSideRoute: MinSideRoute,
+  SelgRoute: SelgRoute,
+  SokRoute: SokRoute,
+  VarslerRoute: VarslerRoute,
+  KjopSlugRoute: KjopSlugRoute,
+  KunstSlugRoute: KunstSlugRoute,
+  KunstnerSlugRoute: KunstnerSlugRoute,
+  ProfilSlugRoute: ProfilSlugRoute,
+  KunstIndexRoute: KunstIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
