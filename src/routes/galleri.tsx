@@ -76,7 +76,7 @@ function GalleriPage() {
           className="absolute inset-0"
           style={{
             transformStyle: "preserve-3d",
-            transform: `translateZ(${pos * SPACING + 500}px)`,
+            transform: `translateZ(${pos * SPACING + CAM_OFFSET}px)`,
             transition: "transform 1.1s cubic-bezier(0.25, 0.8, 0.25, 1)",
           }}
         >
