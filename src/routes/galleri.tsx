@@ -71,8 +71,8 @@ function GalleriPage() {
 
       {/* 3D-scenen */}
       <div
-        className="relative h-[62vh] min-h-[420px] overflow-hidden rounded-3xl glass-lift"
-        style={{ perspective: "850px" }}
+        className="relative h-[62vh] min-h-[420px] overflow-hidden rounded-3xl"
+        style={{ perspective: "850px", background: "linear-gradient(180deg, oklch(0.32 0.05 292), oklch(0.22 0.04 292))" }}
       >
         <div
           className="absolute inset-0"
@@ -90,7 +90,7 @@ function GalleriPage() {
               height: PLANE_LEN,
               transform: `translate(-50%, -50%) translate3d(0, 300px, ${PLANE_Z}px) rotateX(90deg)`,
               background:
-                "linear-gradient(180deg, oklch(0.87 0.03 290), oklch(0.76 0.04 290))",
+                "linear-gradient(180deg, oklch(0.78 0.03 290), oklch(0.6 0.04 290))",
               boxShadow: "inset 0 0 120px oklch(0.7 0.05 290 / 0.5)",
             }}
           />
@@ -101,7 +101,7 @@ function GalleriPage() {
               width: WALL * 2 + 400,
               height: PLANE_LEN,
               transform: `translate(-50%, -50%) translate3d(0, -300px, ${PLANE_Z}px) rotateX(90deg)`,
-              background: "oklch(0.93 0.02 290)",
+              background: "oklch(0.88 0.02 290)",
             }}
           />
           {/* Vegger */}
