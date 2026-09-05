@@ -23,7 +23,8 @@ export const Route = createFileRoute("/galleri")({
 
 const SPACING = 1400;
 const WALL = 560;
-const FRAME_W = 340;
+const FRAME_W = 380;
+const CAM_OFFSET = 900;
 
 const works = artworks.slice(0, 12);
 const LENGTH = (works.length + 2) * SPACING;
