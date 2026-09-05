@@ -43,6 +43,9 @@ export function TopBar() {
           <Link to="/kunst" className="hover:text-brandink">
             Kunst
           </Link>
+          <Link to="/galleri" className="hover:text-brandink">
+            Galleri
+          </Link>
           <Link to="/selg" className="hover:text-brandink">
             Selg kunst
           </Link>
