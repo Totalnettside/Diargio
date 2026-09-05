@@ -31,9 +31,9 @@ export const Route = createFileRoute("/galleri")({
 });
 
 const SPACING = 1400;
-const WALL = 480;
+const WALL = 680;
 const ROOM_W = WALL * 2;
-const ROOM_H = 900;
+const ROOM_H = 820;
 const FRAME_W = 380;
 const CAM_OFFSET = 900;
 const TURN = 45;
@@ -162,7 +162,7 @@ function GalleriPage() {
           isFs ? "h-full w-full" : "h-[72vh] min-h-[460px] rounded-3xl"
         }`}
         style={{
-          perspective: "1000px",
+          perspective: "900px",
           perspectiveOrigin: "50% 46%",
           background: "linear-gradient(180deg, oklch(0.24 0.03 292), oklch(0.14 0.02 292))",
         }}
