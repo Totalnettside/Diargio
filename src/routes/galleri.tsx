@@ -136,7 +136,7 @@ function GalleriPage() {
                 key={w.id}
                 className="absolute left-1/2 top-1/2"
                 style={{
-                  transform: `translate(-50%, -50%) translate3d(${side * (WALL - 6)}px, -40px, ${z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
+                  transform: `translate(-50%, -50%) translate3d(${side * (WALL - 30)}px, -40px, ${z}px) rotateY(${side === -1 ? 74 : -74}deg)`,
                   transformStyle: "preserve-3d",
                 }}
               >
