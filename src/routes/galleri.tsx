@@ -165,7 +165,7 @@ function GalleriPage() {
             style={{
               width: WALL * 2 + 400,
               height: 600,
-              transform: `translate(-50%, -50%) translateZ(${SPACING * 0.9}px)`,
+              transform: `translate(-50%, -50%) translateZ(${SPACING * 2}px)`,
               background:
                 "linear-gradient(180deg, oklch(0.93 0.02 290) 0%, oklch(0.86 0.03 290) 100%)",
             }}
@@ -182,7 +182,7 @@ function GalleriPage() {
           />
           {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
           {[
-            { w: works[4]!, z: SPACING * 0.9 - 40, face: 180 },
+            { w: works[4]!, z: SPACING * 2 - 40, face: 180 },
             { w: works[7]!, z: -(works.length + 1.5) * SPACING + 40, face: 0 },
           ].map(({ w, z, face }) => (
             <div
