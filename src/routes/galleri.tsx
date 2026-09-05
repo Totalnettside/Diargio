@@ -187,11 +187,11 @@ function GalleriPage() {
                     width: ROOM_W,
                     height: SPACING,
                     transform: `translate(-50%, -50%) translate3d(0, ${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
-                    background:
-                      "linear-gradient(90deg, oklch(0.26 0.02 60) 0%, oklch(0.32 0.025 60) 50%, oklch(0.26 0.02 60) 100%)",
+                    background: "oklch(0.58 0.03 62)",
                     backgroundImage:
-                      "repeating-linear-gradient(90deg, oklch(0.3 0.025 60) 0 90px, oklch(0.26 0.022 60) 90px 180px)",
-                    boxShadow: "inset 0 0 160px oklch(0 0 0 / 0.55)",
+                      "repeating-linear-gradient(90deg, oklch(0.6 0.03 62) 0 100px, oklch(0.54 0.03 62) 100px 200px)",
+                    boxShadow: "inset 0 0 120px oklch(0.3 0.03 62 / 0.45)",
+
                   }}
                 />
                 {/* Tak med lysrenne */}
