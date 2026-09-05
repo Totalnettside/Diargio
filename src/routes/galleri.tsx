@@ -38,6 +38,58 @@ const TURN = 45;
 
 const works = artworks.slice(0, 12);
 
+function Frame({ w, active = false }: { w: (typeof works)[number]; active?: boolean }) {
+  const artist = artistById(w.artistId);
+  return (
+    <div className="relative" style={{ width: FRAME_W }}>
+      {/* Spotlys ovenfra */}
+      <div
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2"
+        style={{
+          width: FRAME_W * 1.5,
+          height: 260,
+          background:
+            "radial-gradient(60% 100% at 50% 0%, oklch(1 0.03 95 / 0.55), transparent 72%)",
+          filter: "blur(6px)",
+        }}
+      />
+      <div
+        className="relative rounded-[2px] transition-all duration-700"
+        style={{
+          padding: 18,
+          background:
+            "linear-gradient(160deg, oklch(0.34 0.03 60), oklch(0.2 0.02 60) 55%, oklch(0.28 0.03 60))",
+          boxShadow: active
+            ? "0 40px 70px -24px oklch(0 0 0 / 0.7), inset 0 0 0 2px oklch(0.55 0.06 80 / 0.7)"
+            : "0 26px 46px -22px oklch(0 0 0 / 0.6), inset 0 0 0 2px oklch(0.45 0.04 80 / 0.45)",
+        }}
+      >
+        <div style={{ background: "oklch(0.98 0.004 95)", padding: 14 }}>
+          <img
+            src={w.image}
+            alt={`${w.title} av ${artist?.name ?? ""}`}
+            className="aspect-square w-full object-cover"
+            draggable={false}
+            style={{ boxShadow: "0 2px 8px oklch(0 0 0 / 0.35)" }}
+          />
+        </div>
+      </div>
+      {/* Museumsskilt på veggen */}
+      <div
+        className="mt-3 inline-block rounded-[2px] px-3 py-2 text-left"
+        style={{ background: "oklch(0.97 0.004 95)", boxShadow: "0 6px 14px -10px oklch(0 0 0 / 0.6)" }}
+      >
+        <p className="font-display text-[13px] font-semibold leading-tight text-ink">{w.title}</p>
+        <p className="text-[10px] uppercase tracking-wide text-ink/55">
+          {artist?.name} · {formatPrice(w.price)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+
 function GalleriPage() {
   const [pos, setPos] = useState(0);
   const [rot, setRot] = useState(0);
