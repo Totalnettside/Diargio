@@ -180,6 +180,44 @@ function GalleriPage() {
               background: "oklch(0.88 0.03 290)",
             }}
           />
+          {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
+          {[
+            { w: works[4]!, z: SPACING * 0.9 - 5, face: 180 },
+            { w: works[7]!, z: -(works.length + 1.5) * SPACING + 5, face: 0 },
+          ].map(({ w, z, face }) => (
+            <div
+              key={`end-${w.id}-${face}`}
+              className="absolute left-1/2 top-1/2"
+              style={{
+                transform: `translate(-50%, -50%) translate3d(0, -40px, ${z}px) rotateY(${face}deg)`,
+                transformStyle: "preserve-3d",
+              }}
+            >
+              <div
+                className="rounded-sm p-3"
+                style={{
+                  width: FRAME_W,
+                  background: "oklch(1 0 0)",
+                  boxShadow: "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
+                  outline: "3px solid oklch(0.3 0.02 290)",
+                  outlineOffset: "3px",
+                }}
+              >
+                <img
+                  src={w.image}
+                  alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
+                  className="aspect-square w-full object-cover"
+                  draggable={false}
+                />
+                <div className="mt-2 px-1 pb-1">
+                  <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
+                  <p className="text-[11px] text-ink/55">
+                    {artistById(w.artistId)?.name} · {formatPrice(w.price)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
           {/* Kunstverk på veggene */}
           {works.map((w, i) => {
             const side = i % 2 === 0 ? -1 : 1;
