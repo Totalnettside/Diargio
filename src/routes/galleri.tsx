@@ -121,8 +121,8 @@ function GalleriPage() {
           }}
         >
           {/* Gulv, tak og vegger – segmentert slik at hvert plan holdes liten nok */}
-          {Array.from({ length: works.length + 3 }, (_, k) => {
-            const z = -(k + 0.5) * SPACING;
+          {Array.from({ length: works.length + 6 }, (_, k) => {
+            const z = -((k - 2) + 0.5) * SPACING;
             return (
               <Fragment key={k}>
                 <div
