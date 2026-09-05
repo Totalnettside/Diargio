@@ -202,7 +202,7 @@ function GalleriPage() {
                     height: SPACING,
                     transform: `translate(-50%, -50%) translate3d(0, -${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
                     background:
-                      "linear-gradient(90deg, oklch(0.2 0.02 292) 0%, oklch(0.86 0.02 100) 44%, oklch(0.95 0.015 100) 50%, oklch(0.86 0.02 100) 56%, oklch(0.2 0.02 292) 100%)",
+                      "linear-gradient(90deg, oklch(0.72 0.015 292) 0%, oklch(0.8 0.015 292) 30%, oklch(0.97 0.015 100) 47%, oklch(1 0.01 100) 50%, oklch(0.97 0.015 100) 53%, oklch(0.8 0.015 292) 70%, oklch(0.72 0.015 292) 100%)",
                   }}
                 />
                 {([-1, 1] as const).map((side) => (
