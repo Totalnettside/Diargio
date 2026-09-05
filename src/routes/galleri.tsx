@@ -105,11 +105,12 @@ function GalleriPage() {
       <div
         ref={sceneRef}
         className={`relative overflow-hidden ${
-          isFs ? "h-full w-full" : "h-[62vh] min-h-[420px] rounded-3xl"
+          isFs ? "h-full w-full" : "h-[72vh] min-h-[460px] rounded-3xl"
         }`}
         style={{
-          perspective: "850px",
-          background: "linear-gradient(180deg, oklch(0.32 0.05 292), oklch(0.22 0.04 292))",
+          perspective: "1500px",
+          perspectiveOrigin: "50% 46%",
+          background: "linear-gradient(180deg, oklch(0.24 0.03 292), oklch(0.14 0.02 292))",
         }}
       >
         <div
@@ -125,22 +126,29 @@ function GalleriPage() {
             const z = -((k - 2) + 0.5) * SPACING;
             return (
               <Fragment key={k}>
+                {/* Gulv – mørk, polert parkett */}
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
                     width: WALL * 2 + 400,
                     height: SPACING,
                     transform: `translate(-50%, -50%) translate3d(0, 300px, ${z}px) rotateX(90deg)`,
-                    background: k % 2 ? "oklch(0.72 0.035 290)" : "oklch(0.76 0.035 290)",
+                    background:
+                      "linear-gradient(90deg, oklch(0.26 0.02 60) 0%, oklch(0.32 0.025 60) 50%, oklch(0.26 0.02 60) 100%)",
+                    backgroundImage:
+                      "repeating-linear-gradient(90deg, oklch(0.3 0.025 60) 0 90px, oklch(0.26 0.022 60) 90px 180px)",
+                    boxShadow: "inset 0 0 160px oklch(0 0 0 / 0.55)",
                   }}
                 />
+                {/* Tak med lysrenne */}
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
                     width: WALL * 2 + 400,
                     height: SPACING,
                     transform: `translate(-50%, -50%) translate3d(0, -300px, ${z}px) rotateX(90deg)`,
-                    background: "oklch(0.88 0.02 290)",
+                    background:
+                      "linear-gradient(90deg, oklch(0.2 0.02 292) 0%, oklch(0.86 0.02 100) 44%, oklch(0.95 0.015 100) 50%, oklch(0.86 0.02 100) 56%, oklch(0.2 0.02 292) 100%)",
                   }}
                 />
                 {([-1, 1] as const).map((side) => (
@@ -152,7 +160,7 @@ function GalleriPage() {
                       height: 600,
                       transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
                       background:
-                        "linear-gradient(180deg, oklch(0.95 0.02 290) 0%, oklch(0.9 0.03 290) 70%, oklch(0.82 0.04 290) 100%)",
+                        "linear-gradient(180deg, oklch(0.62 0.02 292) 0%, oklch(0.88 0.012 292) 22%, oklch(0.82 0.012 292) 78%, oklch(0.42 0.02 292) 96%, oklch(0.3 0.02 292) 100%)",
                     }}
                   />
                 ))}
@@ -167,7 +175,7 @@ function GalleriPage() {
               height: 600,
               transform: `translate(-50%, -50%) translateZ(${SPACING * 2}px)`,
               background:
-                "linear-gradient(180deg, oklch(0.93 0.02 290) 0%, oklch(0.86 0.03 290) 100%)",
+                "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
             }}
           />
           {/* Bakvegg */}
@@ -177,7 +185,8 @@ function GalleriPage() {
               width: WALL * 2 + 400,
               height: 600,
               transform: `translate(-50%, -50%) translateZ(${-(works.length + 1.5) * SPACING}px)`,
-              background: "oklch(0.88 0.03 290)",
+              background:
+                "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
             }}
           />
           {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
@@ -193,29 +202,7 @@ function GalleriPage() {
                 transformStyle: "preserve-3d",
               }}
             >
-              <div
-                className="rounded-sm p-3"
-                style={{
-                  width: FRAME_W,
-                  background: "oklch(1 0 0)",
-                  boxShadow: "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
-                  outline: "3px solid oklch(0.3 0.02 290)",
-                  outlineOffset: "3px",
-                }}
-              >
-                <img
-                  src={w.image}
-                  alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
-                  className="aspect-square w-full object-cover"
-                  draggable={false}
-                />
-                <div className="mt-2 px-1 pb-1">
-                  <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
-                  <p className="text-[11px] text-ink/55">
-                    {artistById(w.artistId)?.name} · {formatPrice(w.price)}
-                  </p>
-                </div>
-              </div>
+              <Frame w={w} />
             </div>
           ))}
           {/* Kunstverk på veggene */}
@@ -232,40 +219,20 @@ function GalleriPage() {
                   transformStyle: "preserve-3d",
                 }}
               >
-                <div
-                  className="rounded-sm p-3 transition-all duration-700"
-                  style={{
-                    width: FRAME_W,
-                    background: "oklch(1 0 0)",
-                    boxShadow: active
-                      ? "0 30px 60px -20px oklch(0.4 0.1 290 / 0.55)"
-                      : "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
-                    outline: active ? "3px solid var(--brand)" : "3px solid oklch(0.3 0.02 290)",
-                    outlineOffset: "3px",
-                  }}
-                >
-                  <img
-                    src={w.image}
-                    alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
-                    className="aspect-square w-full object-cover"
-                    draggable={false}
-                  />
-                  {/* Skilt på veggen */}
-                  <div className="mt-2 px-1 pb-1">
-                    <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
-                    <p className="text-[11px] text-ink/55">
-                      {artistById(w.artistId)?.name} · {formatPrice(w.price)}
-                    </p>
-                  </div>
-                </div>
+                <Frame w={w} active={active} />
               </div>
             );
           })}
         </div>
 
-        {/* Blendingsgradienter for dybde */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/40 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/40 to-transparent" />
+        {/* Vignett og lysstemning */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(120% 90% at 50% 45%, transparent 45%, oklch(0.1 0.02 292 / 0.55) 100%)",
+          }}
+        />
 
         {/* Info om verket foran deg */}
         <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-3 rounded-2xl bg-white/85 p-4 backdrop-blur-md glass">
