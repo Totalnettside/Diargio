@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, MoveHorizontal } from "lucide-react";
 import { artistById, artworks, formatPrice } from "@/data/demo";
 
@@ -82,49 +82,52 @@ function GalleriPage() {
             transition: "transform 1.1s cubic-bezier(0.25, 0.8, 0.25, 1)",
           }}
         >
-          {/* Gulv */}
-          <div
-            className="absolute left-1/2 top-1/2"
-            style={{
-              width: WALL * 2 + 400,
-              height: PLANE_LEN,
-              transform: `translate(-50%, -50%) translate3d(0, 300px, ${PLANE_Z}px) rotateX(90deg)`,
-              background:
-                "linear-gradient(180deg, oklch(0.78 0.03 290), oklch(0.6 0.04 290))",
-              boxShadow: "inset 0 0 120px oklch(0.7 0.05 290 / 0.5)",
-            }}
-          />
-          {/* Tak */}
-          <div
-            className="absolute left-1/2 top-1/2"
-            style={{
-              width: WALL * 2 + 400,
-              height: PLANE_LEN,
-              transform: `translate(-50%, -50%) translate3d(0, -300px, ${PLANE_Z}px) rotateX(90deg)`,
-              background: "oklch(0.88 0.02 290)",
-            }}
-          />
-          {/* Vegger */}
-          {([-1, 1] as const).map((side) => (
-            <div
-              key={side}
-              className="absolute left-1/2 top-1/2"
-              style={{
-                width: PLANE_LEN,
-                height: 600,
-                transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${PLANE_Z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
-                background:
-                  "linear-gradient(180deg, oklch(0.95 0.02 290) 0%, oklch(0.9 0.03 290) 70%, oklch(0.83 0.04 290) 100%)",
-              }}
-            />
-          ))}
+          {/* Gulv, tak og vegger – segmentert slik at hvert plan holdes liten nok */}
+          {Array.from({ length: works.length + 3 }, (_, k) => {
+            const z = -(k + 0.5) * SPACING;
+            return (
+              <Fragment key={k}>
+                <div
+                  className="absolute left-1/2 top-1/2"
+                  style={{
+                    width: WALL * 2 + 400,
+                    height: SPACING,
+                    transform: `translate(-50%, -50%) translate3d(0, 300px, ${z}px) rotateX(90deg)`,
+                    background: k % 2 ? "oklch(0.72 0.035 290)" : "oklch(0.76 0.035 290)",
+                  }}
+                />
+                <div
+                  className="absolute left-1/2 top-1/2"
+                  style={{
+                    width: WALL * 2 + 400,
+                    height: SPACING,
+                    transform: `translate(-50%, -50%) translate3d(0, -300px, ${z}px) rotateX(90deg)`,
+                    background: "oklch(0.88 0.02 290)",
+                  }}
+                />
+                {([-1, 1] as const).map((side) => (
+                  <div
+                    key={side}
+                    className="absolute left-1/2 top-1/2"
+                    style={{
+                      width: SPACING,
+                      height: 600,
+                      transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
+                      background:
+                        "linear-gradient(180deg, oklch(0.95 0.02 290) 0%, oklch(0.9 0.03 290) 70%, oklch(0.82 0.04 290) 100%)",
+                    }}
+                  />
+                ))}
+              </Fragment>
+            );
+          })}
           {/* Bakvegg */}
           <div
             className="absolute left-1/2 top-1/2"
             style={{
               width: WALL * 2 + 400,
               height: 600,
-              transform: `translate(-50%, -50%) translateZ(${-LENGTH - 400}px)`,
+              transform: `translate(-50%, -50%) translateZ(${-(works.length + 1.5) * SPACING}px)`,
               background: "oklch(0.88 0.03 290)",
             }}
           />
