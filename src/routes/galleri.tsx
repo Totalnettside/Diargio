@@ -31,12 +31,66 @@ export const Route = createFileRoute("/galleri")({
 });
 
 const SPACING = 1400;
-const WALL = 560;
+const WALL = 680;
+const ROOM_W = WALL * 2;
+const ROOM_H = 820;
 const FRAME_W = 380;
 const CAM_OFFSET = 900;
 const TURN = 45;
 
 const works = artworks.slice(0, 12);
+
+function Frame({ w, active = false }: { w: (typeof works)[number]; active?: boolean }) {
+  const artist = artistById(w.artistId);
+  return (
+    <div className="relative" style={{ width: FRAME_W }}>
+      {/* Spotlys ovenfra */}
+      <div
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2"
+        style={{
+          width: FRAME_W * 1.5,
+          height: 260,
+          background:
+            "radial-gradient(60% 100% at 50% 0%, oklch(1 0.03 95 / 0.55), transparent 72%)",
+          filter: "blur(6px)",
+        }}
+      />
+      <div
+        className="relative rounded-[2px] transition-all duration-700"
+        style={{
+          padding: 18,
+          background:
+            "linear-gradient(160deg, oklch(0.34 0.03 60), oklch(0.2 0.02 60) 55%, oklch(0.28 0.03 60))",
+          boxShadow: active
+            ? "0 40px 70px -24px oklch(0 0 0 / 0.7), inset 0 0 0 2px oklch(0.55 0.06 80 / 0.7)"
+            : "0 26px 46px -22px oklch(0 0 0 / 0.6), inset 0 0 0 2px oklch(0.45 0.04 80 / 0.45)",
+        }}
+      >
+        <div style={{ background: "oklch(0.98 0.004 95)", padding: 14 }}>
+          <img
+            src={w.image}
+            alt={`${w.title} av ${artist?.name ?? ""}`}
+            className="aspect-square w-full object-cover"
+            draggable={false}
+            style={{ boxShadow: "0 2px 8px oklch(0 0 0 / 0.35)" }}
+          />
+        </div>
+      </div>
+      {/* Museumsskilt på veggen */}
+      <div
+        className="mt-3 inline-block rounded-[2px] px-3 py-2 text-left"
+        style={{ background: "oklch(0.97 0.004 95)", boxShadow: "0 6px 14px -10px oklch(0 0 0 / 0.6)" }}
+      >
+        <p className="font-display text-[13px] font-semibold leading-tight text-ink">{w.title}</p>
+        <p className="text-[10px] uppercase tracking-wide text-ink/55">
+          {artist?.name} · {formatPrice(w.price)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
 
 function GalleriPage() {
   const [pos, setPos] = useState(0);
@@ -88,7 +142,7 @@ function GalleriPage() {
   const currentArtist = artistById(current.artistId);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-6">
+    <main className="mx-auto w-full max-w-6xl px-4 py-6 pb-28 md:pb-8">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold">Virtuelt galleri</h1>
@@ -105,11 +159,12 @@ function GalleriPage() {
       <div
         ref={sceneRef}
         className={`relative overflow-hidden ${
-          isFs ? "h-full w-full" : "h-[62vh] min-h-[420px] rounded-3xl"
+          isFs ? "h-full w-full" : "h-[58vh] min-h-[380px] rounded-3xl md:h-[72vh] md:min-h-[460px]"
         }`}
         style={{
-          perspective: "850px",
-          background: "linear-gradient(180deg, oklch(0.32 0.05 292), oklch(0.22 0.04 292))",
+          perspective: "900px",
+          perspectiveOrigin: "50% 46%",
+          background: "linear-gradient(180deg, oklch(0.24 0.03 292), oklch(0.14 0.02 292))",
         }}
       >
         <div
@@ -125,22 +180,29 @@ function GalleriPage() {
             const z = -((k - 2) + 0.5) * SPACING;
             return (
               <Fragment key={k}>
+                {/* Gulv – mørk, polert parkett */}
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
-                    width: WALL * 2 + 400,
+                    width: ROOM_W,
                     height: SPACING,
-                    transform: `translate(-50%, -50%) translate3d(0, 300px, ${z}px) rotateX(90deg)`,
-                    background: k % 2 ? "oklch(0.72 0.035 290)" : "oklch(0.76 0.035 290)",
+                    transform: `translate(-50%, -50%) translate3d(0, ${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
+                    background: "oklch(0.58 0.03 62)",
+                    backgroundImage:
+                      "repeating-linear-gradient(90deg, oklch(0.6 0.03 62) 0 100px, oklch(0.54 0.03 62) 100px 200px)",
+                    boxShadow: "inset 0 0 120px oklch(0.3 0.03 62 / 0.45)",
+
                   }}
                 />
+                {/* Tak med lysrenne */}
                 <div
                   className="absolute left-1/2 top-1/2"
                   style={{
-                    width: WALL * 2 + 400,
+                    width: ROOM_W,
                     height: SPACING,
-                    transform: `translate(-50%, -50%) translate3d(0, -300px, ${z}px) rotateX(90deg)`,
-                    background: "oklch(0.88 0.02 290)",
+                    transform: `translate(-50%, -50%) translate3d(0, -${ROOM_H / 2}px, ${z}px) rotateX(90deg)`,
+                    background:
+                      "linear-gradient(90deg, oklch(0.72 0.015 292) 0%, oklch(0.8 0.015 292) 30%, oklch(0.97 0.015 100) 47%, oklch(1 0.01 100) 50%, oklch(0.97 0.015 100) 53%, oklch(0.8 0.015 292) 70%, oklch(0.72 0.015 292) 100%)",
                   }}
                 />
                 {([-1, 1] as const).map((side) => (
@@ -149,10 +211,10 @@ function GalleriPage() {
                     className="absolute left-1/2 top-1/2"
                     style={{
                       width: SPACING,
-                      height: 600,
+                      height: ROOM_H,
                       transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
                       background:
-                        "linear-gradient(180deg, oklch(0.95 0.02 290) 0%, oklch(0.9 0.03 290) 70%, oklch(0.82 0.04 290) 100%)",
+                        "linear-gradient(180deg, oklch(0.62 0.02 292) 0%, oklch(0.88 0.012 292) 22%, oklch(0.82 0.012 292) 78%, oklch(0.42 0.02 292) 96%, oklch(0.3 0.02 292) 100%)",
                     }}
                   />
                 ))}
@@ -163,21 +225,22 @@ function GalleriPage() {
           <div
             className="absolute left-1/2 top-1/2"
             style={{
-              width: WALL * 2 + 400,
-              height: 600,
+              width: ROOM_W,
+              height: ROOM_H,
               transform: `translate(-50%, -50%) translateZ(${SPACING * 2}px)`,
               background:
-                "linear-gradient(180deg, oklch(0.93 0.02 290) 0%, oklch(0.86 0.03 290) 100%)",
+                "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
             }}
           />
           {/* Bakvegg */}
           <div
             className="absolute left-1/2 top-1/2"
             style={{
-              width: WALL * 2 + 400,
-              height: 600,
+              width: ROOM_W,
+              height: ROOM_H,
               transform: `translate(-50%, -50%) translateZ(${-(works.length + 1.5) * SPACING}px)`,
-              background: "oklch(0.88 0.03 290)",
+              background:
+                "linear-gradient(180deg, oklch(0.68 0.02 292) 0%, oklch(0.88 0.012 292) 25%, oklch(0.8 0.014 292) 80%, oklch(0.32 0.02 292) 100%)",
             }}
           />
           {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
@@ -193,29 +256,7 @@ function GalleriPage() {
                 transformStyle: "preserve-3d",
               }}
             >
-              <div
-                className="rounded-sm p-3"
-                style={{
-                  width: FRAME_W,
-                  background: "oklch(1 0 0)",
-                  boxShadow: "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
-                  outline: "3px solid oklch(0.3 0.02 290)",
-                  outlineOffset: "3px",
-                }}
-              >
-                <img
-                  src={w.image}
-                  alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
-                  className="aspect-square w-full object-cover"
-                  draggable={false}
-                />
-                <div className="mt-2 px-1 pb-1">
-                  <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
-                  <p className="text-[11px] text-ink/55">
-                    {artistById(w.artistId)?.name} · {formatPrice(w.price)}
-                  </p>
-                </div>
-              </div>
+              <Frame w={w} />
             </div>
           ))}
           {/* Kunstverk på veggene */}
@@ -232,40 +273,20 @@ function GalleriPage() {
                   transformStyle: "preserve-3d",
                 }}
               >
-                <div
-                  className="rounded-sm p-3 transition-all duration-700"
-                  style={{
-                    width: FRAME_W,
-                    background: "oklch(1 0 0)",
-                    boxShadow: active
-                      ? "0 30px 60px -20px oklch(0.4 0.1 290 / 0.55)"
-                      : "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
-                    outline: active ? "3px solid var(--brand)" : "3px solid oklch(0.3 0.02 290)",
-                    outlineOffset: "3px",
-                  }}
-                >
-                  <img
-                    src={w.image}
-                    alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
-                    className="aspect-square w-full object-cover"
-                    draggable={false}
-                  />
-                  {/* Skilt på veggen */}
-                  <div className="mt-2 px-1 pb-1">
-                    <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
-                    <p className="text-[11px] text-ink/55">
-                      {artistById(w.artistId)?.name} · {formatPrice(w.price)}
-                    </p>
-                  </div>
-                </div>
+                <Frame w={w} active={active} />
               </div>
             );
           })}
         </div>
 
-        {/* Blendingsgradienter for dybde */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/40 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/40 to-transparent" />
+        {/* Vignett og lysstemning */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(120% 90% at 50% 45%, transparent 45%, oklch(0.1 0.02 292 / 0.55) 100%)",
+          }}
+        />
 
         {/* Info om verket foran deg */}
         <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-3 rounded-2xl bg-white/85 p-4 backdrop-blur-md glass">
