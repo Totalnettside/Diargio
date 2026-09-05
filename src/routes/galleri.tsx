@@ -28,6 +28,8 @@ const CAM_OFFSET = 900;
 
 const works = artworks.slice(0, 12);
 const LENGTH = (works.length + 2) * SPACING;
+const PLANE_LEN = LENGTH + 12000;
+const PLANE_Z = -LENGTH / 2 + 3000;
 
 function GalleriPage() {
   const [pos, setPos] = useState(0);
