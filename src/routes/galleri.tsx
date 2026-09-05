@@ -87,8 +87,8 @@ function GalleriPage() {
             className="absolute left-1/2 top-1/2"
             style={{
               width: WALL * 2 + 400,
-              height: LENGTH + 3000,
-              transform: `translate(-50%, -50%) translate3d(0, 300px, ${-LENGTH / 2}px) rotateX(90deg)`,
+              height: PLANE_LEN,
+              transform: `translate(-50%, -50%) translate3d(0, 300px, ${PLANE_Z}px) rotateX(90deg)`,
               background:
                 "linear-gradient(180deg, oklch(0.93 0.02 290), oklch(0.86 0.025 290))",
               boxShadow: "inset 0 0 120px oklch(0.7 0.05 290 / 0.5)",
@@ -99,8 +99,8 @@ function GalleriPage() {
             className="absolute left-1/2 top-1/2"
             style={{
               width: WALL * 2 + 400,
-              height: LENGTH + 3000,
-              transform: `translate(-50%, -50%) translate3d(0, -300px, ${-LENGTH / 2}px) rotateX(90deg)`,
+              height: PLANE_LEN,
+              transform: `translate(-50%, -50%) translate3d(0, -300px, ${PLANE_Z}px) rotateX(90deg)`,
               background: "oklch(0.97 0.01 290)",
             }}
           />
@@ -110,9 +110,9 @@ function GalleriPage() {
               key={side}
               className="absolute left-1/2 top-1/2"
               style={{
-                width: LENGTH + 3000,
+                width: PLANE_LEN,
                 height: 600,
-                transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${-LENGTH / 2}px) rotateY(${side === -1 ? 90 : -90}deg)`,
+                transform: `translate(-50%, -50%) translate3d(${side * WALL}px, 0, ${PLANE_Z}px) rotateY(${side === -1 ? 90 : -90}deg)`,
                 background:
                   "linear-gradient(180deg, oklch(0.98 0.008 290) 0%, oklch(0.95 0.015 290) 70%, oklch(0.9 0.02 290) 100%)",
               }}
