@@ -49,7 +49,7 @@ function GalleriPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [forward, back]);
 
-  const current = works[pos];
+  const current = works[pos] ?? works[0]!;
   const currentArtist = artistById(current.artistId);
 
   return (
