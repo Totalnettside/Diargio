@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, ExternalLink, MoveHorizontal } from "lucide-react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ExternalLink,
+  Maximize,
+  Minimize,
+  RotateCw,
+} from "lucide-react";
 import { artistById, artworks, formatPrice } from "@/data/demo";
 
 export const Route = createFileRoute("/galleri")({
@@ -25,32 +34,55 @@ const SPACING = 1400;
 const WALL = 560;
 const FRAME_W = 380;
 const CAM_OFFSET = 900;
+const TURN = 45;
 
 const works = artworks.slice(0, 12);
-const LENGTH = (works.length + 2) * SPACING;
-const PLANE_LEN = LENGTH + 12000;
-const PLANE_Z = -LENGTH / 2 + 3000;
 
 function GalleriPage() {
   const [pos, setPos] = useState(0);
+  const [rot, setRot] = useState(0);
+  const [isFs, setIsFs] = useState(false);
+  const sceneRef = useRef<HTMLDivElement>(null);
   const max = works.length - 1;
 
   const forward = useCallback(() => setPos((p) => Math.min(max, p + 1)), [max]);
   const back = useCallback(() => setPos((p) => Math.max(0, p - 1)), []);
+  const turnLeft = useCallback(() => setRot((r) => r + TURN), []);
+  const turnRight = useCallback(() => setRot((r) => r - TURN), []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void sceneRef.current?.requestFullscreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    const onFs = () => setIsFs(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+      if (e.key === "ArrowUp") {
         e.preventDefault();
         forward();
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+      } else if (e.key === "ArrowDown") {
         e.preventDefault();
         back();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        turnLeft();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        turnRight();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [forward, back]);
+  }, [forward, back, turnLeft, turnRight]);
 
   const current = works[pos] ?? works[0]!;
   const currentArtist = artistById(current.artistId);
@@ -61,30 +93,36 @@ function GalleriPage() {
         <div>
           <h1 className="font-display text-3xl font-semibold">Virtuelt galleri</h1>
           <p className="mt-1 text-sm text-ink/60">
-            Vandre gjennom utstillingen – bruk piltastene som om du gikk på museum.
+            Snu deg rundt med ← →, gå frem og tilbake med ↑ ↓ – som på et museum.
           </p>
         </div>
         <span className="flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-ink/60 glass">
-          <MoveHorizontal className="size-3.5" /> ← → piltastene
+          <RotateCw className="size-3.5" /> ← → snu · ↑ ↓ gå
         </span>
       </div>
 
       {/* 3D-scenen */}
       <div
-        className="relative h-[62vh] min-h-[420px] overflow-hidden rounded-3xl"
-        style={{ perspective: "850px", background: "linear-gradient(180deg, oklch(0.32 0.05 292), oklch(0.22 0.04 292))" }}
+        ref={sceneRef}
+        className={`relative overflow-hidden ${
+          isFs ? "h-full w-full" : "h-[62vh] min-h-[420px] rounded-3xl"
+        }`}
+        style={{
+          perspective: "850px",
+          background: "linear-gradient(180deg, oklch(0.32 0.05 292), oklch(0.22 0.04 292))",
+        }}
       >
         <div
           className="absolute inset-0"
           style={{
             transformStyle: "preserve-3d",
-            transform: `translateZ(${pos * SPACING + CAM_OFFSET}px)`,
-            transition: "transform 1.1s cubic-bezier(0.25, 0.8, 0.25, 1)",
+            transform: `rotateY(${rot}deg) translateZ(${pos * SPACING + CAM_OFFSET}px)`,
+            transition: "transform 0.9s cubic-bezier(0.25, 0.8, 0.25, 1)",
           }}
         >
           {/* Gulv, tak og vegger – segmentert slik at hvert plan holdes liten nok */}
-          {Array.from({ length: works.length + 3 }, (_, k) => {
-            const z = -(k + 0.5) * SPACING;
+          {Array.from({ length: works.length + 6 }, (_, k) => {
+            const z = -((k - 2) + 0.5) * SPACING;
             return (
               <Fragment key={k}>
                 <div
@@ -121,6 +159,17 @@ function GalleriPage() {
               </Fragment>
             );
           })}
+          {/* Inngangsvegg (bak deg ved start) */}
+          <div
+            className="absolute left-1/2 top-1/2"
+            style={{
+              width: WALL * 2 + 400,
+              height: 600,
+              transform: `translate(-50%, -50%) translateZ(${SPACING * 2}px)`,
+              background:
+                "linear-gradient(180deg, oklch(0.93 0.02 290) 0%, oklch(0.86 0.03 290) 100%)",
+            }}
+          />
           {/* Bakvegg */}
           <div
             className="absolute left-1/2 top-1/2"
@@ -131,6 +180,44 @@ function GalleriPage() {
               background: "oklch(0.88 0.03 290)",
             }}
           />
+          {/* Verk på inngangs- og bakvegg (synlig når du snur deg) */}
+          {[
+            { w: works[4]!, z: SPACING * 2 - 40, face: 180 },
+            { w: works[7]!, z: -(works.length + 1.5) * SPACING + 40, face: 0 },
+          ].map(({ w, z, face }) => (
+            <div
+              key={`end-${w.id}-${face}`}
+              className="absolute left-1/2 top-1/2"
+              style={{
+                transform: `translate(-50%, -50%) translate3d(0, -40px, ${z}px) rotateY(${face}deg)`,
+                transformStyle: "preserve-3d",
+              }}
+            >
+              <div
+                className="rounded-sm p-3"
+                style={{
+                  width: FRAME_W,
+                  background: "oklch(1 0 0)",
+                  boxShadow: "0 16px 30px -18px oklch(0.4 0.05 290 / 0.4)",
+                  outline: "3px solid oklch(0.3 0.02 290)",
+                  outlineOffset: "3px",
+                }}
+              >
+                <img
+                  src={w.image}
+                  alt={`${w.title} av ${artistById(w.artistId)?.name ?? ""}`}
+                  className="aspect-square w-full object-cover"
+                  draggable={false}
+                />
+                <div className="mt-2 px-1 pb-1">
+                  <p className="font-display text-sm font-semibold leading-tight">{w.title}</p>
+                  <p className="text-[11px] text-ink/55">
+                    {artistById(w.artistId)?.name} · {formatPrice(w.price)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
           {/* Kunstverk på veggene */}
           {works.map((w, i) => {
             const side = i % 2 === 0 ? -1 : 1;
@@ -200,23 +287,50 @@ function GalleriPage() {
           </Link>
         </div>
 
-        {/* Navigasjonspiler for berøring/mus */}
+        {/* Fullskjerm */}
         <button
-          onClick={back}
-          disabled={pos === 0}
-          aria-label="Gå bakover"
-          className="absolute left-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass disabled:opacity-30"
+          onClick={toggleFullscreen}
+          aria-label={isFs ? "Avslutt fullskjerm" : "Fullskjerm"}
+          className="absolute right-3 top-3 grid size-11 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass"
+        >
+          {isFs ? <Minimize className="size-5" /> : <Maximize className="size-5" />}
+        </button>
+
+        {/* Snu venstre/høyre */}
+        <button
+          onClick={turnLeft}
+          aria-label="Snu til venstre"
+          className="absolute left-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass"
         >
           <ArrowLeft className="size-5" />
         </button>
         <button
-          onClick={forward}
-          disabled={pos === max}
-          aria-label="Gå fremover"
-          className="absolute right-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass disabled:opacity-30"
+          onClick={turnRight}
+          aria-label="Snu til høyre"
+          className="absolute right-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass"
         >
           <ArrowRight className="size-5" />
         </button>
+
+        {/* Gå frem/tilbake */}
+        <div className="absolute bottom-24 right-3 flex flex-col gap-2">
+          <button
+            onClick={forward}
+            disabled={pos === max}
+            aria-label="Gå fremover"
+            className="grid size-11 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass disabled:opacity-30"
+          >
+            <ArrowUp className="size-5" />
+          </button>
+          <button
+            onClick={back}
+            disabled={pos === 0}
+            aria-label="Gå bakover"
+            className="grid size-11 place-items-center rounded-full bg-white/85 text-brandink backdrop-blur-md glass disabled:opacity-30"
+          >
+            <ArrowDown className="size-5" />
+          </button>
+        </div>
       </div>
 
       {/* Fremdrift */}
