@@ -142,7 +142,7 @@ function GalleriPage() {
   const currentArtist = artistById(current.artistId);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-6">
+    <main className="mx-auto w-full max-w-6xl px-4 py-6 pb-28 md:pb-8">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold">Virtuelt galleri</h1>
@@ -159,7 +159,7 @@ function GalleriPage() {
       <div
         ref={sceneRef}
         className={`relative overflow-hidden ${
-          isFs ? "h-full w-full" : "h-[72vh] min-h-[460px] rounded-3xl"
+          isFs ? "h-full w-full" : "h-[58vh] min-h-[380px] rounded-3xl md:h-[72vh] md:min-h-[460px]"
         }`}
         style={{
           perspective: "900px",
