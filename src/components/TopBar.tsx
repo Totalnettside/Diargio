@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function TopBar() {
   const { notifications } = useStore();
+  const { user, signOut } = useAuth();
   const unread = notifications.filter((n) => !n.read).length;
   const [q, setQ] = useState("");
   const navigate = useNavigate();
