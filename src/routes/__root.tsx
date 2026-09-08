@@ -133,6 +133,7 @@ function RootComponent() {
           <BottomNav />
         </div>
       </StoreProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
