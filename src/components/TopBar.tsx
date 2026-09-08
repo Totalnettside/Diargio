@@ -66,13 +66,30 @@ export function TopBar() {
             <Bell className="size-4" />
             {unread > 0 && <span className="absolute right-2 top-2 size-2 rounded-full bg-brand" />}
           </Link>
-          <Link
-            to="/profil/$slug"
-            params={{ slug: "kevin" }}
-            className="grid size-10 place-items-center rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
-          >
-            K
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to="/min-side"
+                className="grid size-10 place-items-center rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
+                aria-label="Min side"
+              >
+                {(user.email ?? "?").slice(0, 1).toUpperCase()}
+              </Link>
+              <button
+                onClick={() => void signOut()}
+                className="hidden rounded-2xl bg-white/60 px-3 py-2 text-sm font-semibold text-ink glass md:block"
+              >
+                Logg ut
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className="rounded-2xl bg-brand px-4 py-2.5 text-sm font-semibold text-white"
+            >
+              Logg inn
+            </Link>
+          )}
         </div>
       </div>
     </header>
