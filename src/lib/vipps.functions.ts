@@ -24,7 +24,11 @@ export const startVippsLogin = createServerFn({ method: "POST" })
   .inputValidator((input: { redirectUri: string; state: string }) => input)
   .handler(async ({ data }) => {
     const clientId = process.env["VIPPS_CLIENT_ID"];
-    if (!clientId) throw new Error("Vipps er ikke konfigurert ennå.");
+    if (!clientId)
+      return {
+        authorizationUrl: null,
+        error: "Vipps er ikke koblet til ennå. Bruk e-post eller Google.",
+      };
     const { authorization_endpoint } = await discovery();
     const url = new URL(authorization_endpoint);
     url.searchParams.set("client_id", clientId);
@@ -32,8 +36,9 @@ export const startVippsLogin = createServerFn({ method: "POST" })
     url.searchParams.set("scope", "openid name email phoneNumber");
     url.searchParams.set("redirect_uri", data.redirectUri);
     url.searchParams.set("state", data.state);
-    return { authorizationUrl: url.toString() };
+    return { authorizationUrl: url.toString(), error: null };
   });
+
 
 export const completeVippsLogin = createServerFn({ method: "POST" })
   .inputValidator((input: { code: string; redirectUri: string }) => input)

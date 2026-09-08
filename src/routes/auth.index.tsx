@@ -72,9 +72,14 @@ function AuthPage() {
     try {
       const state = crypto.randomUUID();
       sessionStorage.setItem("vipps_state", state);
-      const { authorizationUrl } = await startVippsLogin({
+      const { authorizationUrl, error } = await startVippsLogin({
         data: { redirectUri: `${window.location.origin}/auth/vipps`, state },
       });
+      if (!authorizationUrl) {
+        setMsg(error ?? "Vipps-innlogging feilet.");
+        setBusy(false);
+        return;
+      }
       window.location.href = authorizationUrl;
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Vipps-innlogging feilet.");
