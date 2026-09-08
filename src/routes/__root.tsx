@@ -124,6 +124,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <StoreProvider>
         <div className="min-h-screen bg-mist pb-24 font-body text-ink md:pb-0">
           <TopBar />
