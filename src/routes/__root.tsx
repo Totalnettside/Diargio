@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/lib/store";
+import { AuthProvider } from "@/hooks/useAuth";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 
@@ -123,6 +124,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <StoreProvider>
         <div className="min-h-screen bg-mist pb-24 font-body text-ink md:pb-0">
           <TopBar />
@@ -131,6 +133,7 @@ function RootComponent() {
           <BottomNav />
         </div>
       </StoreProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

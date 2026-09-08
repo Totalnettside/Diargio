@@ -17,6 +17,8 @@ import { Route as MinSideRouteImport } from './routes/min-side'
 import { Route as SelgRouteImport } from './routes/selg'
 import { Route as SokRouteImport } from './routes/sok'
 import { Route as VarslerRouteImport } from './routes/varsler'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AuthVippsRouteImport } from './routes/auth.vipps'
 import { Route as KjopSlugRouteImport } from './routes/kjop.$slug'
 import { Route as KunstIndexRouteImport } from './routes/kunst.index'
 import { Route as KunstSlugRouteImport } from './routes/kunst.$slug'
@@ -63,6 +65,16 @@ const VarslerRoute = VarslerRouteImport.update({
   path: '/varsler',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthVippsRoute = AuthVippsRouteImport.update({
+  id: '/auth/vipps',
+  path: '/auth/vipps',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KjopSlugRoute = KjopSlugRouteImport.update({
   id: '/kjop/$slug',
   path: '/kjop/$slug',
@@ -98,10 +110,12 @@ export interface FileRoutesByFullPath {
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
+  '/auth/vipps': typeof AuthVippsRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
 }
 export interface FileRoutesByTo {
@@ -113,10 +127,12 @@ export interface FileRoutesByTo {
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
+  '/auth/vipps': typeof AuthVippsRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
+  '/auth': typeof AuthIndexRoute
   '/kunst': typeof KunstIndexRoute
 }
 export interface FileRoutesById {
@@ -129,10 +145,12 @@ export interface FileRoutesById {
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
+  '/auth/vipps': typeof AuthVippsRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
 }
 export interface FileRouteTypes {
@@ -146,10 +164,12 @@ export interface FileRouteTypes {
     | '/selg'
     | '/sok'
     | '/varsler'
+    | '/auth/vipps'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
+    | '/auth/'
     | '/kunst/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -161,10 +181,12 @@ export interface FileRouteTypes {
     | '/selg'
     | '/sok'
     | '/varsler'
+    | '/auth/vipps'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
+    | '/auth'
     | '/kunst'
   id:
     | '__root__'
@@ -176,10 +198,12 @@ export interface FileRouteTypes {
     | '/selg'
     | '/sok'
     | '/varsler'
+    | '/auth/vipps'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
+    | '/auth/'
     | '/kunst/'
   fileRoutesById: FileRoutesById
 }
@@ -192,10 +216,12 @@ export interface RootRouteChildren {
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
   VarslerRoute: typeof VarslerRoute
+  AuthVippsRoute: typeof AuthVippsRoute
   KjopSlugRoute: typeof KjopSlugRoute
   KunstSlugRoute: typeof KunstSlugRoute
   KunstnerSlugRoute: typeof KunstnerSlugRoute
   ProfilSlugRoute: typeof ProfilSlugRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
 }
 
@@ -257,6 +283,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VarslerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/vipps': {
+      id: '/auth/vipps'
+      path: '/auth/vipps'
+      fullPath: '/auth/vipps'
+      preLoaderRoute: typeof AuthVippsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kjop/$slug': {
       id: '/kjop/$slug'
       path: '/kjop/$slug'
@@ -304,10 +344,12 @@ const rootRouteChildren: RootRouteChildren = {
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
   VarslerRoute: VarslerRoute,
+  AuthVippsRoute: AuthVippsRoute,
   KjopSlugRoute: KjopSlugRoute,
   KunstSlugRoute: KunstSlugRoute,
   KunstnerSlugRoute: KunstnerSlugRoute,
   ProfilSlugRoute: ProfilSlugRoute,
+  AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,
 }
 export const routeTree = rootRouteImport
