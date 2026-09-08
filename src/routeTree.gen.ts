@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as GalleriRouteImport } from './routes/galleri'
 import { Route as MeldingerRouteImport } from './routes/meldinger'
 import { Route as MinSideRouteImport } from './routes/min-side'
 import { Route as SelgRouteImport } from './routes/selg'
@@ -33,11 +32,6 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleriRoute = GalleriRouteImport.update({
-  id: '/galleri',
-  path: '/galleri',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeldingerRoute = MeldingerRouteImport.update({
@@ -104,7 +98,6 @@ const ProfilSlugRoute = ProfilSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/galleri': typeof GalleriRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -121,7 +114,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/galleri': typeof GalleriRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -139,7 +131,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/galleri': typeof GalleriRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -158,7 +149,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/galleri'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -175,7 +165,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
-    | '/galleri'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -192,7 +181,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
-    | '/galleri'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -210,7 +198,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
-  GalleriRoute: typeof GalleriRoute
   MeldingerRoute: typeof MeldingerRoute
   MinSideRoute: typeof MinSideRoute
   SelgRoute: typeof SelgRoute
@@ -239,13 +226,6 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/galleri': {
-      id: '/galleri'
-      path: '/galleri'
-      fullPath: '/galleri'
-      preLoaderRoute: typeof GalleriRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meldinger': {
@@ -338,7 +318,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
-  GalleriRoute: GalleriRoute,
   MeldingerRoute: MeldingerRoute,
   MinSideRoute: MinSideRoute,
   SelgRoute: SelgRoute,
