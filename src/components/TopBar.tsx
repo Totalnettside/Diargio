@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 
 export function TopBar() {
   const { notifications } = useStore();
