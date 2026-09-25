@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Heart, Share2, ShieldCheck, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Heart, Printer, Share2, ShieldCheck, Star } from "lucide-react";
+import { addRecent } from "@/lib/recent";
 import { BidDialog } from "@/components/BidDialog";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import {
@@ -64,6 +65,9 @@ function ArtworkPage() {
   const seller = sellerById(artwork.sellerId);
   const { isFavorite, toggleFavorite, sendMessage, toggleFollowSeller, followedSellers } = useStore();
   const [bidOpen, setBidOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => addRecent(artwork.id), [artwork.id]);
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
   const [roomImage, setRoomImage] = useState<string | null>(null);
@@ -205,17 +209,55 @@ function ArtworkPage() {
                   />
                   {isFavorite(artwork.id) ? "Lagret" : "Lagre"}
                 </button>
-                <button
-                  onClick={() => {
-                    if (typeof navigator !== "undefined" && navigator.clipboard) {
-                      void navigator.clipboard.writeText(window.location.href);
-                    }
-                  }}
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold glass"
-                >
-                  <Share2 className="size-4" /> Del
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setShareOpen((v) => !v)}
+                    className="flex h-full items-center justify-center gap-2 rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold glass"
+                  >
+                    <Share2 className="size-4" /> Del
+                  </button>
+                  {shareOpen && (
+                    <div className="absolute right-0 z-20 mt-2 w-52 rounded-2xl bg-background p-2 text-sm shadow-lg ring-1 ring-border">
+                      {(() => {
+                        const url = typeof window !== "undefined" ? window.location.href : "";
+                        const text = `${artwork.title} av ${artist.name}`;
+                        const e = encodeURIComponent;
+                        const links: Array<[string, string]> = [
+                          ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${e(url)}`],
+                          ["X / Twitter", `https://twitter.com/intent/tweet?url=${e(url)}&text=${e(text)}`],
+                          ["LinkedIn", `https://www.linkedin.com/sharing/share-offsite/?url=${e(url)}`],
+                          ["E-post", `mailto:?subject=${e(text)}&body=${e(url)}`],
+                        ];
+                        return (
+                          <>
+                            <button
+                              onClick={() => {
+                                void navigator.clipboard?.writeText(url);
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 1500);
+                              }}
+                              className="block w-full rounded-xl px-3 py-2 text-left hover:bg-secondary"
+                            >
+                              {copied ? "Lenke kopiert ✓" : "Kopier lenke"}
+                            </button>
+                            {links.map(([label, href]) => (
+                              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="block rounded-xl px-3 py-2 hover:bg-secondary">
+                                {label}
+                              </a>
+                            ))}
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
               </div>
+              <button
+                onClick={() => window.print()}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-white/70 py-3 text-sm font-semibold glass print:hidden"
+              >
+                <Printer className="size-4" /> Skriv ut / lagre som PDF
+              </button>
             </div>
           </div>
 

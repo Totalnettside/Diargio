@@ -2,8 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, artworks, artworksByArtist, categories } from "@/data/demo";
+import { artists, artworks, artworksByArtist, categories, featuredArtworks } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { useRecent } from "@/lib/recent";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +33,8 @@ function Index() {
   const { toggleFollowArtist, followedArtists } = useStore();
   const nyeste = [...artworks].sort((a, b) => a.createdDaysAgo - b.createdDaysAgo).slice(0, 9);
   const utvalgte = artworks.filter((a) => a.verified).slice(9, 15);
+  const recentIds = useRecent();
+  const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pt-4">
@@ -91,6 +94,31 @@ function Index() {
           </Link>
         ))}
       </div>
+
+      <div className="mt-6 flex items-center justify-between">
+        <h2 className="text-sm font-bold">Fremhevede annonser</h2>
+        <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+        {featuredArtworks.map((a) => (
+          <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
+            <ArtworkCard artwork={a} />
+          </div>
+        ))}
+      </div>
+
+      {recent.length > 0 && (
+        <>
+          <h2 className="mt-6 text-sm font-bold">Nylig sett</h2>
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+            {recent.map((a) => (
+              <div key={a.id} className="w-44 shrink-0">
+                <ArtworkCard artwork={a} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="mt-6 flex items-center justify-between">
         <h2 className="text-sm font-bold">Nytt på markedsplassen</h2>
