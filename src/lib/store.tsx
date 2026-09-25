@@ -92,6 +92,8 @@ type Store = State & {
   saveSearch: (query: string, label: string) => void;
   markAllRead: () => void;
   addListing: (a: Artwork) => void;
+  updateListing: (a: Artwork) => void;
+  deleteListing: (id: string) => void;
   allArtworks: Artwork[];
 };
 
@@ -221,6 +223,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       addListing: (a) => {
         setState((s) => ({ ...s, myListings: [a, ...s.myListings] }));
         notify("Annonse publisert", `«${a.title}» er nå synlig på markedsplassen.`);
+      },
+      updateListing: (a) => {
+        setState((s) => ({
+          ...s,
+          myListings: s.myListings.map((l) => (l.id === a.id ? a : l)),
+        }));
+        notify("Annonse oppdatert", `«${a.title}» er lagret.`);
+      },
+      deleteListing: (id) => {
+        setState((s) => ({ ...s, myListings: s.myListings.filter((l) => l.id !== id) }));
+        notify("Annonse slettet", "Annonsen er fjernet fra markedsplassen.");
       },
     }),
     [state, notify],
