@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/diargio-logo.png";
 
 export function TopBar() {
   const { notifications } = useStore();
@@ -14,14 +15,8 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-mist/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <span
-            className="grid size-9 place-items-center rounded-lg bg-brandink font-display text-lg font-semibold text-primary-foreground"
-            style={{ boxShadow: "inset 0 0 0 1px oklch(1 0 0 / 0.7)" }}
-          >
-            D
-          </span>
-          <span className="font-display text-xl font-semibold">Diargio</span>
+        <Link to="/" className="flex items-center">
+          <img src={logo} alt="Diargio" width={1152} height={576} className="h-9 w-auto" />
         </Link>
 
         <form
