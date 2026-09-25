@@ -6,9 +6,9 @@ import { completeVippsLogin } from "@/lib/vipps.functions";
 export const Route = createFileRoute("/auth/vipps")({
   head: () => ({
     meta: [
-      { title: "Fullfører Vipps-innlogging – Geargio" },
+      { title: "Fullfører Vipps-innlogging – Diargio" },
       { name: "description", content: "Vi fullfører innloggingen din med Vipps og BankID." },
-      { property: "og:title", content: "Fullfører Vipps-innlogging – Geargio" },
+      { property: "og:title", content: "Fullfører Vipps-innlogging – Diargio" },
       { property: "og:description", content: "Vi fullfører innloggingen din med Vipps." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -8,16 +8,16 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/auth/")({
   head: () => ({
     meta: [
-      { title: "Logg inn – Geargio" },
+      { title: "Logg inn – Diargio" },
       {
         name: "description",
         content:
-          "Logg inn på Geargio med e-post, Google eller Vipps (BankID) for å kjøpe og selge kunst.",
+          "Logg inn på Diargio med e-post, Google eller Vipps (BankID) for å kjøpe og selge kunst.",
       },
-      { property: "og:title", content: "Logg inn – Geargio" },
+      { property: "og:title", content: "Logg inn – Diargio" },
       {
         property: "og:description",
-        content: "Logg inn med e-post, Google eller Vipps (BankID) på Geargio.",
+        content: "Logg inn med e-post, Google eller Vipps (BankID) på Diargio.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,7 +94,7 @@ function AuthPage() {
           {mode === "inn" ? "Logg inn" : "Opprett konto"}
         </h1>
         <p className="mt-1 text-sm text-ink/60">
-          Kjøp, selg og følg kunst på Geargio.
+          Kjøp, selg og følg kunst på Diargio.
         </p>
 
         <div className="mt-6 space-y-2">
@@ -154,7 +154,7 @@ function AuthPage() {
         </button>
 
         <p className="mt-6 text-xs text-ink/50">
-          Ved å fortsette godtar du Geargios vilkår.{" "}
+          Ved å fortsette godtar du Diargios vilkår.{" "}
           <Link to="/" className="underline">
             Til forsiden
           </Link>

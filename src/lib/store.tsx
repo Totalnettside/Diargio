@@ -96,7 +96,7 @@ type Store = State & {
 };
 
 const StoreContext = createContext<Store | null>(null);
-const KEY = "geargio-state-v1";
+const KEY = "diargio-state-v1";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);

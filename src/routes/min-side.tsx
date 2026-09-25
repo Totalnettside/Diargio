@@ -7,13 +7,15 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/min-side")({
   head: () => ({
     meta: [
-      { title: "Min kunsthandel | Geargio" },
+      { title: "Min kunsthandel | Diargio" },
       {
         name: "description",
         content: "Oversikt over annonser, bud, favoritter, lagrede søk, salg og statistikk.",
       },
-      { property: "og:title", content: "Min kunsthandel | Geargio" },
+      { property: "og:title", content: "Min kunsthandel | Diargio" },
       { property: "og:description", content: "Dashboard for kjøp og salg av kunst." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
