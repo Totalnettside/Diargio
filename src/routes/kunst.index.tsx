@@ -2,6 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Bookmark, ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   artTypes,
   artistById,
@@ -55,47 +58,25 @@ const sortOptions = [
   "Mest sett",
 ] as const;
 
-function Chip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
+function OptionList({ options, selected, onToggle }: { options: readonly string[]; selected: string[]; onToggle: (value: string) => void }) {
   return (
-    <button
-      onClick={onClick}
-      className={`rounded-sm border px-3 py-2 text-xs font-semibold transition-colors ${
-        active ? "border-brandink bg-brandink text-primary-foreground" : "border-border bg-card hover:border-brandink"
-      }`}
-    >
-      {label}
-    </button>
+    <div className="grid gap-1">
+      {options.map((option) => (
+        <label key={option} className="flex cursor-pointer items-center gap-3 rounded-sm px-2 py-2 text-sm hover:bg-secondary/60">
+          <Checkbox checked={selected.includes(option)} onCheckedChange={() => onToggle(option)} />
+          <span>{option}</span>
+        </label>
+      ))}
+    </div>
   );
 }
 
-function FilterGroup({
-  title,
-  options,
-  selected,
-  onToggle,
-}: {
-  title: string;
-  options: readonly string[];
-  selected: string[];
-  onToggle: (v: string) => void;
-}) {
+function FilterTitle({ label, count }: { label: string; count: number }) {
   return (
-    <div className="mt-4">
-      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">{title}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {options.map((o) => (
-          <Chip key={o} label={o} active={selected.includes(o)} onClick={() => onToggle(o)} />
-        ))}
-      </div>
-    </div>
+    <span className="flex items-center gap-2">
+      {label}
+      {count > 0 && <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold text-primary-foreground">{count}</span>}
+    </span>
   );
 }
 
@@ -123,6 +104,14 @@ function Marketplace() {
 
   const toggle = (list: string[], set: (v: string[]) => void) => (v: string) =>
     set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
+
+  const activeFilterCount = kategori.length + stil.length + teknikk.length + type.length + tilstand.length + selgertype.length + salgsform.length + fylke.length + Number(Boolean(fra || til)) + Number(Boolean(kunstnerSok)) + Number(Boolean(minBredde || minHoyde));
+
+  const clearFilters = () => {
+    setKategori([]); setStil([]); setTeknikk([]); setType([]); setTilstand([]);
+    setSelgertype([]); setSalgsform([]); setFylke([]); setFra(""); setTil("");
+    setKunstnerSok(""); setMinBredde(""); setMinHoyde("");
+  };
 
   const results = useMemo(() => {
     let out = allArtworks.filter((a) => {
@@ -192,103 +181,57 @@ function Marketplace() {
         </div>
       </div>
 
-      <FilterGroup
-        title="Kategori"
-        options={categories}
-        selected={kategori}
-        onToggle={toggle(kategori, setKategori)}
-      />
+      <Accordion type="multiple" defaultValue={["kategori", "pris"]} className="mt-3 border-t border-border">
+        <AccordionItem value="kategori">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Kategori" count={kategori.length} /></AccordionTrigger>
+          <AccordionContent><OptionList options={categories} selected={kategori} onToggle={toggle(kategori, setKategori)} /></AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="pris">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Pris" count={Number(Boolean(fra || til))} /></AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-2 gap-3">
+              <input value={fra} onChange={(e) => setFra(e.target.value.replace(/\D/g, ""))} placeholder="Fra kr" inputMode="numeric" className="min-w-0 border-b border-border bg-transparent px-1 py-2 text-sm outline-none" />
+              <input value={til} onChange={(e) => setTil(e.target.value.replace(/\D/g, ""))} placeholder="Til kr" inputMode="numeric" className="min-w-0 border-b border-border bg-transparent px-1 py-2 text-sm outline-none" />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="uttrykk">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Stil og uttrykk" count={stil.length + teknikk.length + type.length} /></AccordionTrigger>
+          <AccordionContent className="space-y-4">
+            <div><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Stil</p><OptionList options={styles} selected={stil} onToggle={toggle(stil, setStil)} /></div>
+            <div className="border-t border-border pt-4"><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Teknikk</p><OptionList options={techniques} selected={teknikk} onToggle={toggle(teknikk, setTeknikk)} /></div>
+            <div className="border-t border-border pt-4"><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Type</p><OptionList options={artTypes} selected={type} onToggle={toggle(type, setType)} /></div>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="kunstner">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Kunstner og selger" count={selgertype.length + Number(Boolean(kunstnerSok))} /></AccordionTrigger>
+          <AccordionContent className="space-y-4">
+            <input value={kunstnerSok} onChange={(e) => setKunstnerSok(e.target.value)} placeholder="Søk etter kunstner" className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none" />
+            <OptionList options={sellerTypes} selected={selgertype} onToggle={toggle(selgertype, setSelgertype)} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="sted">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Sted" count={fylke.length} /></AccordionTrigger>
+          <AccordionContent><OptionList options={counties} selected={fylke} onToggle={toggle(fylke, setFylke)} /></AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="detaljer">
+          <AccordionTrigger className="hover:no-underline"><FilterTitle label="Flere valg" count={salgsform.length + tilstand.length + Number(Boolean(minBredde || minHoyde))} /></AccordionTrigger>
+          <AccordionContent className="space-y-4">
+            <div><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Salgsform</p><OptionList options={saleTypes} selected={salgsform} onToggle={toggle(salgsform, setSalgsform)} /></div>
+            <div className="border-t border-border pt-4"><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Tilstand</p><OptionList options={conditions} selected={tilstand} onToggle={toggle(tilstand, setTilstand)} /></div>
+            <div className="border-t border-border pt-4"><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Minimum størrelse</p><div className="grid grid-cols-2 gap-3"><input value={minBredde} onChange={(e) => setMinBredde(e.target.value.replace(/\D/g, ""))} placeholder="Bredde cm" inputMode="numeric" className="min-w-0 border-b border-border bg-transparent px-1 py-2 text-sm outline-none" /><input value={minHoyde} onChange={(e) => setMinHoyde(e.target.value.replace(/\D/g, ""))} placeholder="Høyde cm" inputMode="numeric" className="min-w-0 border-b border-border bg-transparent px-1 py-2 text-sm outline-none" /></div></div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-      <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-ink/50">Pris</p>
-        <div className="mt-2 flex gap-2">
-          <input
-            value={fra}
-            onChange={(e) => setFra(e.target.value.replace(/\D/g, ""))}
-            placeholder="Fra"
-            inputMode="numeric"
-            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
-          />
-          <input
-            value={til}
-            onChange={(e) => setTil(e.target.value.replace(/\D/g, ""))}
-            placeholder="Til"
-            inputMode="numeric"
-            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
-          />
-        </div>
-      </div>
+      {activeFilterCount > 0 && <Button variant="ghost" onClick={clearFilters} className="mt-3 w-full text-ink/60">Nullstill {activeFilterCount} valg</Button>}
 
-      <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-ink/50">Kunstner</p>
-        <input
-          value={kunstnerSok}
-          onChange={(e) => setKunstnerSok(e.target.value)}
-          placeholder="Søk kunstner"
-          className="mt-2 w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
-        />
-      </div>
-
-      <FilterGroup title="Type" options={artTypes} selected={type} onToggle={toggle(type, setType)} />
-      <FilterGroup title="Stil" options={styles} selected={stil} onToggle={toggle(stil, setStil)} />
-      <FilterGroup
-        title="Teknikk"
-        options={techniques}
-        selected={teknikk}
-        onToggle={toggle(teknikk, setTeknikk)}
-      />
-
-      <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-ink/50">Størrelse (min. cm)</p>
-        <div className="mt-2 flex gap-2">
-          <input
-            value={minBredde}
-            onChange={(e) => setMinBredde(e.target.value.replace(/\D/g, ""))}
-            placeholder="Bredde"
-            inputMode="numeric"
-            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
-          />
-          <input
-            value={minHoyde}
-            onChange={(e) => setMinHoyde(e.target.value.replace(/\D/g, ""))}
-            placeholder="Høyde"
-            inputMode="numeric"
-            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
-          />
-        </div>
-      </div>
-
-      <FilterGroup
-        title="Selgertype"
-        options={sellerTypes}
-        selected={selgertype}
-        onToggle={toggle(selgertype, setSelgertype)}
-      />
-      <FilterGroup
-        title="Lokasjon"
-        options={counties}
-        selected={fylke}
-        onToggle={toggle(fylke, setFylke)}
-      />
-      <FilterGroup
-        title="Salgsform"
-        options={saleTypes}
-        selected={salgsform}
-        onToggle={toggle(salgsform, setSalgsform)}
-      />
-      <FilterGroup
-        title="Tilstand"
-        options={conditions}
-        selected={tilstand}
-        onToggle={toggle(tilstand, setTilstand)}
-      />
-
-      <button
+      <Button
         onClick={() => saveSearch(query, query || kategori.join(", ") || "Alle verk")}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-sm bg-brandink py-3 text-sm font-semibold text-primary-foreground"
+        className="mt-3 w-full rounded-sm py-3"
       >
         <Bookmark className="size-4" /> Lagre søk
-      </button>
+      </Button>
     </div>
   );
 
