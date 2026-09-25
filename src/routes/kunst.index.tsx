@@ -348,7 +348,7 @@ function Marketplace() {
                 {results.slice(1).map((a) => <ArtworkCard key={a.id} artwork={a} />)}
               </div>
             </>
-          )}
+          ) : null}
         </div>
       </div>
       </div>
