@@ -97,7 +97,7 @@ type Store = State & {
   allArtworks: Artwork[];
 };
 
-const g = globalThis as unknown as { __diargioStoreCtx?: React.Context<Store | null> };
+const g = globalThis as unknown as { __diargioStoreCtx?: Context<Store | null> };
 const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext<Store | null>(null));
 const KEY = "diargio-state-v1";
 const LEGACY_KEY = "geargio-state-v1";
