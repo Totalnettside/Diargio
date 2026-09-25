@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo";
+import { calculateTransactionFees } from "@/lib/fees";
 
 export const Route = createFileRoute("/kjop/$slug")({
   loader: ({ params }) => {
@@ -11,12 +12,16 @@ export const Route = createFileRoute("/kjop/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData ? `Kjøp ${loaderData.artwork.title} | Geargio` : "Kjøp | Geargio" },
+      { title: loaderData ? `Kjøp ${loaderData.artwork.title} | Diargio` : "Kjøp | Diargio" },
       {
         name: "description",
         content: "Trygg kunsthandel: pengene holdes tilbake til du har bekreftet mottak.",
       },
       { name: "robots", content: "noindex" },
+      { property: "og:title", content: "Trygg kunsthandel | Diargio" },
+      { property: "og:description", content: "Kjøp kunst med tydelig prisoversikt og trygg betaling." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CheckoutPage,
@@ -34,7 +39,7 @@ function CheckoutPage() {
   const { artwork } = Route.useLoaderData();
   const seller = sellerById(artwork.sellerId);
   const [step, setStep] = useState(0);
-  const fee = Math.round(artwork.price * 0.05);
+  const fees = calculateTransactionFees(artwork.price);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-5">
@@ -61,13 +66,17 @@ function CheckoutPage() {
           <span>Verk</span>
           <span>{formatPrice(artwork.price)}</span>
         </div>
+        <div className="mt-2 flex justify-between text-ink/60">
+          <span>Diargio-gebyr (20 %)</span>
+          <span>{formatPrice(fees.platformFee)}</span>
+        </div>
         <div className="mt-1 flex justify-between text-ink/60">
-          <span>Plattformprovisjon (5 %, betales av selger)</span>
-          <span>{formatPrice(fee)}</span>
+          <span>Kunstavgift (5 %)</span>
+          <span>{formatPrice(fees.artFee)}</span>
         </div>
         <div className="mt-2 flex justify-between border-t border-border pt-2 font-bold">
           <span>Å betale</span>
-          <span>{formatPrice(artwork.price)}</span>
+          <span>{formatPrice(fees.total)}</span>
         </div>
       </div>
 
@@ -92,7 +101,7 @@ function CheckoutPage() {
           onClick={() => setStep((s) => s + 1)}
           className="mt-4 w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
         >
-          {step === 0 ? "Betal trygt gjennom Geargio" : "Neste steg"}
+          {step === 0 ? "Betal trygt gjennom Diargio" : "Neste steg"}
         </button>
       ) : (
         <p className="mt-4 rounded-2xl bg-mint/50 p-4 text-sm font-semibold text-brandink glass">
@@ -101,7 +110,7 @@ function CheckoutPage() {
       )}
 
       <p className="mt-3 text-xs text-ink/50">
-        Demoflyt. Betalingsleverandør og escrow kobles på senere.
+        Demoflyt. Stripe og betalingsreservasjon kobles på senere.
       </p>
       <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="mt-4 inline-block text-sm font-semibold text-brandink">
         Tilbake til annonsen

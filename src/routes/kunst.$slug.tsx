@@ -22,10 +22,10 @@ export const Route = createFileRoute("/kunst/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Annonsen finnes ikke | Geargio" }, { name: "robots", content: "noindex" }] };
+        return { meta: [{ title: "Annonsen finnes ikke | Diargio" }, { name: "robots", content: "noindex" }] };
     }
     const { artwork, artistName } = loaderData;
-    const title = `${artistName} – ${artwork.title} til salgs | Geargio`;
+    const title = `${artistName} – ${artwork.title} til salgs | Diargio`;
     const description = `${artwork.title} av ${artistName}, ${artwork.technique.toLowerCase()}, ${artwork.widthCm} × ${artwork.heightCm} cm. ${formatPrice(artwork.price)} i ${artwork.location}.`;
     return {
       meta: [
@@ -34,6 +34,7 @@ export const Route = createFileRoute("/kunst/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
       scripts: [
         {
@@ -289,7 +290,7 @@ function ArtworkPage() {
           <div className="rounded-3xl p-5 glass">
             <p className="text-sm font-bold">Trygg kunsthandel</p>
             <p className="mt-1 text-xs leading-relaxed text-ink/60">
-              Betal gjennom Geargio. Pengene holdes tilbake til du har bekreftet at verket er mottatt.
+              Betal gjennom Diargio. Pengene holdes tilbake til du har bekreftet mottak. Totalt 25 % gebyr tilkommer: 20 % Diargio-gebyr og 5 % kunstavgift.
             </p>
           </div>
         </aside>

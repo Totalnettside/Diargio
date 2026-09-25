@@ -9,8 +9,8 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
   const fav = isFavorite(artwork.id);
 
   return (
-    <article className="overflow-hidden rounded-2xl glass">
-      <div className="relative">
+    <article className="group overflow-hidden border-b border-border bg-card">
+      <div className="relative overflow-hidden bg-muted">
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }}>
           <img
             src={artwork.image}
@@ -18,37 +18,37 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
             loading="lazy"
             width={1024}
             height={1024}
-            className="aspect-square w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+            className={`${large ? "aspect-[4/3]" : "aspect-[4/5]"} w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]`}
           />
         </Link>
         <button
           onClick={() => toggleFavorite(artwork.id)}
           aria-label={fav ? "Fjern favoritt" : "Lagre som favoritt"}
-          className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white/75 glass"
+          className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-card/90 shadow-sm backdrop-blur"
         >
           <Heart className={`size-4 ${fav ? "fill-brand text-brand" : "text-ink"}`} />
         </button>
         <div className="absolute left-3 top-3 flex flex-col items-start gap-1">
           {artwork.verified && (
-            <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-semibold text-brandink glass">
+            <span className="rounded-sm bg-card/90 px-2.5 py-1 text-[10px] font-semibold text-brandink backdrop-blur">
               ✓ Verifisert
             </span>
           )}
-          <span className="rounded-full bg-ink/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary-foreground">
+          <span className="rounded-sm bg-ink/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary-foreground">
             Demo
           </span>
         </div>
       </div>
-      <div className={large ? "p-4" : "p-3"}>
+      <div className={large ? "px-1 py-4" : "px-1 py-3"}>
         <Link
           to="/kunstner/$slug"
           params={{ slug: artist?.slug ?? "" }}
-          className={`font-semibold hover:text-brandink ${large ? "text-sm" : "text-xs"}`}
+          className={`font-semibold text-brandink hover:text-foreground ${large ? "text-sm" : "text-xs"}`}
         >
           {artist?.name}
         </Link>
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="block">
-          <p className={`truncate font-display ${large ? "text-base" : "text-[13px]"}`}>{artwork.title}</p>
+          <p className={`truncate font-display font-medium ${large ? "text-xl" : "text-[13px]"}`}>{artwork.title}</p>
         </Link>
         <div className="mt-1 flex items-baseline justify-between gap-2">
           <span className={`font-bold ${large ? "text-base" : "text-sm"}`}>
