@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
 
@@ -97,7 +97,8 @@ type Store = State & {
   allArtworks: Artwork[];
 };
 
-const StoreContext = createContext<Store | null>(null);
+const g = globalThis as unknown as { __diargioStoreCtx?: React.Context<Store | null> };
+const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext<Store | null>(null));
 const KEY = "diargio-state-v1";
 const LEGACY_KEY = "geargio-state-v1";
 
