@@ -5,6 +5,7 @@ import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo"
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { calculateTransactionFees } from "@/lib/fees";
+import { StripeBadge } from "@/components/StripeBadge";
 
 export const Route = createFileRoute("/kjop/$slug")({
   loader: ({ params }) => {
@@ -117,9 +118,12 @@ function Checkout({ artwork }: { artwork: Artwork }) {
         </p>
       )}
 
-      <p className="mt-3 text-xs text-ink/50">
-        Demoflyt. Stripe og betalingsreservasjon kobles på senere.
-      </p>
+      <div className="mt-3 flex items-center gap-2">
+        <StripeBadge />
+        <p className="text-xs text-ink/50">
+          Demoflyt. Betalingsreservasjon kobles på senere.
+        </p>
+      </div>
       <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="mt-4 inline-block text-sm font-semibold text-brandink">
         Tilbake til annonsen
       </Link>

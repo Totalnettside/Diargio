@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Heart, Printer, Share2, ShieldCheck, Star } from "lucide-react";
 import { addRecent } from "@/lib/recent";
 import { BidDialog } from "@/components/BidDialog";
+import { StripeBadge } from "@/components/StripeBadge";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import {
   artistById,
@@ -346,6 +347,9 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
             <p className="mt-1 text-xs leading-relaxed text-ink/60">
               Betal gjennom Diargio. Pengene holdes tilbake til du har bekreftet mottak. Totalt 25 % gebyr tilkommer: 20 % Diargio-gebyr og 5 % kunstavgift.
             </p>
+            <div className="mt-3">
+              <StripeBadge />
+            </div>
           </div>
         </aside>
       </div>
