@@ -139,3 +139,9 @@
     display: none;
   }
 }
+
+@media print {
+  header, nav, footer, button, .no-print { display: none !important; }
+  body { background: white !important; }
+  .glass, .glass-lift { box-shadow: none !important; backdrop-filter: none !important; }
+}
