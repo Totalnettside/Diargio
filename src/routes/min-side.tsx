@@ -43,6 +43,7 @@ function Dashboard() {
     followedSellers,
     collections,
     conversations,
+    deleteListing,
   } = useStore();
   const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
   const me = sellers[0]!;
