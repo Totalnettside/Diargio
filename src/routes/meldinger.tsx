@@ -6,10 +6,12 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/meldinger")({
   head: () => ({
     meta: [
-      { title: "Meldinger | Geargio" },
+      { title: "Meldinger | Diargio" },
       { name: "description", content: "Samtaler med kjøpere og selgere, koblet til kunstverket." },
-      { property: "og:title", content: "Meldinger | Geargio" },
+      { property: "og:title", content: "Meldinger | Diargio" },
       { property: "og:description", content: "Send meldinger, bud og motbud i samme samtale." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MessagesPage,

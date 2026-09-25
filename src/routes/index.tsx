@@ -8,17 +8,19 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Geargio – finn kunst du faktisk vil ha på veggen" },
+      { title: "Diargio – finn kunst du faktisk vil ha på veggen" },
       {
         name: "description",
         content:
           "Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere, gallerier og private selgere i Norge.",
       },
-      { property: "og:title", content: "Geargio – markedsplassen for kunst i Norge" },
+      { property: "og:title", content: "Diargio – markedsplassen for kunst i Norge" },
       {
         property: "og:description",
         content: "Kjøp og selg kunst direkte fra kunstnere, gallerier og private selgere.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,

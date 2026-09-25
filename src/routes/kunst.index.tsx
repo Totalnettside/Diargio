@@ -1,5 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Bookmark, ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import {
   artTypes,
@@ -27,17 +28,19 @@ export const Route = createFileRoute("/kunst/")({
   }),
   head: () => ({
     meta: [
-      { title: "Kunst til salgs i Norge | Geargio" },
+      { title: "Kunst til salgs i Norge | Diargio" },
       {
         name: "description",
         content:
           "Bla gjennom malerier, grafikk, fotografi, skulpturer og street art til salgs fra kunstnere, gallerier og private selgere.",
       },
-      { property: "og:title", content: "Kunst til salgs | Geargio" },
+      { property: "og:title", content: "Kunst til salgs | Diargio" },
       {
         property: "og:description",
         content: "Filtrer på kategori, pris, stil, teknikk, selgertype og salgsform.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Marketplace,
@@ -64,8 +67,8 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-3 py-1.5 text-xs font-semibold glass ${
-        active ? "bg-lav text-brandink" : "bg-white/60"
+      className={`rounded-sm border px-3 py-2 text-xs font-semibold transition-colors ${
+        active ? "border-brandink bg-brandink text-primary-foreground" : "border-border bg-card hover:border-brandink"
       }`}
     >
       {label}
@@ -86,7 +89,7 @@ function FilterGroup({
 }) {
   return (
     <div className="mt-4">
-      <p className="text-xs font-bold uppercase tracking-wide text-ink/50">{title}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">{title}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => (
           <Chip key={o} label={o} active={selected.includes(o)} onClick={() => onToggle(o)} />
@@ -170,21 +173,23 @@ function Marketplace() {
     sort,
   ]);
 
+  const featured = results[0];
+
   const filters = (
-    <div className="rounded-3xl p-4 glass">
-      <p className="font-display text-lg font-semibold">Filtrer</p>
+    <div className="border-t border-border py-5 lg:sticky lg:top-20 lg:border-t-0 lg:py-0">
+      <div className="flex items-center justify-between">
+        <p className="font-display text-base font-semibold">Filtrer samlingen</p>
+        <button onClick={() => setOpenFilters(false)} className="grid size-9 place-items-center lg:hidden" aria-label="Lukk filtre">
+          <X className="size-4" />
+        </button>
+      </div>
 
       <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-ink/50">Søk</p>
-        <input
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            void navigate({ to: "/kunst", search: { q: e.target.value }, replace: true });
-          }}
-          placeholder="Verk, stil eller kategori"
-          className="mt-2 w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
-        />
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/50">Søk</p>
+        <div className="mt-2 flex items-center gap-2 border-b border-border py-2">
+          <Search className="size-4 text-ink/40" />
+          <input value={query} onChange={(e) => { setQuery(e.target.value); void navigate({ to: "/kunst", search: { q: e.target.value }, replace: true }); }} placeholder="Verk, stil eller kategori" className="w-full bg-transparent text-sm outline-none" />
+        </div>
       </div>
 
       <FilterGroup
@@ -202,14 +207,14 @@ function Marketplace() {
             onChange={(e) => setFra(e.target.value.replace(/\D/g, ""))}
             placeholder="Fra"
             inputMode="numeric"
-            className="w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
+            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
           />
           <input
             value={til}
             onChange={(e) => setTil(e.target.value.replace(/\D/g, ""))}
             placeholder="Til"
             inputMode="numeric"
-            className="w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
+            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
           />
         </div>
       </div>
@@ -220,7 +225,7 @@ function Marketplace() {
           value={kunstnerSok}
           onChange={(e) => setKunstnerSok(e.target.value)}
           placeholder="Søk kunstner"
-          className="mt-2 w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
+          className="mt-2 w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
         />
       </div>
 
@@ -241,14 +246,14 @@ function Marketplace() {
             onChange={(e) => setMinBredde(e.target.value.replace(/\D/g, ""))}
             placeholder="Bredde"
             inputMode="numeric"
-            className="w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
+            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
           />
           <input
             value={minHoyde}
             onChange={(e) => setMinHoyde(e.target.value.replace(/\D/g, ""))}
             placeholder="Høyde"
             inputMode="numeric"
-            className="w-full rounded-2xl bg-white/70 px-3 py-2 text-sm outline-none glass"
+            className="w-full border-b border-border bg-transparent px-1 py-2 text-sm outline-none"
           />
         </div>
       </div>
@@ -280,55 +285,72 @@ function Marketplace() {
 
       <button
         onClick={() => saveSearch(query, query || kategori.join(", ") || "Alle verk")}
-        className="mt-5 w-full rounded-2xl bg-brandink py-2.5 text-sm font-semibold text-primary-foreground"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-sm bg-brandink py-3 text-sm font-semibold text-primary-foreground"
       >
-        Lagre søk
+        <Bookmark className="size-4" /> Lagre søk
       </button>
     </div>
   );
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Kunst til salgs</h1>
-      <p className="mt-1 text-sm text-ink/60">
-        {results.length} verk fra kunstnere, gallerier og private selgere.
-      </p>
+    <main>
+      <section className="border-b border-border bg-card">
+        <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-10 md:grid-cols-[1fr_auto] md:items-end md:py-16">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-brandink">Den norske kunstsamlingen</p>
+            <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-tight md:text-6xl">Kunst som fortjener en plass hos deg.</h1>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-ink/60 md:text-base">Oppdag originale verk fra etablerte kunstnere, nye stemmer, gallerier og private samlinger over hele Norge.</p>
+          </div>
+          <div className="border-l border-border pl-5">
+            <p className="font-display text-3xl font-semibold">{results.length}</p>
+            <p className="text-xs text-ink/50">tilgjengelige verk</p>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mx-auto w-full max-w-6xl px-5 py-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
         <button
           onClick={() => setOpenFilters((v) => !v)}
-          className="rounded-2xl bg-white/70 px-4 py-2 text-sm font-semibold text-brandink glass lg:hidden"
+          className="flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2.5 text-sm font-semibold text-brandink lg:hidden"
         >
-          {openFilters ? "Skjul filtre" : "Filtre"}
+          <SlidersHorizontal className="size-4" /> {openFilters ? "Skjul filtre" : "Filtre"}
         </button>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as (typeof sortOptions)[number])}
-          className="rounded-2xl bg-white/70 px-3 py-2 text-sm font-semibold outline-none glass"
-        >
-          {sortOptions.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+        <p className="hidden text-xs text-ink/50 lg:block">Kuratert utvalg · Oppdatert fortløpende</p>
+        <label className="relative ml-auto flex items-center gap-2 text-xs font-semibold">
+          Sorter
+          <select value={sort} onChange={(e) => setSort(e.target.value as (typeof sortOptions)[number])} className="appearance-none border-b border-border bg-transparent py-2 pl-2 pr-7 text-sm outline-none">
+            {sortOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-0 size-4" />
+        </label>
       </div>
 
-      <div className="mt-4 grid gap-5 lg:grid-cols-[280px_1fr]">
-        <aside className={`${openFilters ? "block" : "hidden"} lg:block`}>{filters}</aside>
+      <div className="mt-7 grid gap-8 lg:grid-cols-[250px_1fr]">
+        <aside className={`${openFilters ? "block" : "hidden"} lg:block lg:border-r lg:border-border lg:pr-7`}>{filters}</aside>
         <div>
           {results.length === 0 ? (
-            <p className="rounded-3xl p-6 text-sm text-ink/60 glass">
+            <p className="border border-border bg-card p-8 text-sm text-ink/60">
               Ingen verk matcher filtrene. Prøv å fjerne noen valg.
             </p>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-              {results.map((a) => (
-                <ArtworkCard key={a.id} artwork={a} />
-              ))}
-            </div>
-          )}
+          ) : featured ? (
+            <>
+              <div className="mb-10 grid gap-5 border-b border-border pb-10 md:grid-cols-[1.35fr_1fr] md:items-center">
+                <ArtworkCard artwork={featured} large />
+                <div className="px-1 md:px-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brandink">Redaksjonelt utvalgt</p>
+                  <h2 className="mt-3 font-display text-2xl font-semibold md:text-3xl">Et verk å leve med</h2>
+                  <p className="mt-3 text-sm leading-7 text-ink/60">Et fremhevet verk fra dagens samling, valgt for sitt særpreg, håndverk og evne til å forme et rom.</p>
+                  <Link to="/kunst/$slug" params={{ slug: featured.slug }} className="mt-5 inline-block border-b border-brandink pb-1 text-sm font-semibold text-brandink">Se hele verket</Link>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3">
+                {results.slice(1).map((a) => <ArtworkCard key={a.id} artwork={a} />)}
+              </div>
+            </>
+          ) : null}
         </div>
+      </div>
       </div>
     </main>
   );

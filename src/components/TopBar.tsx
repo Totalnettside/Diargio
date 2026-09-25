@@ -12,16 +12,16 @@ export function TopBar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/60 bg-mist/85 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-border bg-mist/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2">
           <span
-            className="grid size-9 place-items-center rounded-2xl bg-gradient-to-br from-lav via-peach to-mint font-display text-lg font-semibold text-brandink"
+            className="grid size-9 place-items-center rounded-lg bg-brandink font-display text-lg font-semibold text-primary-foreground"
             style={{ boxShadow: "inset 0 0 0 1px oklch(1 0 0 / 0.7)" }}
           >
-            G
+            D
           </span>
-          <span className="font-display text-xl font-semibold tracking-tight">Geargio</span>
+          <span className="font-display text-xl font-semibold">Diargio</span>
         </Link>
 
         <form

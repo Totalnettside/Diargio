@@ -20,14 +20,16 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/selg")({
   head: () => ({
     meta: [
-      { title: "Legg ut kunst til salgs | Geargio" },
+      { title: "Legg ut kunst til salgs | Diargio" },
       {
         name: "description",
         content:
           "Last opp bilder, fyll inn informasjon om verket og publiser annonsen. Gratis for private selgere.",
       },
-      { property: "og:title", content: "Selg kunst på Geargio" },
+      { property: "og:title", content: "Selg kunst på Diargio" },
       { property: "og:description", content: "Legg ut annonsen din på under to minutter." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SellPage,
