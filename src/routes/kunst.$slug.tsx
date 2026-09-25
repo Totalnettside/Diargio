@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, Printer, Share2, ShieldCheck, Star } from "lucide-react";
 import { addRecent } from "@/lib/recent";
@@ -12,18 +12,17 @@ import {
   formatPrice,
   sellerById,
 } from "@/data/demo";
+import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
-    const artwork = artworkBySlug(params.slug);
-    if (!artwork) throw notFound();
-    const artist = artistById(artwork.artistId);
-    return { artwork, artistName: artist.name };
+    const artwork = artworkBySlug(params.slug) ?? null;
+    return { artwork, artistName: artwork ? artistById(artwork.artistId).name : "" };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) {
-        return { meta: [{ title: "Annonsen finnes ikke | Diargio" }, { name: "robots", content: "noindex" }] };
+    if (!loaderData?.artwork) {
+        return { meta: [{ title: "Annonse | Diargio" }, { name: "robots", content: "noindex" }] };
     }
     const { artwork, artistName } = loaderData;
     const title = `${artistName} – ${artwork.title} til salgs | Diargio`;
@@ -60,7 +59,22 @@ export const Route = createFileRoute("/kunst/$slug")({
 });
 
 function ArtworkPage() {
-  const { artwork } = Route.useLoaderData();
+  const { artwork: demo } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { allArtworks } = useStore();
+  const artwork = demo ?? allArtworks.find((a) => a.slug === slug);
+  if (!artwork) {
+    return (
+      <main className="mx-auto max-w-xl px-5 py-16 text-center">
+        <h1 className="font-display text-2xl font-semibold">Fant ikke annonsen</h1>
+        <Link to="/kunst" className="mt-4 inline-block text-sm font-semibold text-brandink">Tilbake til kunst</Link>
+      </main>
+    );
+  }
+  return <ArtworkView artwork={artwork} />;
+}
+
+function ArtworkView({ artwork }: { artwork: Artwork }) {
   const artist = artistById(artwork.artistId);
   const seller = sellerById(artwork.sellerId);
   const { isFavorite, toggleFavorite, sendMessage, toggleFollowSeller, followedSellers } = useStore();

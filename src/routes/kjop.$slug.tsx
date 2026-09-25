@@ -1,18 +1,18 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo";
+import type { Artwork } from "@/data/demo";
+import { useStore } from "@/lib/store";
 import { calculateTransactionFees } from "@/lib/fees";
 
 export const Route = createFileRoute("/kjop/$slug")({
   loader: ({ params }) => {
-    const artwork = artworkBySlug(params.slug);
-    if (!artwork) throw notFound();
-    return { artwork };
+    return { artwork: artworkBySlug(params.slug) ?? null };
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData ? `Kjøp ${loaderData.artwork.title} | Diargio` : "Kjøp | Diargio" },
+      { title: loaderData?.artwork ? `Kjøp ${loaderData.artwork.title} | Diargio` : "Kjøp | Diargio" },
       {
         name: "description",
         content: "Trygg kunsthandel: pengene holdes tilbake til du har bekreftet mottak.",
@@ -36,7 +36,15 @@ const steps = [
 ];
 
 function CheckoutPage() {
-  const { artwork } = Route.useLoaderData();
+  const { artwork: demo } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { allArtworks } = useStore();
+  const artwork = demo ?? allArtworks.find((a) => a.slug === slug);
+  if (!artwork) return <main className="px-5 py-16 text-center"><Link to="/kunst" className="font-semibold text-brandink">Fant ikke annonsen – tilbake til kunst</Link></main>;
+  return <Checkout artwork={artwork} />;
+}
+
+function Checkout({ artwork }: { artwork: Artwork }) {
   const seller = sellerById(artwork.sellerId);
   const [step, setStep] = useState(0);
   const fees = calculateTransactionFees(artwork.price);
