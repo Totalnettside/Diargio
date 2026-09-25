@@ -5,6 +5,7 @@ import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo"
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { calculateTransactionFees } from "@/lib/fees";
+import { StripeBadge } from "@/components/StripeBadge";
 
 export const Route = createFileRoute("/kjop/$slug")({
   loader: ({ params }) => {
