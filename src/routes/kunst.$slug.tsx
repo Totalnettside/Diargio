@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Heart, Printer, Share2, ShieldCheck, Star } from "lucide-react";
 import { addRecent } from "@/lib/recent";
 import { BidDialog } from "@/components/BidDialog";
+import { StripeBadge } from "@/components/StripeBadge";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import {
   artistById,
