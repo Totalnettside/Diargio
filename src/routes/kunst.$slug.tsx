@@ -197,22 +197,20 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
             )}
 
             <div className="mt-4 flex flex-col gap-2">
-              {artwork.saleType === "Fastpris" && (
+              {artwork.saleType !== "Pris på forespørsel" && (
                 <button
                   onClick={() => void navigate({ to: "/kjop/$slug", params: { slug: artwork.slug } })}
                   className="rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
                 >
-                  Kjøp nå
+                  Kjøp nå · {formatPrice(artwork.price)}
                 </button>
               )}
-              {artwork.saleType !== "Pris på forespørsel" && (
-                <button
-                  onClick={() => setBidOpen(true)}
-                  className="rounded-2xl bg-lav/70 py-3 text-sm font-semibold text-brandink glass"
-                >
-                  {artwork.saleType === "Auksjon" ? "Legg inn bud" : "Gi bud"}
-                </button>
-              )}
+              <button
+                onClick={() => setBidOpen(true)}
+                className="rounded-2xl bg-lav/70 py-3 text-sm font-semibold text-brandink glass"
+              >
+                {artwork.saleType === "Auksjon" ? "Legg inn bud" : "Gi bud"}
+              </button>
               <div className="flex gap-2">
                 <button
                   onClick={() => toggleFavorite(artwork.id)}
