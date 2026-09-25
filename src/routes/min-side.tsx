@@ -106,9 +106,35 @@ function Dashboard() {
 
       {tab === "Mine annonser" && (
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
-          {myActive.map((a) => (
-            <ArtworkCard key={a.id} artwork={a} />
-          ))}
+          {myActive.map((a) => {
+            const isMine = myListings.some((l) => l.id === a.id);
+            return (
+              <div key={a.id} className="relative">
+                <ArtworkCard artwork={a} />
+                {isMine && (
+                  <div className="mt-2 flex gap-2">
+                    <Link
+                      to="/rediger/$slug"
+                      params={{ slug: a.slug }}
+                      className="flex-1 rounded-2xl bg-white/70 px-3 py-2 text-center text-xs font-semibold text-brandink glass"
+                    >
+                      Endre
+                    </Link>
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Slette «${a.title}»? Dette kan ikke angres.`)) {
+                          deleteListing(a.id);
+                        }
+                      }}
+                      className="flex-1 rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 glass"
+                    >
+                      Slett
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
