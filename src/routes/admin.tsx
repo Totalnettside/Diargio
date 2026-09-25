@@ -7,6 +7,10 @@ export const Route = createFileRoute("/admin")({
     meta: [
       { title: "Adminpanel | Diargio" },
       { name: "description", content: "Administrer brukere, annonser, transaksjoner og moderering." },
+      { property: "og:title", content: "Adminpanel | Diargio" },
+      { property: "og:description", content: "Administrer Diargios markedsplass." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),
