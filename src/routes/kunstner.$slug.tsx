@@ -11,17 +11,19 @@ export const Route = createFileRoute("/kunstner/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Kunstner ikke funnet | Geargio" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Kunstner ikke funnet | Diargio" }, { name: "robots", content: "noindex" }] };
     }
     const { artist } = loaderData;
-    const title = `${artist.name} – verk til salgs | Geargio`;
-    const description = `${artist.name}, ${artist.nationality.toLowerCase()} kunstner (${artist.born}). Se verk til salgs på Geargio.`;
+    const title = `${artist.name} – verk til salgs | Diargio`;
+    const description = `${artist.name}, ${artist.nationality.toLowerCase()} kunstner (${artist.born}). Se verk til salgs på Diargio.`;
     return {
       meta: [
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:type", content: "profile" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },

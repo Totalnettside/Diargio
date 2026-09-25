@@ -5,7 +5,7 @@ import { artists, artworks, formatPrice, sellers } from "@/data/demo";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Adminpanel | Geargio" },
+      { title: "Adminpanel | Diargio" },
       { name: "description", content: "Administrer brukere, annonser, transaksjoner og moderering." },
       { name: "robots", content: "noindex" },
     ],
@@ -34,7 +34,7 @@ const reportReasons = [
 
 function AdminPage() {
   const [section, setSection] = useState<(typeof sections)[number]>("Dashboard");
-  const [commission, setCommission] = useState("5");
+  const [commission, setCommission] = useState("20");
   const [proPrice, setProPrice] = useState("999");
   const [promos, setPromos] = useState({ fremhev: "99", topp: "149", forside: "299" });
   const gmv = artworks.reduce((s, a) => s + a.price, 0);
@@ -62,7 +62,8 @@ function AdminPage() {
             ["Totale brukere", String(sellers.length * 148)],
             ["Aktive annonser", String(artworks.length)],
             ["GMV", formatPrice(gmv)],
-            ["Omsetning (5 %)", formatPrice(Math.round(gmv * 0.05))],
+            ["Diargio-gebyr (20 %)", formatPrice(Math.round(gmv * 0.2))],
+            ["Kunstavgift (5 %)", formatPrice(Math.round(gmv * 0.05))],
             ["Nye annonser (7d)", "42"],
             ["Antall handler", "138"],
             ["Snitt salgspris", formatPrice(Math.round(gmv / artworks.length))],

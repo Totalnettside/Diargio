@@ -173,6 +173,8 @@ function Marketplace() {
     sort,
   ]);
 
+  const featured = results[0];
+
   const filters = (
     <div className="border-t border-border py-5 lg:sticky lg:top-20 lg:border-t-0 lg:py-0">
       <div className="flex items-center justify-between">
@@ -331,15 +333,15 @@ function Marketplace() {
             <p className="border border-border bg-card p-8 text-sm text-ink/60">
               Ingen verk matcher filtrene. Prøv å fjerne noen valg.
             </p>
-          ) : (
+          ) : featured ? (
             <>
               <div className="mb-10 grid gap-5 border-b border-border pb-10 md:grid-cols-[1.35fr_1fr] md:items-center">
-                <ArtworkCard artwork={results[0]} large />
+                <ArtworkCard artwork={featured} large />
                 <div className="px-1 md:px-5">
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brandink">Redaksjonelt utvalgt</p>
                   <h2 className="mt-3 font-display text-2xl font-semibold md:text-3xl">Et verk å leve med</h2>
                   <p className="mt-3 text-sm leading-7 text-ink/60">Et fremhevet verk fra dagens samling, valgt for sitt særpreg, håndverk og evne til å forme et rom.</p>
-                  <Link to="/kunst/$slug" params={{ slug: results[0].slug }} className="mt-5 inline-block border-b border-brandink pb-1 text-sm font-semibold text-brandink">Se hele verket</Link>
+                  <Link to="/kunst/$slug" params={{ slug: featured.slug }} className="mt-5 inline-block border-b border-brandink pb-1 text-sm font-semibold text-brandink">Se hele verket</Link>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3">

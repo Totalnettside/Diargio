@@ -12,10 +12,10 @@ export const Route = createFileRoute("/profil/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Profil ikke funnet | Geargio" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Profil ikke funnet | Diargio" }, { name: "robots", content: "noindex" }] };
     }
     const { seller } = loaderData;
-    const title = `${seller.name} – ${seller.type.toLowerCase()} på Geargio`;
+    const title = `${seller.name} – ${seller.type.toLowerCase()} på Diargio`;
     const description = `${seller.name} i ${seller.location}. ${seller.rating} i vurdering, ${seller.sales} gjennomførte salg.`;
     return {
       meta: [
@@ -23,6 +23,8 @@ export const Route = createFileRoute("/profil/$slug")({
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:type", content: "profile" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },

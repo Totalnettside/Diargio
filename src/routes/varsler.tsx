@@ -4,10 +4,12 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/varsler")({
   head: () => ({
     meta: [
-      { title: "Varsler | Geargio" },
+      { title: "Varsler | Diargio" },
       { name: "description", content: "Bud, meldinger, prisendringer og treff på lagrede søk." },
-      { property: "og:title", content: "Varsler | Geargio" },
+      { property: "og:title", content: "Varsler | Diargio" },
       { property: "og:description", content: "Alle varslene dine fra markedsplassen." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: NotificationsPage,
