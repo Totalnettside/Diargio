@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Bookmark, ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
+import { Bookmark, ChevronDown, LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -236,64 +236,73 @@ function Marketplace() {
   );
 
   return (
-    <main>
+    <main className="bg-background">
       <section className="border-b border-border bg-card">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-10 md:grid-cols-[1fr_auto] md:items-end md:py-16">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-brandink">Den norske kunstsamlingen</p>
-            <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-tight md:text-6xl">Kunst som fortjener en plass hos deg.</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-ink/60 md:text-base">Oppdag originale verk fra etablerte kunstnere, nye stemmer, gallerier og private samlinger over hele Norge.</p>
-          </div>
-          <div className="border-l border-border pl-5">
-            <p className="font-display text-3xl font-semibold">{results.length}</p>
-            <p className="text-xs text-ink/50">tilgjengelige verk</p>
-          </div>
+        <div className="mx-auto w-full max-w-6xl px-5 py-6">
+          <nav className="text-xs text-ink/50"><Link to="/" className="hover:underline">Forsiden</Link> / <span className="text-ink">Kunst</span></nav>
+          <h1 className="mt-2 font-display text-2xl font-semibold md:text-3xl">Kunst til salgs</h1>
+          <form
+            onSubmit={(e) => { e.preventDefault(); void navigate({ to: "/kunst", search: { q: query }, replace: true }); }}
+            className="mt-4 flex gap-2"
+          >
+            <div className="flex flex-1 items-center gap-2 rounded-md border-2 border-border bg-background px-3 focus-within:border-brandink">
+              <Search className="size-5 text-ink/40" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Søk etter kunstner, verk, stil…" className="w-full bg-transparent py-3 text-base outline-none" />
+              {query && <button type="button" onClick={() => setQuery("")} aria-label="Tøm søk"><X className="size-4 text-ink/50" /></button>}
+            </div>
+            <Button type="submit" className="h-auto rounded-md px-6">Søk</Button>
+          </form>
         </div>
       </section>
 
       <div className="mx-auto w-full max-w-6xl px-5 py-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
-        <button
-          onClick={() => setOpenFilters((v) => !v)}
-          className="flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2.5 text-sm font-semibold text-brandink lg:hidden"
-        >
-          <SlidersHorizontal className="size-4" /> {openFilters ? "Skjul filtre" : "Filtre"}
-        </button>
-        <p className="hidden text-xs text-ink/50 lg:block">Kuratert utvalg · Oppdatert fortløpende</p>
-        <label className="relative ml-auto flex items-center gap-2 text-xs font-semibold">
-          Sorter
-          <select value={sort} onChange={(e) => setSort(e.target.value as (typeof sortOptions)[number])} className="appearance-none border-b border-border bg-transparent py-2 pl-2 pr-7 text-sm outline-none">
-            {sortOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-0 size-4" />
-        </label>
-      </div>
+        <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+          <aside className={`${openFilters ? "block" : "hidden"} lg:block`}>{filters}</aside>
+          <div>
+            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
+              <button
+                onClick={() => setOpenFilters((v) => !v)}
+                className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-semibold lg:hidden"
+              >
+                <SlidersHorizontal className="size-4" /> Filtre{activeFilterCount > 0 && ` (${activeFilterCount})`}
+              </button>
+              <p className="text-sm"><span className="font-bold">{results.length}</span> treff</p>
+              <label className="relative ml-auto flex items-center gap-2 text-sm">
+                <span className="text-ink/60">Sorter:</span>
+                <select value={sort} onChange={(e) => setSort(e.target.value as (typeof sortOptions)[number])} className="appearance-none rounded-md border border-border bg-card py-2 pl-3 pr-8 text-sm outline-none">
+                  {sortOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 size-4" />
+              </label>
+              <div className="flex overflow-hidden rounded-md border border-border">
+                <button onClick={() => setView("grid")} aria-label="Rutenett" className={`grid size-9 place-items-center ${view === "grid" ? "bg-secondary" : "bg-card"}`}><LayoutGrid className="size-4" /></button>
+                <button onClick={() => setView("list")} aria-label="Liste" className={`grid size-9 place-items-center ${view === "list" ? "bg-secondary" : "bg-card"}`}><List className="size-4" /></button>
+              </div>
+            </div>
 
-      <div className="mt-7 grid gap-8 lg:grid-cols-[250px_1fr]">
-        <aside className={`${openFilters ? "block" : "hidden"} lg:block lg:border-r lg:border-border lg:pr-7`}>{filters}</aside>
-        <div>
-          {results.length === 0 ? (
-            <p className="border border-border bg-card p-8 text-sm text-ink/60">
-              Ingen verk matcher filtrene. Prøv å fjerne noen valg.
-            </p>
-          ) : featured ? (
-            <>
-              <div className="mb-10 grid gap-5 border-b border-border pb-10 md:grid-cols-[1.35fr_1fr] md:items-center">
-                <ArtworkCard artwork={featured} large />
-                <div className="px-1 md:px-5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brandink">Redaksjonelt utvalgt</p>
-                  <h2 className="mt-3 font-display text-2xl font-semibold md:text-3xl">Et verk å leve med</h2>
-                  <p className="mt-3 text-sm leading-7 text-ink/60">Et fremhevet verk fra dagens samling, valgt for sitt særpreg, håndverk og evne til å forme et rom.</p>
-                  <Link to="/kunst/$slug" params={{ slug: featured.slug }} className="mt-5 inline-block border-b border-brandink pb-1 text-sm font-semibold text-brandink">Se hele verket</Link>
-                </div>
+            {results.length === 0 ? (
+              <p className="mt-6 rounded-md border border-border bg-card p-8 text-sm text-ink/60">Ingen treff. Prøv å fjerne noen filtre.</p>
+            ) : view === "grid" ? (
+              <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3">
+                {results.map((a) => <ArtworkCard key={a.id} artwork={a} />)}
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3">
-                {results.slice(1).map((a) => <ArtworkCard key={a.id} artwork={a} />)}
+            ) : (
+              <div className="mt-4 divide-y divide-border">
+                {results.map((a) => (
+                  <Link key={a.id} to="/kunst/$slug" params={{ slug: a.slug }} className="flex gap-4 py-4 hover:bg-secondary/40">
+                    <img src={a.image} alt={a.title} loading="lazy" className="size-28 shrink-0 rounded-md object-cover md:size-36" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-ink/50">{a.location} · {a.createdDaysAgo === 0 ? "I dag" : `${a.createdDaysAgo} d siden`}</p>
+                      <p className="mt-1 truncate font-display text-lg font-medium">{a.title}</p>
+                      <p className="text-sm text-ink/60">{artistById(a.artistId)?.name} · {a.technique}</p>
+                      <p className="mt-2 text-lg font-bold">{a.saleType === "Pris på forespørsel" ? "Pris på forespørsel" : formatPrice(a.price)}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </>
-          ) : null}
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </main>
   );
