@@ -30,7 +30,7 @@ function DealRoom() {
   const endRef = useRef<HTMLDivElement>(null);
 
   const convo = conversations.find((c) => c.artworkId === artwork?.id);
-  useEffect(() => endRef.current?.scrollIntoView({ block: "nearest" }), [convo?.messages.length]);
+  useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [convo?.messages.length]);
 
   if (!artwork) {
     return (
