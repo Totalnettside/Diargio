@@ -9,6 +9,7 @@ import {
   artTypes,
   artistById,
   categories,
+  formatPrice,
   conditions,
   counties,
   saleTypes,
@@ -162,7 +163,7 @@ function Marketplace() {
     sort,
   ]);
 
-  const featured = results[0];
+  const [view, setView] = useState<"grid" | "list">("grid");
 
   const filters = (
     <div className="border-t border-border py-5 lg:sticky lg:top-20 lg:border-t-0 lg:py-0">
