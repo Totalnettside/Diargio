@@ -18,6 +18,7 @@ import { Route as SokRouteImport } from './routes/sok'
 import { Route as VarslerRouteImport } from './routes/varsler'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthVippsRouteImport } from './routes/auth.vipps'
+import { Route as DealroomSlugRouteImport } from './routes/dealroom.$slug'
 import { Route as KjopSlugRouteImport } from './routes/kjop.$slug'
 import { Route as KunstIndexRouteImport } from './routes/kunst.index'
 import { Route as KunstSlugRouteImport } from './routes/kunst.$slug'
@@ -70,6 +71,11 @@ const AuthVippsRoute = AuthVippsRouteImport.update({
   path: '/auth/vipps',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealroomSlugRoute = DealroomSlugRouteImport.update({
+  id: '/dealroom/$slug',
+  path: '/dealroom/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KjopSlugRoute = KjopSlugRouteImport.update({
   id: '/kjop/$slug',
   path: '/kjop/$slug',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
+  '/dealroom/$slug': typeof DealroomSlugRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
+  '/dealroom/$slug': typeof DealroomSlugRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/sok': typeof SokRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
+  '/dealroom/$slug': typeof DealroomSlugRoute
   '/kjop/$slug': typeof KjopSlugRoute
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/sok'
     | '/varsler'
     | '/auth/vipps'
+    | '/dealroom/$slug'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/sok'
     | '/varsler'
     | '/auth/vipps'
+    | '/dealroom/$slug'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/sok'
     | '/varsler'
     | '/auth/vipps'
+    | '/dealroom/$slug'
     | '/kjop/$slug'
     | '/kunst/$slug'
     | '/kunstner/$slug'
@@ -216,6 +228,7 @@ export interface RootRouteChildren {
   SokRoute: typeof SokRoute
   VarslerRoute: typeof VarslerRoute
   AuthVippsRoute: typeof AuthVippsRoute
+  DealroomSlugRoute: typeof DealroomSlugRoute
   KjopSlugRoute: typeof KjopSlugRoute
   KunstSlugRoute: typeof KunstSlugRoute
   KunstnerSlugRoute: typeof KunstnerSlugRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVippsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dealroom/$slug': {
+      id: '/dealroom/$slug'
+      path: '/dealroom/$slug'
+      fullPath: '/dealroom/$slug'
+      preLoaderRoute: typeof DealroomSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kjop/$slug': {
       id: '/kjop/$slug'
       path: '/kjop/$slug'
@@ -344,6 +364,7 @@ const rootRouteChildren: RootRouteChildren = {
   SokRoute: SokRoute,
   VarslerRoute: VarslerRoute,
   AuthVippsRoute: AuthVippsRoute,
+  DealroomSlugRoute: DealroomSlugRoute,
   KjopSlugRoute: KjopSlugRoute,
   KunstSlugRoute: KunstSlugRoute,
   KunstnerSlugRoute: KunstnerSlugRoute,

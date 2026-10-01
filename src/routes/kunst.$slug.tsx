@@ -212,6 +212,13 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
               >
                 {artwork.saleType === "Auksjon" ? "Legg inn bud" : "Gi bud"}
               </button>
+              <Link
+                to="/dealroom/$slug"
+                params={{ slug: artwork.slug }}
+                className="rounded-2xl border border-brand/50 py-3 text-center text-sm font-semibold text-brandink"
+              >
+                Åpne dealroom
+              </Link>
               <div className="flex gap-2">
                 <button
                   onClick={() => toggleFavorite(artwork.id)}
