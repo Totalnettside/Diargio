@@ -16,7 +16,7 @@ export function TopBar() {
     <header className="sticky top-0 z-20 border-b border-border bg-mist/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="Diargio" width={1152} height={576} className="h-14 w-auto" />
+          <img src={logo} alt="Diargio" width={803} height={295} className="h-14 w-auto" />
         </Link>
 
         <form
