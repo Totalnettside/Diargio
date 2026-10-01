@@ -145,3 +145,38 @@
   body { background: white !important; }
   .glass, .glass-lift { box-shadow: none !important; backdrop-filter: none !important; }
 }
+
+/* Hero animations (forsiden) */
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-16px) rotate(calc(var(--r, 0deg) + 1.2deg)); }
+}
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-ring {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.07); opacity: 0.12; }
+}
+.hero-rise {
+  opacity: 0;
+  animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero-float {
+  animation: hero-float 7s ease-in-out infinite;
+}
+.hero-ring {
+  animation: hero-ring 6s ease-in-out infinite;
+}
+.hero-frame {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.hero-frame:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 40px 70px -20px oklch(0.25 0.018 155 / 0.45);
+  z-index: 40;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise, .hero-float, .hero-ring { animation: none; opacity: 1; }
+}
