@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworks, artworksByArtist, categories, featuredArtworks } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
+import { formatPrice } from "@/data/demo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
