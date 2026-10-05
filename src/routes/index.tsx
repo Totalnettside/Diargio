@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworks, artworksByArtist, categories, featuredArtworks } from "@/data/demo";
 import { useStore } from "@/lib/store";
