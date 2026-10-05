@@ -180,3 +180,44 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-rise, .hero-float, .hero-ring { animation: none; opacity: 1; }
 }
+
+/* ============ Se den på veggen ============ */
+.wall-surface {
+  background:
+    radial-gradient(85% 60% at 50% -5%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in oklab, var(--peach) 55%, white) 0%, color-mix(in oklab, var(--peach) 82%, var(--mist)) 100%);
+}
+.wall-floor {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--brandink) 45%, var(--peach)) 0%, color-mix(in oklab, var(--brandink) 85%, var(--ink)) 100%);
+  box-shadow: 0 -6px 14px color-mix(in oklab, var(--ink) 25%, transparent);
+}
+.wall-frame {
+  border-style: solid;
+  border-width: clamp(5px, 0.8vw, 8px);
+  border-image: linear-gradient(135deg, color-mix(in oklab, var(--brand) 70%, white), var(--brand) 35%, color-mix(in oklab, var(--brand) 65%, var(--brandink)) 65%, color-mix(in oklab, var(--brand) 80%, white)) 1;
+  background: var(--card);
+  padding: clamp(8px, 1.4vw, 16px);
+  box-shadow:
+    0 34px 54px -20px color-mix(in oklab, var(--ink) 50%, transparent),
+    0 10px 18px -10px color-mix(in oklab, var(--ink) 30%, transparent);
+}
+.wall-glass {
+  position: relative;
+}
+.wall-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, color-mix(in oklab, white 16%, transparent) 0%, color-mix(in oklab, white 5%, transparent) 22%, transparent 40%);
+  pointer-events: none;
+}
+.wall-in {
+  animation: wall-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes wall-in {
+  from { opacity: 0; transform: scale(0.965) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-in { animation: none; }
+}
