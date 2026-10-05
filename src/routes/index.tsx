@@ -196,7 +196,7 @@ function Index() {
               key={wallArt.id}
               className="wall-in relative"
               style={{
-                height: `${Math.min(86, (wallArt.heightCm / 280) * 100)}%`,
+                height: `${Math.min(90, (wallArt.heightCm / 160) * 100)}%`,
                 aspectRatio: `${wallArt.widthCm} / ${wallArt.heightCm}`,
                 maxWidth: "80%",
               }}
