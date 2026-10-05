@@ -190,7 +190,7 @@ function Index() {
             <ChevronLeft className="size-5 md:size-6" />
           </button>
 
-          {/* Veggen: høyden tilsvarer ca. 280 cm, så rammen får realistisk størrelse */}
+          {/* Veggen: høyden tilsvarer ca. 160 cm synlig veggflate, så rammen får realistisk størrelse */}
           <div className="relative flex h-[300px] flex-1 items-center justify-center md:h-[440px]">
             <div
               key={wallArt.id}
