@@ -190,15 +190,15 @@ function Index() {
             <ChevronLeft className="size-5 md:size-6" />
           </button>
 
-          {/* Veggen: høyden tilsvarer ca. 120 cm synlig veggflate, så rammen får realistisk størrelse */}
-          <div className="relative flex h-[300px] flex-1 items-center justify-center md:h-[460px]">
+          {/* Veggen: høyden tilsvarer ca. 90 cm synlig veggflate, så verket fyller mest mulig */}
+          <div className="relative flex h-[320px] flex-1 items-center justify-center md:h-[500px]">
             <div
               key={wallArt.id}
               className="wall-in relative"
               style={{
-                height: `${Math.min(88, (wallArt.heightCm / 120) * 100)}%`,
+                height: `${Math.min(92, (wallArt.heightCm / 90) * 100)}%`,
                 aspectRatio: `${wallArt.widthCm} / ${wallArt.heightCm}`,
-                maxWidth: "80%",
+                maxWidth: "92%",
               }}
             >
               <Link
