@@ -37,6 +37,12 @@ function Index() {
   const recentIds = useRecent();
   const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
+  const wallArts = artworks.filter((a) => a.verified).slice(0, 10);
+  const [wallIdx, setWallIdx] = useState(0);
+  const wallArt = wallArts[wallIdx % wallArts.length]!;
+  const wallArtist = artists.find((x) => x.id === wallArt.artistId);
+  const wallStep = (dir: 1 | -1) => setWallIdx((i) => (i + dir + wallArts.length) % wallArts.length);
+
   const heroRef = useRef<HTMLElement>(null);
   const heroFrames = featuredArtworks.slice(0, 3);
 
