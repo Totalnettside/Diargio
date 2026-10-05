@@ -181,7 +181,7 @@ function Index() {
         }}
       >
         <div className="wall-floor absolute inset-x-0 bottom-0 h-[10%]" />
-        <div className="relative flex min-h-[380px] items-center gap-1 px-2 py-10 sm:px-4 md:min-h-[540px] md:px-6">
+        <div className="relative flex items-center gap-1 px-2 py-8 sm:px-4 md:px-6">
           <button
             aria-label="Forrige verk"
             onClick={() => wallStep(-1)}
@@ -190,8 +190,8 @@ function Index() {
             <ChevronLeft className="size-5 md:size-6" />
           </button>
 
-          {/* Veggen: høyden tilsvarer ca. 130 cm synlig veggflate, så rammen får realistisk størrelse */}
-          <div className="relative flex h-[280px] flex-1 items-center justify-center md:h-[400px]">
+          {/* Veggen: høyden tilsvarer ca. 120 cm synlig veggflate, så rammen får realistisk størrelse */}
+          <div className="relative flex h-[300px] flex-1 items-center justify-center md:h-[460px]">
             <div
               key={wallArt.id}
               className="wall-in relative"
