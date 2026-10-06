@@ -15,6 +15,8 @@ import {
 } from "@/data/demo";
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
+import { useChat } from "@/hooks/useChat";
 
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
@@ -78,7 +80,9 @@ function ArtworkPage() {
 function ArtworkView({ artwork }: { artwork: Artwork }) {
   const artist = artistById(artwork.artistId);
   const seller = sellerById(artwork.sellerId);
-  const { isFavorite, toggleFavorite, sendMessage, toggleFollowSeller, followedSellers } = useStore();
+  const { isFavorite, toggleFavorite, toggleFollowSeller, followedSellers } = useStore();
+  const { user } = useAuth();
+  const { startConversation } = useChat();
   const [bidOpen, setBidOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -318,7 +322,6 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                     setMessage("");
                     setSent(true);
                   } else {
-                    sendMessage(artwork.id, body);
                     alert(user ? "Du kan ikke sende melding til deg selv på denne annonsen." : "Logg inn for å sende melding.");
                   }
                 });
