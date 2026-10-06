@@ -151,6 +151,30 @@ export type Database = {
         }
         Relationships: []
       }
+      purchases: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          seller_id: string
+        }
+        Insert: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          seller_id?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           comment: string | null
