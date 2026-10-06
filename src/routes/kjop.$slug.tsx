@@ -5,6 +5,7 @@ import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo"
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { calculateTransactionFees } from "@/lib/fees";
+import { supabase } from "@/integrations/supabase/client";
 import { StripeBadge } from "@/components/StripeBadge";
 
 export const Route = createFileRoute("/kjop/$slug")({
@@ -107,7 +108,13 @@ function Checkout({ artwork }: { artwork: Artwork }) {
 
       {step < steps.length - 1 ? (
         <button
-          onClick={() => setStep((s) => s + 1)}
+          onClick={async () => {
+            if (step === 0) {
+              const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
+              if (l) await supabase.from("purchases").upsert({ seller_id: l.user_id, listing_id: artwork.id }, { onConflict: "buyer_id,listing_id", ignoreDuplicates: true });
+            }
+            setStep((s) => s + 1);
+          }}
           className="mt-4 w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
         >
           {step === 0 ? "Betal trygt gjennom Diargio" : "Neste steg"}

@@ -90,7 +90,12 @@ function SellerPage() {
   const name = nameOf(profile);
   const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   const mine = reviews.find((r) => r.reviewer_id === user?.id);
-  const canReview = user && user.id !== id;
+  const [hasBought, setHasBought] = useState(false);
+  useEffect(() => {
+    if (!user || user.id === id) return setHasBought(false);
+    void supabase.from("purchases").select("id").eq("buyer_id", user.id).eq("seller_id", id).limit(1).then(({ data }) => setHasBought(!!data?.length));
+  }, [user, id]);
+  const canReview = user && user.id !== id && hasBought;
 
   const submit = async () => {
     setErr("");
