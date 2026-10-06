@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -52,6 +53,7 @@ export function TopBar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <Link
             to="/varsler"
             className="relative grid size-10 place-items-center rounded-2xl bg-white/60 glass"
