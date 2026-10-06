@@ -86,7 +86,7 @@ function DealRoom() {
           <div className="absolute bottom-3 left-3 flex gap-2">
             {[
               { i: ZoomIn, f: () => setZoom((z) => Math.min(3, z + 0.3)), l: "Zoom inn" },
-              { i: ZoomOut, f: () => { setZoom((z) => { const n = Math.max(1, z - 0.3); return n === 1 ? 1 : n; }); if (zoom <= 1.01) setPan({ x: 0, y: 0 }); }, l: "Zoom ut" },
+              { i: ZoomOut, f: () => setZoom((z) => { const n = Math.max(1, z - 0.3); if (n === 1) setPan({ x: 0, y: 0 }); return n; }), l: "Zoom ut" },
             ].map(({ i: Icon, f, l }) => (
               <button key={l} onClick={f} aria-label={l} className="rounded-xl bg-mist/90 p-2 text-ink">
                 <Icon className="size-4" />
