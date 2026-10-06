@@ -11,8 +11,8 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
   const fav = isFavorite(artwork.id);
 
   return (
-    <article className="group overflow-hidden border-b border-border bg-card">
-      <div className="relative overflow-hidden bg-muted">
+    <article className="group overflow-hidden rounded-2xl border-b border-border bg-card">
+      <div className="relative overflow-hidden rounded-t-2xl bg-muted">
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="block">
           <ArtworkPreview image={artwork.image} alt={`${artwork.title} av ${artist?.name ?? "ukjent kunstner"}`} large={large} />
         </Link>
