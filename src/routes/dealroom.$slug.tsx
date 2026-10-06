@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
-import { artistById, formatPrice, sellerById } from "@/data/demo";
+import { artistById, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { useChat } from "@/hooks/useChat";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/dealroom/$slug")({
   head: () => ({
@@ -20,17 +23,22 @@ export const Route = createFileRoute("/dealroom/$slug")({
 
 function DealRoom() {
   const { slug } = Route.useParams();
-  const { allArtworks, conversations, sendMessage, placeBid } = useStore();
+  const { allArtworks, bids, placeBid } = useStore();
+  const { conversations, messages, names, send, startConversation } = useChat();
+  const { user } = useAuth();
   const artwork = allArtworks.find((a) => a.slug === slug);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const drag = useRef<{ x: number; y: number } | null>(null);
   const [text, setText] = useState("");
   const [bid, setBid] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
-  const convo = conversations.find((c) => c.artworkId === artwork?.id);
-  useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [convo?.messages.length]);
+  const convo = conversations.find((c) => c.listing_id === artwork?.id);
+  const thread = messages.filter((m) => m.conversation_id === convo?.id);
+  useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [thread.length]);
 
   if (!artwork) {
     return (
@@ -41,8 +49,7 @@ function DealRoom() {
     );
   }
 
-  const bids = convo?.messages.filter((m) => m.bidAmount) ?? [];
-  const highest = bids.reduce((m, b) => Math.max(m, b.bidAmount ?? 0), 0);
+  const highest = bids.filter((b) => b.artworkId === artwork.id).reduce((m, b) => Math.max(m, b.amount), 0);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 py-6">
@@ -51,7 +58,7 @@ function DealRoom() {
           <p className="text-xs font-bold uppercase tracking-widest text-brand">Dealroom</p>
           <h1 className="font-display text-2xl font-semibold">{artwork.title}</h1>
           <p className="text-sm text-ink/60">
-            Kjøper: deg · Selger: {sellerById(artwork.sellerId).name}
+            {convo ? `Kjøper: ${names[convo.buyer_id] ?? "Kjøper"} · Selger: ${names[convo.seller_id] ?? "Selger"}` : "Kjøp og salg av kunst"}
           </p>
         </div>
         <Link to="/kunst/$slug" params={{ slug }} className="text-sm font-semibold text-brandink underline">
@@ -111,35 +118,37 @@ function DealRoom() {
             </div>
           </div>
           <p className="mt-2 text-xs text-ink/55">
-            {artistById(artwork.artistId).name} · {artwork.location}
+            {artistById(artwork.artistId)?.name} · {artwork.location}
           </p>
 
           <div className="mt-3 h-72 flex-1 space-y-2 overflow-y-auto pr-1">
-            {!convo?.messages.length && (
+            {!thread.length && (
               <p className="text-sm text-ink/55">Start forhandlingen med en melding eller et bud.</p>
             )}
-            {convo?.messages.map((m) => (
+            {thread.map((m) => (
               <div
                 key={m.id}
                 className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                  m.from === "meg" ? "ml-auto bg-brandink text-primary-foreground" : "bg-white/80"
+                  m.sender_id === user?.id ? "ml-auto bg-brandink text-primary-foreground" : "bg-card/80"
                 }`}
               >
-                {m.bidAmount && <p className="font-semibold">Bud: {formatPrice(m.bidAmount)}</p>}
-                {m.text && <p>{m.text}</p>}
+                <p className="whitespace-pre-wrap">{m.body}</p>
               </div>
             ))}
             <div ref={endRef} />
           </div>
 
+          {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
           <form
             className="mt-3 flex gap-2"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               const n = Number(bid);
               if (!n) return;
-              placeBid(artwork.id, n);
-              setBid("");
+              setSending(true); setError("");
+              try { await placeBid(artwork.id, n); setBid(""); }
+              catch (e) { setError(e instanceof Error ? e.message : "Budet kunne ikke sendes."); }
+              finally { setSending(false); }
             }}
           >
             <input
@@ -149,17 +158,21 @@ function DealRoom() {
               placeholder="Beløp i kr"
               className="w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none"
             />
-            <button className="shrink-0 rounded-2xl bg-lav/80 px-4 py-3 text-sm font-semibold text-brandink">
-              Gi bud
-            </button>
+            <Button type="submit" disabled={sending} variant="secondary" className="shrink-0">{sending ? "Sender …" : "Gi bud"}</Button>
           </form>
           <form
             className="mt-2 flex gap-2"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               if (!text.trim()) return;
-              sendMessage(artwork.id, text.trim());
-              setText("");
+              setSending(true); setError("");
+              try {
+                if (!user) throw new Error("Logg inn for å sende melding.");
+                if (convo) await send(convo.id, text.trim());
+                else if (!await startConversation(artwork.id, text.trim())) throw new Error("Samtalen kunne ikke åpnes.");
+                setText("");
+              } catch (e) { setError(e instanceof Error ? e.message : "Meldingen kunne ikke sendes."); }
+              finally { setSending(false); }
             }}
           >
             <input
@@ -168,9 +181,9 @@ function DealRoom() {
               placeholder="Skriv en melding …"
               className="w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none"
             />
-            <button className="shrink-0 rounded-2xl bg-brandink px-4 py-3 text-sm font-semibold text-primary-foreground">
+            <Button type="submit" disabled={sending} className="shrink-0">
               Send
-            </button>
+            </Button>
           </form>
         </section>
       </div>

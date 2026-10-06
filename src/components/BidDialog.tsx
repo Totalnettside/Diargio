@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatPrice, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 export function BidDialog({ artwork, onClose }: { artwork: Artwork; onClose: () => void }) {
   const { placeBid } = useStore();
@@ -8,6 +9,8 @@ export function BidDialog({ artwork, onClose }: { artwork: Artwork; onClose: () 
   const [amount, setAmount] = useState(String(Math.round(base * 0.9)));
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-end bg-ink/40 p-0 backdrop-blur-sm sm:place-items-center sm:p-6">
@@ -16,14 +19,14 @@ export function BidDialog({ artwork, onClose }: { artwork: Artwork; onClose: () 
           <div className="text-center">
             <p className="font-display text-xl font-semibold">Budet er sendt</p>
             <p className="mt-2 text-sm text-ink/60">
-              Selger får varsel og kan godta, avslå eller gi motbud. Du finner budet i meldingene.
+              Selger har fått budet i meldinger og varsler. Du finner budet under «Min side» → «Bud».
             </p>
-            <button
+            <Button
               onClick={onClose}
               className="mt-4 w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
             >
               Lukk
-            </button>
+            </Button>
           </div>
         ) : (
           <>
@@ -36,7 +39,7 @@ export function BidDialog({ artwork, onClose }: { artwork: Artwork; onClose: () 
             <label className="mt-4 block text-xs font-semibold uppercase tracking-wide text-ink/50">
               Ditt bud
             </label>
-            <div className="mt-1 flex items-center gap-2 rounded-2xl bg-white/70 px-4 py-3 glass">
+            <div className="mt-1 flex items-center gap-2 rounded-2xl bg-card/70 px-4 py-3 glass">
               <input
                 inputMode="numeric"
                 value={amount}
@@ -53,26 +56,33 @@ export function BidDialog({ artwork, onClose }: { artwork: Artwork; onClose: () 
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
-              className="mt-1 w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none glass"
+              className="mt-1 w-full rounded-2xl bg-card/70 px-4 py-3 text-sm outline-none glass"
+              maxLength={2000}
               placeholder="Hei! Jeg er interessert i verket …"
             />
 
+            {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
             <div className="mt-4 flex gap-2">
-              <button
+              <Button
+                variant="outline"
+                disabled={sending}
                 onClick={onClose}
-                className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-brandink glass"
+                className="rounded-2xl px-4 py-3 text-sm font-semibold"
               >
                 Avbryt
-              </button>
-              <button
-                onClick={() => {
-                  placeBid(artwork.id, Number(amount || 0), message || undefined);
-                  setSent(true);
+              </Button>
+              <Button
+                disabled={sending || !Number(amount)}
+                onClick={async () => {
+                  setSending(true); setError("");
+                  try { await placeBid(artwork.id, Number(amount || 0), message || undefined); setSent(true); }
+                  catch (e) { setError(e instanceof Error ? e.message : "Budet kunne ikke sendes."); }
+                  finally { setSending(false); }
                 }}
                 className="flex-1 rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
               >
-                Send bud
-              </button>
+                {sending ? "Sender …" : "Send bud"}
+              </Button>
             </div>
           </>
         )}

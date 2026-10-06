@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      bids: {
+        Row: {
+          amount: number
+          buyer_id: string
+          conversation_id: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          message: string | null
+          read_at: string | null
+          seller_id: string
+        }
+        Insert: {
+          amount: number
+          buyer_id?: string
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          message?: string | null
+          read_at?: string | null
+          seller_id: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          message?: string | null
+          read_at?: string | null
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -235,6 +286,10 @@ export type Database = {
       is_conversation_member: {
         Args: { _cid: string; _uid: string }
         Returns: boolean
+      }
+      submit_artwork_bid: {
+        Args: { _amount: number; _listing_id: string; _message?: string }
+        Returns: string
       }
     }
     Enums: {

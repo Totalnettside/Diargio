@@ -64,7 +64,7 @@ export function TopBar() {
             aria-label="Varsler"
           >
             <Bell className="size-4" />
-            {unread > 0 && <span className="absolute right-2 top-2 size-2 rounded-full bg-brand" />}
+            <UnreadBadge count={unread} className="absolute -right-1 -top-1" />
           </Link>
           {user ? (
             <>

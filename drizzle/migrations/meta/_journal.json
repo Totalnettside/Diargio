@@ -43,6 +43,13 @@
       "when": 1791290489664,
       "tag": "0005_purchases",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791291482278,
+      "tag": "0006_persistent_bids_with_seller_messages",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,10 @@ import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { ProfileForm } from "@/components/ProfileForm";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useAuth } from "@/hooks/useAuth";
+import { useChat } from "@/hooks/useChat";
+import { Button } from "@/components/ui/button";
+import { UnreadBadge } from "@/components/UnreadBadge";
 
 export const Route = createFileRoute("/min-side")({
   head: () => ({
@@ -45,10 +49,15 @@ function Dashboard() {
     followedArtists,
     followedSellers,
     collections,
-    conversations,
+    markBidRead,
     deleteListing,
   } = useStore();
   const { isAdmin } = useIsAdmin();
+  const { user } = useAuth();
+  const { conversations } = useChat();
+  const receivedBids = bids.filter((b) => b.sellerId === user?.id);
+  const sentBids = bids.filter((b) => b.buyerId === user?.id);
+  const unreadBids = receivedBids.filter((b) => !b.read).length;
   const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
   const myActive = [...myListings];
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
@@ -69,7 +78,8 @@ function Dashboard() {
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {tabs.map((t) => (
-          <button
+          <Button
+            variant="ghost"
             key={t}
             onClick={() => setTab(t)}
             className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold glass ${
@@ -77,7 +87,8 @@ function Dashboard() {
             }`}
           >
             {t}
-          </button>
+            {t === "Bud" && <UnreadBadge count={unreadBids} />}
+          </Button>
         ))}
       </div>
 
@@ -92,6 +103,7 @@ function Dashboard() {
             ))}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
+            {receivedBids.length > 0 && <Button onClick={() => setTab("Bud")} variant="outline">Mottatte bud ({receivedBids.length}) <UnreadBadge count={unreadBids} /></Button>}
             <Link
               to="/selg"
               className="rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground"
@@ -185,21 +197,26 @@ function Dashboard() {
 
       {tab === "Bud" && (
         <div className="mt-4 space-y-2">
-          {bids.length === 0 ? (
-            <p className="rounded-2xl p-4 text-sm text-ink/60 glass">Du har ingen aktive bud.</p>
-          ) : (
-            bids.map((b) => {
+          {[["Mottatte bud", receivedBids], ["Mine bud", sentBids]].map(([label, list]) => (
+            <section key={String(label)} className="mb-6">
+            <h2 className="mb-3 font-semibold">{String(label)}</h2>
+            {(list as typeof bids).length === 0 && <p className="text-sm text-muted-foreground">Ingen bud ennå.</p>}
+            {(list as typeof bids).map((b) => {
               const art = allArtworks.find((a) => a.id === b.artworkId);
               return (
                 <div key={b.id} className="rounded-2xl p-4 text-sm glass">
                   <p className="font-semibold">{art?.title}</p>
                   <p className="text-ink/60">
-                    {formatPrice(b.amount)} · {b.status}
+                    {formatPrice(b.amount)} {b.sellerId === user?.id && !b.read && <span className="font-semibold text-brandink">· Nytt bud</span>}
                   </p>
+                  {b.message && <p className="mt-1">{b.message}</p>}
+                  <p className="mt-1 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
+                  {b.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}>Åpne samtale</Link></Button>}
                 </div>
               );
-            })
-          )}
+            })}
+            </section>
+          ))}
         </div>
       )}
 

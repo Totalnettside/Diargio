@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Reuse ArtworkPreview for marketplace card image presentation; composite the original listing image over a shared interior asset without changing stored artwork images.
+- Submit bids through the authenticated database RPC and transactional message trigger; seller notifications and bid dashboards read the same RLS-protected persistent bids, never local browser bids.
