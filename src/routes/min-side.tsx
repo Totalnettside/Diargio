@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { ProfileForm } from "@/components/ProfileForm";
 
 export const Route = createFileRoute("/min-side")({
   head: () => ({
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/min-side")({
 
 const tabs = [
   "Oversikt",
+  "Min profil",
   "Mine annonser",
   "Favoritter",
   "Lagrede søk",
@@ -102,6 +104,13 @@ function Dashboard() {
             </Link>
           </div>
         </>
+      )}
+
+      {tab === "Min profil" && (
+        <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
+          <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>
+          <ProfileForm />
+        </section>
       )}
 
       {tab === "Mine annonser" && (
