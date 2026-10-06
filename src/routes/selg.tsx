@@ -192,8 +192,8 @@ function SellPage() {
                 className="hidden"
                 onChange={(e) => {
                   const files = Array.from(e.target.files ?? []);
-                  setImages((prev) =>
-                    [...prev, ...files.map((f) => URL.createObjectURL(f))].slice(0, 15),
+                  void Promise.all(files.map(compressImage)).then((urls) =>
+                    setImages((prev) => [...prev, ...urls].slice(0, 15)),
                   );
                 }}
               />
@@ -465,4 +465,22 @@ function SellPage() {
       </section>
     </main>
   );
+}
+
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 1400;
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      resolve(c.toDataURL("image/jpeg", 0.82));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
 }

@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Bid = {
   id: string;
@@ -83,6 +84,26 @@ const KEY = "diargio-state-v2";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
+  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork }[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const loadListings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("id,user_id,data")
+      .order("created_at", { ascending: false });
+    if (error) console.error("listings", error);
+    else setDbListings((data ?? []) as unknown as { id: string; user_id: string; data: Artwork }[]);
+  }, []);
+
+  useEffect(() => {
+    void loadListings();
+    void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [loadListings]);
 
   useEffect(() => {
     try {
@@ -114,7 +135,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Store>(
     () => ({
       ...state,
-      allArtworks: [...state.myListings, ...demoArtworks],
+      myListings: dbListings.filter((l) => l.user_id === userId).map((l) => l.data),
+      allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
       isFavorite: (id) => state.favorites.includes(id),
       toggleFavorite: (id) =>
         setState((s) => ({
@@ -201,22 +223,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       markAllRead: () =>
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) })),
       addListing: (a) => {
-        setState((s) => ({ ...s, myListings: [a, ...s.myListings] }));
-        notify("Annonse publisert", `«${a.title}» er nå synlig på markedsplassen.`);
+        void (async () => {
+          const { error } = await supabase.from("listings").insert({ id: a.id, data: a as never });
+          if (error) {
+            notify("Kunne ikke publisere", error.message);
+            return;
+          }
+          await loadListings();
+          notify("Annonse publisert", `«${a.title}» er nå synlig på markedsplassen.`);
+        })();
       },
       updateListing: (a) => {
-        setState((s) => ({
-          ...s,
-          myListings: s.myListings.map((l) => (l.id === a.id ? a : l)),
-        }));
-        notify("Annonse oppdatert", `«${a.title}» er lagret.`);
+        void (async () => {
+          const { error } = await supabase
+            .from("listings")
+            .update({ data: a as never, updated_at: new Date().toISOString() })
+            .eq("id", a.id);
+          if (error) return notify("Kunne ikke lagre", error.message);
+          await loadListings();
+          notify("Annonse oppdatert", `«${a.title}» er lagret.`);
+        })();
       },
       deleteListing: (id) => {
-        setState((s) => ({ ...s, myListings: s.myListings.filter((l) => l.id !== id) }));
-        notify("Annonse slettet", "Annonsen er fjernet fra markedsplassen.");
+        void (async () => {
+          const { error } = await supabase.from("listings").delete().eq("id", id);
+          if (error) return notify("Kunne ikke slette", error.message);
+          await loadListings();
+          notify("Annonse slettet", "Annonsen er fjernet fra markedsplassen.");
+        })();
       },
     }),
-    [state, notify],
+    [state, notify, dbListings, userId, loadListings],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
