@@ -264,18 +264,14 @@ body { top: 0 !important; }
 .artwork-preview-frame {
   display: flex;
   flex: none;
-  padding: 4cqw;
-  border: 2cqw solid var(--gallery-frame);
-  background: var(--gallery-mat);
   box-shadow: var(--gallery-frame-shadow);
-  outline: 1px solid var(--gallery-frame-edge);
 }
 .artwork-preview-image {
   display: block;
   width: auto;
   height: auto;
-  max-width: 86cqw;
-  max-height: calc(100cqh - 14cqw);
+  max-width: 100cqw;
+  max-height: 100cqh;
   object-fit: contain;
 }
 .artwork-preview-room-slot {
