@@ -29,6 +29,17 @@ type ChatValue = {
   startConversation: (listingId: string, body: string) => Promise<string | null>;
 };
 
+const fallback: ChatValue = {
+  conversations: [],
+  messages: [],
+  unread: 0,
+  unreadFor: () => 0,
+  names: {},
+  send: async () => {},
+  markRead: async () => {},
+  startConversation: async () => null,
+};
+
 const ChatContext = createContext<ChatValue | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
@@ -158,6 +169,5 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
 export function useChat() {
   const ctx = useContext(ChatContext);
-  if (!ctx) throw new Error("useChat must be used within ChatProvider");
-  return ctx;
+  return ctx ?? fallback;
 }
