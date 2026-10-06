@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { UnreadBadge } from "@/components/UnreadBadge";
 
 export const Route = createFileRoute("/min-side")({
-  validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s.tab === "string" ? { tab: s.tab } : {}),
+  validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
   head: () => ({
     meta: [
       { title: "Min kunsthandel | Diargio" },
