@@ -10,7 +10,7 @@ export const Route = createFileRoute("/dealroom/$slug")({
       { title: "Dealroom | Diargio" },
       { name: "description", content: "Virtuelt dealroom der kjøper og selger ser verket, chatter og gir bud." },
       { property: "og:title", content: "Dealroom | Diargio" },
-      { property: "og:description", content: "Se verket i 3D, chat og forhandle i samme rom." },
+      { property: "og:description", content: "Se verket tett på, chat og forhandle i samme rom." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
