@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useStore } from "@/lib/store";
 import { Link } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { artists, artworks, formatPrice, sellers } from "@/data/demo";
+import { artists, formatPrice } from "@/data/demo";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -54,6 +56,15 @@ function AdminPage() {
 
 function AdminContent() {
   const [section, setSection] = useState<(typeof sections)[number]>("Dashboard");
+  const { allArtworks: artworks, deleteListing } = useStore();
+  const [users, setUsers] = useState<{ id: string; display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null; location: string | null; created_at: string; bankid_verified: boolean }[]>([]);
+  useEffect(() => {
+    void supabase
+      .from("profiles")
+      .select("id,display_name,first_name,last_name,avatar_url,location,created_at,bankid_verified")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setUsers(data ?? []));
+  }, []);
   const [commission, setCommission] = useState("20");
   const [proPrice, setProPrice] = useState("999");
   const [promos, setPromos] = useState({ fremhev: "99", topp: "149", forside: "299" });
@@ -79,14 +90,14 @@ function AdminContent() {
       {section === "Dashboard" && (
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            ["Totale brukere", String(sellers.length * 148)],
+            ["Totale brukere", String(users.length)],
             ["Aktive annonser", String(artworks.length)],
             ["GMV", formatPrice(gmv)],
             ["Diargio-gebyr (20 %)", formatPrice(Math.round(gmv * 0.2))],
             ["Kunstavgift (5 %)", formatPrice(Math.round(gmv * 0.05))],
             ["Nye annonser (7d)", "42"],
             ["Antall handler", "138"],
-            ["Snitt salgspris", formatPrice(Math.round(gmv / artworks.length))],
+            ["Snitt salgspris", formatPrice(artworks.length ? Math.round(gmv / artworks.length) : 0)],
             ["Tvister", "2"],
           ].map(([k, v]) => (
             <div key={k} className="rounded-2xl p-4 glass">
@@ -110,15 +121,18 @@ function AdminContent() {
               </tr>
             </thead>
             <tbody>
-              {artworks.slice(0, 12).map((a) => (
+              {artworks.map((a) => (
                 <tr key={a.id} className="border-t border-border">
                   <td className="py-2">{a.title}</td>
-                  <td>{sellers.find((s) => s.id === a.sellerId)?.name}</td>
+                  <td>{a.artistName ?? "—"}</td>
                   <td>{formatPrice(a.price)}</td>
                   <td>{a.saleType}</td>
                   <td>
-                    <button className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold glass">
-                      Fremhev
+                    <button
+                      onClick={() => confirm(`Slette «${a.title}»?`) && deleteListing(a.id)}
+                      className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold glass"
+                    >
+                      Slett
                     </button>
                   </td>
                 </tr>
@@ -130,17 +144,24 @@ function AdminContent() {
 
       {section === "Brukere" && (
         <div className="mt-4 space-y-2">
-          {sellers.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 rounded-2xl p-3 glass">
-              <img src={s.avatar} alt="" className="size-10 rounded-full object-cover" />
+          {users.length === 0 && <p className="text-sm text-ink/60">Ingen brukere ennå.</p>}
+          {users.map((u) => (
+            <div key={u.id} className="flex items-center gap-3 rounded-2xl p-3 glass">
+              {u.avatar_url ? (
+                <img src={u.avatar_url} alt="" className="size-10 rounded-full object-cover" />
+              ) : (
+                <div className="size-10 rounded-full bg-mint/60" />
+              )}
               <div>
-                <p className="text-sm font-semibold">{s.name}</p>
+                <p className="text-sm font-semibold">
+                  {[u.first_name, u.last_name].filter(Boolean).join(" ") || u.display_name || "Uten navn"}
+                </p>
                 <p className="text-xs text-ink/55">
-                  {s.type} · {s.location}
+                  {u.location ?? "Ukjent sted"} · Registrert {new Date(u.created_at).toLocaleDateString("nb-NO")}
                 </p>
               </div>
               <span className="ml-auto rounded-full bg-mint/60 px-3 py-1 text-xs font-semibold text-brandink">
-                {s.verified ? "Verifisert" : "Ikke verifisert"}
+                {u.bankid_verified ? "Verifisert" : "Ikke verifisert"}
               </span>
             </div>
           ))}

@@ -179,7 +179,7 @@ function SellPage() {
               onDrop={(e) => {
                 e.preventDefault();
                 const files = Array.from(e.dataTransfer.files).slice(0, 15);
-                setImages((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))].slice(0, 15));
+                void Promise.all(files.map(compressImage)).then((urls) => setImages((prev) => [...prev, ...urls].slice(0, 15)));
               }}
               className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-dashed border-brand/40 bg-white/50 px-4 py-10 text-center text-sm text-ink/60"
             >
