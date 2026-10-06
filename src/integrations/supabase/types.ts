@@ -20,33 +20,39 @@ export type Database = {
           buyer_id: string
           conversation_id: string | null
           created_at: string
+          decided_at: string | null
           id: string
           listing_id: string
           message: string | null
           read_at: string | null
           seller_id: string
+          status: string
         }
         Insert: {
           amount: number
           buyer_id?: string
           conversation_id?: string | null
           created_at?: string
+          decided_at?: string | null
           id?: string
           listing_id: string
           message?: string | null
           read_at?: string | null
           seller_id: string
+          status?: string
         }
         Update: {
           amount?: number
           buyer_id?: string
           conversation_id?: string | null
           created_at?: string
+          decided_at?: string | null
           id?: string
           listing_id?: string
           message?: string | null
           read_at?: string | null
           seller_id?: string
+          status?: string
         }
         Relationships: [
           {
@@ -276,6 +282,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      decide_artwork_bid: {
+        Args: { _bid_id: string; _decision: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

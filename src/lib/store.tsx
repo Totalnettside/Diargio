@@ -75,6 +75,7 @@ type Store = State & {
   toggleFollowSeller: (id: string) => void;
   placeBid: (artworkId: string, amount: number, message?: string) => Promise<void>;
   markBidRead: (id: string) => Promise<void>;
+  decideBid: (id: string, decision: "accepted" | "rejected") => Promise<void>;
   sendMessage: (artworkId: string, text: string) => void;
   saveSearch: (query: string, label: string) => void;
   markAllRead: () => void;
@@ -100,7 +101,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (error) return;
     setDbBids((data ?? []).map((b) => ({
       id: b.id, artworkId: b.listing_id, amount: Number(b.amount),
-      message: b.message ?? undefined, status: "Sendt", createdAt: new Date(b.created_at).getTime(),
+      message: b.message ?? undefined, status: b.status === "accepted" ? "Godtatt" : b.status === "rejected" ? "Avslått" : "Sendt", createdAt: new Date(b.created_at).getTime(),
       buyerId: b.buyer_id, sellerId: b.seller_id, conversationId: b.conversation_id ?? undefined, read: Boolean(b.read_at),
     })));
   }, [userId]);
@@ -218,6 +219,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       markBidRead: async (id) => {
         const { error } = await supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("id", id);
         if (!error) await loadBids();
+      },
+      decideBid: async (id, decision) => {
+        const { error } = await supabase.rpc("decide_artwork_bid", { _bid_id: id, _decision: decision });
+        if (error) throw new Error("Budet kunne ikke behandles. Det kan allerede være besvart. Prøv igjen.");
+        await loadBids();
       },
       sendMessage: (artworkId, text) =>
         setState((s) => {
