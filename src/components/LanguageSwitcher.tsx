@@ -7,10 +7,7 @@ const LANGS = [
   { code: "pl", label: "Polski", flag: "🇵🇱" },
 ] as const;
 
-function readLang(): string {
-  const m = document.cookie.match(/googtrans=\/no\/(\w+)/);
-  return m?.[1] ?? "no";
-}
+const KEY = "diargio-lang";
 
 function setCookie(value: string | null) {
   const host = window.location.hostname;
@@ -21,30 +18,59 @@ function setCookie(value: string | null) {
   document.cookie = `googtrans=${v}; path=/; domain=.${host}${exp}`;
 }
 
+function applyLang(code: string, tries = 0) {
+  const combo = document.querySelector<HTMLSelectElement>("select.goog-te-combo");
+  if (!combo || combo.options.length < 2) {
+    if (tries < 50) setTimeout(() => applyLang(code, tries + 1), 200);
+    return;
+  }
+  combo.value = code === "no" ? "" : code;
+  combo.dispatchEvent(new Event("change"));
+}
+
+function loadScript(onReady: () => void) {
+  const w = window as unknown as { gtInit?: () => void; google?: any };
+  if (document.getElementById("gt-script")) {
+    onReady();
+    return;
+  }
+  w.gtInit = () => {
+    new w.google.translate.TranslateElement(
+      { pageLanguage: "no", includedLanguages: "en,pl,no", autoDisplay: false },
+      "gt-el",
+    );
+    onReady();
+  };
+  const s = document.createElement("script");
+  s.id = "gt-script";
+  s.src = "https://translate.google.com/translate_a/element.js?cb=gtInit";
+  document.body.appendChild(s);
+}
+
 export function LanguageSwitcher() {
   const [lang, setLang] = useState("no");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const current = readLang();
+    const current = localStorage.getItem(KEY) ?? "no";
     setLang(current);
     document.documentElement.lang = current === "no" ? "nb" : current;
-    if (current === "no" || document.getElementById("gt-script")) return;
-    (window as unknown as { gtInit: () => void }).gtInit = () => {
-      const g = (window as unknown as { google: any }).google;
-      new g.translate.TranslateElement({ pageLanguage: "no", autoDisplay: false }, "gt-el");
-    };
-    const s = document.createElement("script");
-    s.id = "gt-script";
-    s.src = "https://translate.google.com/translate_a/element.js?cb=gtInit";
-    document.body.appendChild(s);
+    if (current !== "no") loadScript(() => applyLang(current));
   }, []);
 
   const choose = (code: string) => {
     setOpen(false);
     if (code === lang) return;
-    setCookie(code === "no" ? null : `/no/${code}`);
-    window.location.reload();
+    localStorage.setItem(KEY, code);
+    setLang(code);
+    document.documentElement.lang = code === "no" ? "nb" : code;
+    if (code === "no") {
+      setCookie(null);
+      window.location.reload();
+      return;
+    }
+    setCookie(`/no/${code}`);
+    loadScript(() => applyLang(code));
   };
 
   const active = LANGS.find((l) => l.code === lang) ?? LANGS[0];
