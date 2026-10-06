@@ -96,7 +96,7 @@ function AdminContent() {
             ["Diargio-gebyr (20 %)", formatPrice(Math.round(gmv * 0.2))],
             ["Kunstavgift (5 %)", formatPrice(Math.round(gmv * 0.05))],
             ["Snitt salgspris", formatPrice(artworks.length ? Math.round(gmv / artworks.length) : 0)],
-            ["Tvister", "2"],
+
           ] as [string, string, ...string[]][]).map(([k, v, target]) => (
             <button
               key={k}
