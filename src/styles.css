@@ -197,11 +197,6 @@
   box-shadow: 0 -6px 14px color-mix(in oklab, var(--ink) 25%, transparent);
 }
 .wall-frame {
-  border-style: solid;
-  border-width: clamp(5px, 0.8vw, 8px);
-  border-image: linear-gradient(135deg, color-mix(in oklab, var(--brand) 70%, white), var(--brand) 35%, color-mix(in oklab, var(--brand) 65%, var(--brandink)) 65%, color-mix(in oklab, var(--brand) 80%, white)) 1;
-  background: var(--card);
-  padding: clamp(8px, 1.4vw, 16px);
   box-shadow:
     0 34px 54px -20px color-mix(in oklab, var(--ink) 50%, transparent),
     0 10px 18px -10px color-mix(in oklab, var(--ink) 30%, transparent);

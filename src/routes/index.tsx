@@ -323,7 +323,7 @@ function Index() {
                 <img
                   src={wallArt.image}
                   alt={wallArt.title}
-                  className="wall-glass h-full w-full object-cover"
+                  className="wall-glass h-full w-full object-contain"
                 />
               </Link>
             </div>
