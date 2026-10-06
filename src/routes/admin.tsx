@@ -89,9 +89,9 @@ function AdminContent() {
 
       {section === "Dashboard" && (
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {[
-            ["Totale brukere", String(users.length)],
-            ["Aktive annonser", String(artworks.length)],
+          {([
+            ["Totale brukere", String(users.length), "Brukere"],
+            ["Aktive annonser", String(artworks.length), "Annonser"],
             ["GMV", formatPrice(gmv)],
             ["Diargio-gebyr (20 %)", formatPrice(Math.round(gmv * 0.2))],
             ["Kunstavgift (5 %)", formatPrice(Math.round(gmv * 0.05))],
@@ -99,11 +99,15 @@ function AdminContent() {
             ["Antall handler", "138"],
             ["Snitt salgspris", formatPrice(artworks.length ? Math.round(gmv / artworks.length) : 0)],
             ["Tvister", "2"],
-          ].map(([k, v]) => (
-            <div key={k} className="rounded-2xl p-4 glass">
+          ] as [string, string, ...string[]][]).map(([k, v, target]) => (
+            <button
+              key={k}
+              onClick={() => target && setSection(target as (typeof sections)[number])}
+              className={`rounded-2xl p-4 glass text-left ${target ? "cursor-pointer hover:ring-1 hover:ring-brandink/30" : "cursor-default"}`}
+            >
               <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
               <p className="text-lg font-bold">{v}</p>
-            </div>
+            </button>
           ))}
         </div>
       )}
