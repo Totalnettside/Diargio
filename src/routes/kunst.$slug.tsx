@@ -84,14 +84,14 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
   const { isFavorite, toggleFavorite, toggleFollowSeller, followedSellers } = useStore();
   const { user } = useAuth();
   const { startConversation } = useChat();
-  const [owner, setOwner] = useState<{ name: string; avatar: string | null } | null>(null);
+  const [owner, setOwner] = useState<{ id: string; name: string; avatar: string | null } | null>(null);
   useEffect(() => {
     let alive = true;
     void (async () => {
       const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
       if (!l) return;
       const { data: p } = await supabase.from("profiles").select("display_name, first_name, last_name, avatar_url").eq("id", l.user_id).maybeSingle();
-      if (alive && p) setOwner({ name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Selger", avatar: p.avatar_url });
+      if (alive && p) setOwner({ id: l.user_id, name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Selger", avatar: p.avatar_url });
     })();
     return () => {
       alive = false;
@@ -360,8 +360,8 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
             )}
             <div className="mt-2 flex gap-2">
               <Link
-                to="/profil/$slug"
-                params={{ slug: seller.slug }}
+                to="/selger/$id"
+                params={{ id: owner?.id ?? "ukjent" }}
                 className="flex-1 rounded-2xl bg-white/70 py-2.5 text-center text-sm font-semibold text-brandink glass"
               >
                 Se profil
