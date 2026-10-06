@@ -175,7 +175,7 @@ function Index() {
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className="shrink-0 rounded-full bg-white/60 px-4 py-2 text-xs font-semibold glass"
+            className="shrink-0 rounded-full bg-white/60 px-4 py-2 text-xs font-semibold glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-card hover:shadow-md active:scale-100"
           >
             {c}
           </Link>
