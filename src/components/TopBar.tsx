@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
