@@ -62,6 +62,9 @@ export function TopBar() {
         </form>
 
         <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-white/90 md:flex">
+          <Link to="/" className="transition-colors hover:text-white">
+            Hjem
+          </Link>
           <Link to="/kunst" className="transition-colors hover:text-white">
             Kunst
           </Link>
