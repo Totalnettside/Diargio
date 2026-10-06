@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
@@ -39,11 +39,6 @@ function Index() {
   const recentIds = useRecent();
   const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
-  const wallArts = artworks.slice(0, 10);
-  const [wallIdx, setWallIdx] = useState(0);
-  const wallArt = wallArts.length ? wallArts[wallIdx % wallArts.length] : undefined;
-  const wallArtist = wallArt ? artists.find((x) => x.id === wallArt.artistId) : undefined;
-  const wallStep = (dir: 1 | -1) => setWallIdx((i) => (i + dir + wallArts.length) % wallArts.length);
 
   const heroRef = useRef<HTMLElement>(null);
   const heroFrames = featuredArtworks.slice(0, 3);
