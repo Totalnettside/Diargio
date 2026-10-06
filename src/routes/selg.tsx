@@ -320,13 +320,6 @@ function SellPage() {
                   ))}
                 </select>
               </Field>
-              <Field label="Proveniens">
-                <input
-                  value={provenance}
-                  onChange={(e) => setProvenance(e.target.value)}
-                  className={inputClass}
-                />
-              </Field>
             </div>
             <div className="flex flex-wrap gap-2">
               {[

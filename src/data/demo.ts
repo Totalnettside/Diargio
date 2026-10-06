@@ -116,6 +116,10 @@ export const techniques = [
   "Mixed media",
   "Blyant",
   "Digital",
+  "Pappmaché",
+  "Skulptur",
+  "Collage",
+  "Keramikk",
 ];
 
 export const artTypes = [
@@ -135,13 +139,21 @@ export const saleTypes: SaleType[] = [
   "Pris på forespørsel",
 ];
 export const counties = [
+  "Østfold",
+  "Akershus",
   "Oslo",
-  "Vestland",
-  "Trøndelag",
-  "Rogaland",
   "Innlandet",
+  "Buskerud",
+  "Vestfold",
+  "Telemark",
   "Agder",
+  "Rogaland",
+  "Vestland",
+  "Møre og Romsdal",
+  "Trøndelag",
+  "Nordland",
   "Troms",
+  "Finnmark",
 ];
 
 const _demoArtists: Artist[] = [

@@ -101,7 +101,6 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
     ["Størrelse", `${artwork.widthCm} × ${artwork.heightCm} cm`],
     ["Innramming", artwork.framed ? "Innrammet" : "Ikke innrammet"],
     ["Tilstand", artwork.condition],
-    ["Proveniens", artwork.provenance],
     ["Levering", artwork.delivery],
     ["Lokasjon", `${artwork.location}, ${artwork.county}`],
   ];
