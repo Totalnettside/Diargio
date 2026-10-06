@@ -7,13 +7,13 @@ export type Bid = {
   id: string;
   artworkId: string;
   amount: number;
-  message?: string;
+  message?: string | undefined;
   status: "Sendt" | "Godtatt" | "Avslått" | "Motbud";
   counterAmount?: number;
   createdAt: number;
   buyerId?: string;
   sellerId?: string;
-  conversationId?: string;
+  conversationId?: string | undefined;
   read?: boolean;
 };
 
@@ -39,7 +39,7 @@ export type AppNotification = {
   body: string;
   read: boolean;
   createdAt: number;
-  conversationId?: string;
+  conversationId?: string | undefined;
 };
 
 type State = {

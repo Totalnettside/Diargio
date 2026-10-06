@@ -7,6 +7,7 @@ import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 
 export const Route = createFileRoute("/meldinger")({
+  validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search.c === "string" ? { c: search.c } : {},
   head: () => ({
     meta: [
       { title: "Meldinger | Diargio" },
@@ -22,12 +23,13 @@ export const Route = createFileRoute("/meldinger")({
 
 function MessagesPage() {
   const { user, loading } = useAuth();
-  const { allArtworks } = useStore();
+  const { allArtworks, bids, markBidRead } = useStore();
+  const { c } = Route.useSearch();
   const { conversations, messages, names, unreadFor, send, markRead } = useChat();
   const [activeId, setActiveId] = useState("");
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
-  const active = conversations.find((c) => c.id === activeId) ?? conversations[0];
+  const active = conversations.find((conversation) => conversation.id === (activeId || c)) ?? conversations[0];
   const thread = active ? messages.filter((m) => m.conversation_id === active.id) : [];
   const artwork = active ? allArtworks.find((a) => a.id === active.listing_id) : undefined;
   const activeUnread = active ? unreadFor(active.id) : 0;
@@ -35,6 +37,11 @@ function MessagesPage() {
   useEffect(() => {
     if (active && activeUnread > 0) void markRead(active.id);
   }, [active, activeUnread, markRead]);
+
+  useEffect(() => {
+    const unread = bids.filter((b) => b.conversationId === active?.id && b.sellerId === user?.id && !b.read);
+    for (const b of unread) void markBidRead(b.id);
+  }, [active?.id, bids, user?.id, markBidRead]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
