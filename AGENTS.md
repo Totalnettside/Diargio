@@ -9,6 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Reuse ArtworkPreview for marketplace card image presentation; composite the original listing image over a shared interior asset without changing stored artwork images.
-- ArtworkPreview selects an unframed pedestal scene for sculpture categories, techniques or types; all other artwork keeps the gallery/interior presentation.
+- Reuse ArtworkPreview for marketplace cards; display the complete original uploaded image without composited scenes or frames.
+- Bid decisions use a seller-authorized transactional RPC with pending-only transitions and a buyer chat message; acceptance never records payment or purchase.
 - Submit bids through the authenticated database RPC and transactional message trigger; seller notifications and bid dashboards read the same RLS-protected persistent bids, never local browser bids.

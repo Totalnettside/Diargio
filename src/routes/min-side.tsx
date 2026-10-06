@@ -50,6 +50,7 @@ function Dashboard() {
     followedSellers,
     collections,
     markBidRead,
+    decideBid,
     deleteListing,
   } = useStore();
   const { isAdmin } = useIsAdmin();
@@ -59,6 +60,16 @@ function Dashboard() {
   const sentBids = bids.filter((b) => b.buyerId === user?.id);
   const unreadBids = receivedBids.filter((b) => !b.read).length;
   const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
+  const [decidingBid, setDecidingBid] = useState<string | null>(null);
+  const [bidError, setBidError] = useState("");
+  const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
+    if (!window.confirm(decision === "accepted" ? "Godkjenne dette budet? Betaling er ikke gjennomført." : "Avslå dette budet?")) return;
+    setDecidingBid(id);
+    setBidError("");
+    try { await decideBid(id, decision); }
+    catch (error) { setBidError(error instanceof Error ? error.message : "Kunne ikke behandle budet."); }
+    finally { setDecidingBid(null); }
+  };
   const myActive = [...myListings];
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
   const views = myActive.reduce((sum, a) => sum + a.views, 0);
@@ -197,6 +208,7 @@ function Dashboard() {
 
       {tab === "Bud" && (
         <div className="mt-4 space-y-2">
+          {bidError && <p role="alert" className="text-sm text-destructive">{bidError}</p>}
           {[["Mottatte bud", receivedBids], ["Mine bud", sentBids]].map(([label, list]) => (
             <section key={String(label)} className="mb-6">
             <h2 className="mb-3 font-semibold">{String(label)}</h2>
@@ -210,6 +222,13 @@ function Dashboard() {
                     {formatPrice(b.amount)} {b.sellerId === user?.id && !b.read && <span className="font-semibold text-brandink">· Nytt bud</span>}
                   </p>
                   {b.message && <p className="mt-1">{b.message}</p>}
+                  <p className="mt-2 font-semibold">{b.status === "Sendt" ? "Venter på svar" : b.status === "Godtatt" ? "Godkjent · ikke betalt" : b.status}</p>
+                  {b.sellerId === user?.id && b.status === "Sendt" && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "accepted")}>Godkjenn bud</Button>
+                      <Button variant="outline" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "rejected")}>Avslå bud</Button>
+                    </div>
+                  )}
                   <p className="mt-1 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
                   {b.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}>Åpne samtale</Link></Button>}
                 </div>
