@@ -17,7 +17,7 @@ export function TopBar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-mist/90 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-sage/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center">
           <img src={logo} alt="Diargio" width={803} height={287} className="h-14 w-auto" />
@@ -40,18 +40,18 @@ export function TopBar() {
           />
         </form>
 
-        <nav className="hidden items-center gap-5 text-sm font-semibold md:flex">
-          <Link to="/kunst" className="hover:text-brandink">
+        <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-white/90 md:flex">
+          <Link to="/kunst" className="transition-colors hover:text-white">
             Kunst
           </Link>
-          <Link to="/selg" className="hover:text-brandink">
+          <Link to="/selg" className="transition-colors hover:text-white">
             Selg kunst
           </Link>
-          <Link to="/meldinger" className="relative hover:text-brandink">
+          <Link to="/meldings" className="relative transition-colors hover:text-white">
             Meldinger
             <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
           </Link>
-          <Link to="/min-side" className="hover:text-brandink">
+          <Link to="/min-side" className="transition-colors hover:text-white">
             Min side
           </Link>
         </nav>
