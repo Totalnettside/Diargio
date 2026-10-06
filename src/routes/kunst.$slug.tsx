@@ -102,14 +102,11 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
     ["Innramming", artwork.framed ? "Innrammet" : "Ikke innrammet"],
     ["Tilstand", artwork.condition],
     ["Levering", artwork.delivery],
-    ["Lokasjon", `${artwork.location}, ${artwork.county}`],
+    ["Lokasjon", artwork.location && artwork.location !== "Oslo" && artwork.location !== artwork.county ? `${artwork.location}, ${artwork.county}` : artwork.county],
   ];
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-5">
-      <span className="inline-block rounded-full bg-ink/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
-        Demodata
-      </span>
 
       <div className="mt-3 grid gap-5 lg:grid-cols-[1.4fr_1fr]">
         <div>

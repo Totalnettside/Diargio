@@ -136,7 +136,7 @@ function SellPage() {
       framed,
       coa,
       provenance: provenance || "Ikke oppgitt",
-      location: "Oslo",
+      location: county,
       county,
       saleType,
       price: Number(price) || 0,

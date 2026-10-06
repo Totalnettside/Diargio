@@ -34,9 +34,6 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
               ✓ Verifisert
             </span>
           )}
-          <span className="rounded-sm bg-ink/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary-foreground">
-            Demo
-          </span>
         </div>
       </div>
       <div className={large ? "px-1 py-4" : "px-1 py-3"}>
