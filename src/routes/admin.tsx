@@ -124,7 +124,7 @@ function AdminContent() {
               {artworks.map((a) => (
                 <tr key={a.id} className="border-t border-border">
                   <td className="py-2">{a.title}</td>
-                  <td>{a.artistName ?? "—"}</td>
+                  <td>{a.location}</td>
                   <td>{formatPrice(a.price)}</td>
                   <td>{a.saleType}</td>
                   <td>
