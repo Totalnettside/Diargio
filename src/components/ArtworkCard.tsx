@@ -14,7 +14,7 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
     <article className="group overflow-hidden border-b border-border bg-card">
       <div className="relative overflow-hidden bg-muted">
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="block">
-          <ArtworkPreview image={artwork.image} alt={`${artwork.title} av ${artist?.name ?? "ukjent kunstner"}`} large={large} />
+          <ArtworkPreview image={artwork.image} alt={`${artwork.title} av ${artist?.name ?? "ukjent kunstner"}`} large={large} sculpture={[artwork.category, artwork.technique, artwork.type].some(value => value.toLowerCase().includes("skulptur"))} />
         </Link>
         <Button
           variant="ghost"
