@@ -121,7 +121,7 @@ function SellPage() {
       id: `my${Date.now()}`,
       slug,
       title: title || "Nytt verk",
-      artistId: artists.find((a) => a.name === artistName)?.id ?? artists[0]!.id,
+      artistId: artists.find((a) => a.name === artistName)?.id ?? "self",
       sellerId: "s1",
       category,
       style,

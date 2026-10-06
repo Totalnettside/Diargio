@@ -144,7 +144,7 @@ export const counties = [
   "Troms",
 ];
 
-export const artists: Artist[] = [
+const _demoArtists: Artist[] = [
   {
     id: "a1",
     slug: "astrid-berg",
@@ -247,7 +247,7 @@ export const artists: Artist[] = [
   },
 ];
 
-export const sellers: Seller[] = [
+const _demoSellers: Seller[] = [
   {
     id: "s1",
     slug: "kevin",
@@ -469,9 +469,9 @@ function pick<T>(arr: T[], i: number): T {
   return arr[i % arr.length]!;
 }
 
-export const artworks: Artwork[] = titles.map((title, i) => {
-  const artist = pick(artists, i * 3 + 1);
-  const seller = pick(sellers, i * 5 + 2);
+const _demoArtworks: Artwork[] = titles.map((title, i) => {
+  const artist = pick(_demoArtists, i * 3 + 1);
+  const seller = pick(_demoSellers, i * 5 + 2);
   const saleType: SaleType =
     i % 9 === 4 ? "Auksjon" : i % 5 === 3 ? "Bud ønskes" : i % 11 === 7 ? "Pris på forespørsel" : "Fastpris";
   const price = prices[i]!;
@@ -524,13 +524,19 @@ export const artworks: Artwork[] = titles.map((title, i) => {
   };
 });
 
+void _demoArtworks;
+export const artists: Artist[] = [];
+export const sellers: Seller[] = [];
+export const artworks: Artwork[] = [];
 export const featuredArtworks = artworks.filter((a) => a.verified).slice(0, 6);
 
-export function artistById(id: string) {
-  return artists.find((a) => a.id === id)!;
+const unknownArtist: Artist = { id: "self", slug: "", name: "Ukjent kunstner", nationality: "", born: "", movement: "", bio: "", avatar: "" };
+const selfSeller: Seller = { id: "s1", slug: "", name: "Deg", type: "Privat", verified: false, rating: 0, reviewCount: 0, sales: 0, memberSince: "2026", responseRate: 0, location: "Norge", avatar: "", followers: 0 };
+export function artistById(id: string): Artist {
+  return artists.find((a) => a.id === id) ?? unknownArtist;
 }
-export function sellerById(id: string) {
-  return sellers.find((s) => s.id === id)!;
+export function sellerById(id: string): Seller {
+  return sellers.find((s) => s.id === id) ?? selfSeller;
 }
 export function artworkBySlug(slug: string) {
   return artworks.find((a) => a.slug === slug);
@@ -567,7 +573,8 @@ export type DemoReview = {
   date: string;
 };
 
-export const reviews: DemoReview[] = [
+export const reviews: DemoReview[] = [];
+const _demoReviews: DemoReview[] = [
   {
     id: "r1",
     author: "Marte L.",
@@ -590,3 +597,5 @@ export const reviews: DemoReview[] = [
     date: "21. mai 2026",
   },
 ];
+
+void _demoReviews;

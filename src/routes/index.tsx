@@ -39,8 +39,8 @@ function Index() {
 
   const wallArts = artworks.filter((a) => a.verified).slice(0, 10);
   const [wallIdx, setWallIdx] = useState(0);
-  const wallArt = wallArts[wallIdx % wallArts.length]!;
-  const wallArtist = artists.find((x) => x.id === wallArt.artistId);
+  const wallArt = wallArts.length ? wallArts[wallIdx % wallArts.length] : undefined;
+  const wallArtist = wallArt ? artists.find((x) => x.id === wallArt.artistId) : undefined;
   const wallStep = (dir: 1 | -1) => setWallIdx((i) => (i + dir + wallArts.length) % wallArts.length);
 
   const heroRef = useRef<HTMLElement>(null);
@@ -272,6 +272,7 @@ function Index() {
         </Link>
       </section>
 
+      {wallArt && <>
       <div className="mt-6 flex items-end justify-between">
         <h2 className="text-sm font-bold">Se den på veggen</h2>
         <p className="hidden text-[11px] text-ink/45 sm:block">
@@ -353,6 +354,7 @@ function Index() {
           ))}
         </div>
       </section>
+      </>}
     </main>
   );
 }
