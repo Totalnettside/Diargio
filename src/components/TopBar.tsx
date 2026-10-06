@@ -39,7 +39,7 @@ export function TopBar() {
 
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-sage/95 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center" aria-label="Diargio">
           <img src={diargioLogo.url} alt="Diargio" className="h-14 w-auto" />
@@ -47,8 +47,7 @@ export function TopBar() {
 
 
         <form
-          className="hidden flex-1 items-center gap-2 rounded-2xl bg-white/70 px-4 py-2.5 md:flex"
-          style={{ boxShadow: "inset 0 0 0 1px oklch(1 0 0)" }}
+          className="hidden flex-1 items-center gap-2 rounded-2xl border border-border bg-white px-4 py-2.5 md:flex"
           onSubmit={(e) => {
             e.preventDefault();
             void navigate({ to: "/sok", search: { q } });
@@ -59,22 +58,22 @@ export function TopBar() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Søk etter kunstner, verk, stil eller kategori"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-ink/45"
+            className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/45"
           />
         </form>
 
-        <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-white/90 md:flex">
-          <Link to="/kunst" className="transition-colors hover:text-white">
+        <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-ink md:flex">
+          <Link to="/kunst" className="transition-colors hover:text-brandink">
             Kunst
           </Link>
-          <Link to="/selg" className="transition-colors hover:text-white">
+          <Link to="/selg" className="transition-colors hover:text-brandink">
             Selg kunst
           </Link>
-          <Link to="/meldinger" className="relative transition-colors hover:text-white">
+          <Link to="/meldinger" className="relative transition-colors hover:text-brandink">
             Meldinger
             <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
           </Link>
-          <Link to="/min-side" className="transition-colors hover:text-white">
+          <Link to="/min-side" className="transition-colors hover:text-brandink">
             Min side
           </Link>
         </nav>
