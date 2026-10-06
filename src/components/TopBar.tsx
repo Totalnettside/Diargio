@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import { supabase } from "@/integrations/supabase/client";
-import logo from "@/assets/diargio-logo.png";
 
 export function TopBar() {
   const { notifications } = useStore();
@@ -42,8 +41,11 @@ export function TopBar() {
     <header className="sticky top-0 z-20 border-b border-white/10 bg-sage/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="Diargio" width={803} height={287} className="h-14 w-auto" />
+          <span className="font-serif text-2xl font-semibold tracking-wide text-white">
+            Diargio
+          </span>
         </Link>
+
 
         <form
           className="hidden flex-1 items-center gap-2 rounded-2xl bg-white/70 px-4 py-2.5 md:flex"
