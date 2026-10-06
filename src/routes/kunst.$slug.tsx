@@ -16,6 +16,7 @@ import {
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { useChat } from "@/hooks/useChat";
 
 export const Route = createFileRoute("/kunst/$slug")({
@@ -83,6 +84,19 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
   const { isFavorite, toggleFavorite, toggleFollowSeller, followedSellers } = useStore();
   const { user } = useAuth();
   const { startConversation } = useChat();
+  const [owner, setOwner] = useState<{ name: string; avatar: string | null } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
+      if (!l) return;
+      const { data: p } = await supabase.from("profiles").select("display_name, first_name, last_name, avatar_url").eq("id", l.user_id).maybeSingle();
+      if (alive && p) setOwner({ name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Selger", avatar: p.avatar_url });
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [artwork.id]);
   const [bidOpen, setBidOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -283,14 +297,20 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
 
           <div className="rounded-3xl p-5 glass">
             <div className="flex items-center gap-3">
-              <img
-                src={seller.avatar}
-                alt={seller.name}
-                loading="lazy"
-                width={512}
-                height={512}
-                className="size-12 rounded-full object-cover"
-              />
+              {(owner?.avatar ?? seller.avatar) ? (
+                <img
+                  src={owner?.avatar ?? seller.avatar}
+                  alt={owner?.name ?? seller.name}
+                  loading="lazy"
+                  width={512}
+                  height={512}
+                  className="size-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className="grid size-12 place-items-center rounded-full bg-secondary font-display text-lg font-semibold text-brandink">
+                  {(owner?.name ?? seller.name).slice(0, 1).toUpperCase()}
+                </div>
+              )}
               <div>
                 <p className="text-sm font-semibold">{seller.name}</p>
                 {seller.verified && (
