@@ -188,11 +188,15 @@ function Index() {
         <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
-        {featuredArtworks.map((a) => (
-          <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
-            <ArtworkCard artwork={a} />
-          </div>
-        ))}
+        {featuredArtworks.length === 0 ? (
+          <p className="text-xs text-ink/50">Ingen annonser lagt ut ennå – bli den første!</p>
+        ) : (
+          featuredArtworks.map((a) => (
+            <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
+              <ArtworkCard artwork={a} />
+            </div>
+          ))
+        )}
       </div>
 
       {recent.length > 0 && (
