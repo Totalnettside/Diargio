@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, artworks, artworksByArtist, categories, featuredArtworks } from "@/data/demo";
+import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
 import { formatPrice } from "@/data/demo";
@@ -31,13 +31,16 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
-  const { toggleFollowArtist, followedArtists } = useStore();
+  const { allArtworks, toggleFollowArtist, followedArtists } = useStore();
+  const artworks = allArtworks;
+  // I starten fremheves all kunst som legges ut, så alt kommer på forsiden.
+  const featuredArtworks = artworks;
   const nyeste = [...artworks].sort((a, b) => a.createdDaysAgo - b.createdDaysAgo).slice(0, 9);
-  const utvalgte = artworks.filter((a) => a.verified).slice(9, 15);
+  const utvalgte = artworks.slice(9, 15);
   const recentIds = useRecent();
   const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
-  const wallArts = artworks.filter((a) => a.verified).slice(0, 10);
+  const wallArts = artworks.slice(0, 10);
   const [wallIdx, setWallIdx] = useState(0);
   const wallArt = wallArts.length ? wallArts[wallIdx % wallArts.length] : undefined;
   const wallArtist = wallArt ? artists.find((x) => x.id === wallArt.artistId) : undefined;
