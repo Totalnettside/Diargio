@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, formatPrice, reviews } from "@/data/demo";
+import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/min-side")({
