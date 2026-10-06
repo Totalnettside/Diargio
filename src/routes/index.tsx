@@ -2,10 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, artworks, artworksByArtist, categories, featuredArtworks } from "@/data/demo";
+import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
-import { formatPrice } from "@/data/demo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,13 +30,16 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
-  const { toggleFollowArtist, followedArtists } = useStore();
+  const { allArtworks, toggleFollowArtist, followedArtists } = useStore();
+  const artworks = allArtworks;
+  // I starten fremheves all kunst som legges ut, så alt kommer på forsiden.
+  const featuredArtworks = artworks;
   const nyeste = [...artworks].sort((a, b) => a.createdDaysAgo - b.createdDaysAgo).slice(0, 9);
-  const utvalgte = artworks.filter((a) => a.verified).slice(9, 15);
+  const utvalgte = artworks.slice(9, 15);
   const recentIds = useRecent();
   const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
-  const wallArts = artworks.filter((a) => a.verified).slice(0, 10);
+  const wallArts = artworks.slice(0, 10);
   const [wallIdx, setWallIdx] = useState(0);
   const wallArt = wallArts.length ? wallArts[wallIdx % wallArts.length] : undefined;
   const wallArtist = wallArt ? artists.find((x) => x.id === wallArt.artistId) : undefined;
@@ -185,11 +187,15 @@ function Index() {
         <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
-        {featuredArtworks.map((a) => (
-          <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
-            <ArtworkCard artwork={a} />
-          </div>
-        ))}
+        {featuredArtworks.length === 0 ? (
+          <p className="text-xs text-ink/50">Ingen annonser lagt ut ennå – bli den første!</p>
+        ) : (
+          featuredArtworks.map((a) => (
+            <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
+              <ArtworkCard artwork={a} />
+            </div>
+          ))
+        )}
       </div>
 
       {recent.length > 0 && (
