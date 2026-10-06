@@ -4,11 +4,14 @@ import { useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { useChat } from "@/hooks/useChat";
+import { UnreadBadge } from "@/components/UnreadBadge";
 import logo from "@/assets/diargio-logo.png";
 
 export function TopBar() {
   const { notifications } = useStore();
   const { user, signOut } = useAuth();
+  const { unread: unreadMsgs } = useChat();
   const unread = notifications.filter((n) => !n.read).length;
   const [q, setQ] = useState("");
   const navigate = useNavigate();
@@ -44,8 +47,9 @@ export function TopBar() {
           <Link to="/selg" className="hover:text-brandink">
             Selg kunst
           </Link>
-          <Link to="/meldinger" className="hover:text-brandink">
+          <Link to="/meldinger" className="relative hover:text-brandink">
             Meldinger
+            <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
           </Link>
           <Link to="/min-side" className="hover:text-brandink">
             Min side

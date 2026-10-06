@@ -312,9 +312,16 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
             <button
               onClick={() => {
                 if (!message.trim()) return;
-                sendMessage(artwork.id, message.trim());
-                setMessage("");
-                setSent(true);
+                const body = message.trim();
+                void startConversation(artwork.id, body).then((cid) => {
+                  if (cid) {
+                    setMessage("");
+                    setSent(true);
+                  } else {
+                    sendMessage(artwork.id, body);
+                    alert(user ? "Du kan ikke sende melding til deg selv på denne annonsen." : "Logg inn for å sende melding.");
+                  }
+                });
               }}
               className="mt-2 w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
             >

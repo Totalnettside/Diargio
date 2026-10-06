@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useChat } from "@/hooks/useChat";
+import { UnreadBadge } from "@/components/UnreadBadge";
 import { Home, MessageCircle, Plus, Search, User } from "lucide-react";
 
 export function BottomNav() {
+  const { unread } = useChat();
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex items-end justify-around gap-1 border-t border-white/60 bg-white/80 px-3 pb-4 pt-2 backdrop-blur-md md:hidden">
       <Link
@@ -34,7 +37,7 @@ export function BottomNav() {
         className="flex flex-col items-center gap-1 text-ink/45"
         activeProps={{ className: "flex flex-col items-center gap-1 text-brandink" }}
       >
-        <MessageCircle className="size-5" />
+        <span className="relative"><MessageCircle className="size-5" /><UnreadBadge count={unread} className="absolute -right-2.5 -top-2" /></span>
         <span className="text-[10px] font-semibold">Meld</span>
       </Link>
       <Link
