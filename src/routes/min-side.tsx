@@ -4,6 +4,7 @@ import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { ProfileForm } from "@/components/ProfileForm";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 export const Route = createFileRoute("/min-side")({
   head: () => ({
@@ -47,6 +48,7 @@ function Dashboard() {
     conversations,
     deleteListing,
   } = useStore();
+  const { isAdmin } = useIsAdmin();
   const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
   const myActive = [...myListings];
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
@@ -99,9 +101,9 @@ function Dashboard() {
             <Link to="/meldinger" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
               Meldinger
             </Link>
-            <Link to="/admin" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
+            {isAdmin && <Link to="/admin" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
               Adminpanel
-            </Link>
+            </Link>}
           </div>
         </>
       )}

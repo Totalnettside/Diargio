@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { artists, artworks, formatPrice, sellers } from "@/data/demo";
 
 export const Route = createFileRoute("/admin")({
@@ -37,6 +39,20 @@ const reportReasons = [
 ];
 
 function AdminPage() {
+  const { isAdmin, checking } = useIsAdmin();
+  if (checking) return <main className="p-10 text-center text-sm text-ink/60">Laster…</main>;
+  if (!isAdmin)
+    return (
+      <main className="mx-auto max-w-md p-10 text-center">
+        <h1 className="font-display text-xl font-semibold">Ingen tilgang</h1>
+        <p className="mt-2 text-sm text-ink/60">Adminpanelet er kun for administrator.</p>
+        <Link to="/" className="mt-4 inline-block rounded-2xl bg-brandink px-5 py-2 text-sm font-semibold text-primary-foreground">Til forsiden</Link>
+      </main>
+    );
+  return <AdminContent />;
+}
+
+function AdminContent() {
   const [section, setSection] = useState<(typeof sections)[number]>("Dashboard");
   const [commission, setCommission] = useState("20");
   const [proPrice, setProPrice] = useState("999");
