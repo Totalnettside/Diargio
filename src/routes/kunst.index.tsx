@@ -293,7 +293,7 @@ function Marketplace() {
                   <Link key={a.id} to="/kunst/$slug" params={{ slug: a.slug }} className="flex gap-4 py-4 hover:bg-secondary/40">
                     <img src={a.image} alt={a.title} loading="lazy" className="size-28 shrink-0 rounded-md object-cover md:size-36" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs text-ink/50">{a.location} · {a.createdDaysAgo === 0 ? "I dag" : `${a.createdDaysAgo} d siden`}</p>
+                      <p className="text-xs text-ink/50">{a.county} · {a.createdDaysAgo === 0 ? "I dag" : `${a.createdDaysAgo} d siden`}</p>
                       <p className="mt-1 truncate font-display text-lg font-medium">{a.title}</p>
                       <p className="text-sm text-ink/60">{artistById(a.artistId)?.name} · {a.technique}</p>
                       <p className="mt-2 text-lg font-bold">{a.saleType === "Pris på forespørsel" ? "Pris på forespørsel" : formatPrice(a.price)}</p>
