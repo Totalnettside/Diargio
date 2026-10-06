@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, Search } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/diargio-logo.png";
 
 export function TopBar() {
@@ -14,7 +15,28 @@ export function TopBar() {
   const { unread: unreadMsgs } = useChat();
   const unread = notifications.filter((n) => !n.read).length;
   const [q, setQ] = useState("");
+  const [avatar, setAvatar] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      setAvatar(null);
+      return;
+    }
+    let alive = true;
+    supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (alive) setAvatar(data?.avatar_url ?? null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [user?.id]);
+
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/10 bg-sage/95 backdrop-blur-md">
@@ -70,10 +92,14 @@ export function TopBar() {
             <>
               <Link
                 to="/min-side"
-                className="grid size-10 place-items-center rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
+                className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
                 aria-label="Min side"
               >
-                {(user.email ?? "?").slice(0, 1).toUpperCase()}
+                {avatar ? (
+                  <img src={avatar} alt="Profilbilde" className="size-full object-cover" />
+                ) : (
+                  (user.email ?? "?").slice(0, 1).toUpperCase()
+                )}
               </Link>
               <button
                 onClick={() => void signOut()}
