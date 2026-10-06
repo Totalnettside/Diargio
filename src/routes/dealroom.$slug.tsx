@@ -22,7 +22,7 @@ function DealRoom() {
   const { slug } = Route.useParams();
   const { allArtworks, conversations, sendMessage, placeBid } = useStore();
   const artwork = allArtworks.find((a) => a.slug === slug);
-  const [rot, setRot] = useState({ x: -6, y: -20 });
+  const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const drag = useRef<{ x: number; y: number } | null>(null);
   const [text, setText] = useState("");
