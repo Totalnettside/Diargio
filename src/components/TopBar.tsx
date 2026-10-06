@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import diargioLogo from "@/assets/diargio-logo.png.asset.json";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
 import { Bell, Search } from "lucide-react";
@@ -41,6 +42,7 @@ export function TopBar() {
     <header className="sticky top-0 z-20 border-b border-white/10 bg-sage/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center" aria-label="Diargio">
+          <img src={diargioLogo.url} alt="Diargio" className="h-14 w-auto" />
         </Link>
 
 
@@ -62,9 +64,6 @@ export function TopBar() {
         </form>
 
         <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-white/90 md:flex">
-          <Link to="/" className="transition-colors hover:text-white">
-            Hjem
-          </Link>
           <Link to="/kunst" className="transition-colors hover:text-white">
             Kunst
           </Link>
