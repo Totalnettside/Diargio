@@ -52,6 +52,7 @@ export function TopBar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <Link
             to="/varsler"
             className="relative grid size-10 place-items-center rounded-2xl bg-white/60 glass"
