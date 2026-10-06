@@ -38,6 +38,8 @@
   --color-brand: var(--brand);
   --color-brandink: var(--brandink);
   --color-mint: var(--mint);
+  --color-sage: var(--sage);
+  --color-sagelight: var(--sagelight);
   --color-peach: var(--peach);
   --color-lav: var(--lav);
   --color-ink: var(--ink);
@@ -51,6 +53,8 @@
 
   --brand: oklch(0.66 0.08 65);
   --brandink: oklch(0.4 0.045 158);
+  --sage: oklch(0.49 0.028 133);
+  --sagelight: oklch(0.56 0.032 133);
   --mint: oklch(0.9 0.035 135);
   --peach: oklch(0.89 0.04 70);
   --lav: oklch(0.92 0.02 130);
