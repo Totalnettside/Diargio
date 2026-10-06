@@ -5,7 +5,6 @@ import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
-import { formatPrice } from "@/data/demo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
