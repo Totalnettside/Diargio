@@ -60,7 +60,8 @@ function Dashboard() {
   const receivedBids = bids.filter((b) => b.sellerId === user?.id);
   const sentBids = bids.filter((b) => b.buyerId === user?.id);
   const unreadBids = receivedBids.filter((b) => !b.read).length;
-  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = Route.useSearch().tab; return (tabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
+  const initialTab = Route.useSearch().tab;
+  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = initialTab; return (tabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
   const [decidingBid, setDecidingBid] = useState<string | null>(null);
   const [bidError, setBidError] = useState("");
   const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
