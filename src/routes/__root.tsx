@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/lib/store";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ChatProvider } from "@/hooks/useChat";
 import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
@@ -128,6 +129,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
       <StoreProvider>
+      <ChatProvider>
         <div className="min-h-screen bg-mist pb-24 font-body text-ink md:pb-0">
           <TopBar />
           {/* Required: nested routes render here. */}
@@ -135,6 +137,7 @@ function RootComponent() {
           <BottomNav />
           <OnboardingDialog />
         </div>
+      </ChatProvider>
       </StoreProvider>
       </AuthProvider>
     </QueryClientProvider>
