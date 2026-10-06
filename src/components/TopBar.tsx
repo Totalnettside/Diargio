@@ -47,7 +47,7 @@ export function TopBar() {
           <Link to="/selg" className="transition-colors hover:text-white">
             Selg kunst
           </Link>
-          <Link to="/meldings" className="relative transition-colors hover:text-white">
+          <Link to="/meldinger" className="relative transition-colors hover:text-white">
             Meldinger
             <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
           </Link>
