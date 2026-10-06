@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, artworksBySeller, formatPrice, reviews, sellers } from "@/data/demo";
+import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/min-side")({
@@ -46,8 +46,7 @@ function Dashboard() {
     deleteListing,
   } = useStore();
   const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
-  const me = sellers[0]!;
-  const myActive = [...myListings, ...artworksBySeller(me.id)];
+  const myActive = [...myListings];
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
   const views = myActive.reduce((sum, a) => sum + a.views, 0);
 
@@ -57,7 +56,7 @@ function Dashboard() {
     ["Favoritter", String(favorites.length)],
     ["Meldinger", String(conversations.length)],
     ["Aktive bud", String(bids.length)],
-    ["Solgt", String(me.sales)],
+    ["Solgt", "0"],
   ];
 
   return (
@@ -230,12 +229,12 @@ function Dashboard() {
             {[
               ["Visninger", views.toLocaleString("nb-NO")],
               ["Favoritter", String(myActive.reduce((s, a) => s + a.favorites, 0))],
-              ["Henvendelser", String(conversations.length + 6)],
-              ["Konvertering", "3,4 %"],
-              ["Bud", String(bids.length + 4)],
-              ["Salg", String(me.sales)],
-              ["Snitt salgstid", "18 dager"],
-              ["Snitt salgspris", formatPrice(34500)],
+              ["Henvendelser", String(conversations.length)],
+              ["Konvertering", "0 %"],
+              ["Bud", String(bids.length)],
+              ["Salg", "0"],
+              ["Snitt salgstid", "–"],
+              ["Snitt salgspris", "–"],
             ].map(([k, v]) => (
               <div key={k} className="rounded-2xl p-4 glass">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
@@ -260,7 +259,7 @@ function Dashboard() {
 
       {tab === "Vurderinger" && (
         <div className="mt-4 space-y-2">
-          {reviews.map((r) => (
+          {([] as typeof reviews).map((r) => (
             <div key={r.id} className="rounded-2xl p-4 glass">
               <p className="text-sm font-semibold">
                 {"★".repeat(r.rating)} <span className="text-ink/60">{r.author}</span>

@@ -49,34 +49,14 @@ type State = {
 };
 
 const initialState: State = {
-  favorites: ["w1", "w4"],
-  collections: { "Kunst jeg vurderer": ["w1"], "Til kontoret": ["w4"] },
-  followedArtists: ["a1"],
+  favorites: [],
+  collections: {},
+  followedArtists: [],
   followedSellers: [],
   bids: [],
-  conversations: [
-    {
-      id: "c1",
-      artworkId: "w4",
-      messages: [
-        { id: "m1", from: "meg", text: "Hei! Er verket fortsatt tilgjengelig?", createdAt: Date.now() - 86400000 },
-        { id: "m2", from: "selger", text: "Ja, det henger fortsatt i galleriet. Du er velkommen innom.", createdAt: Date.now() - 82000000 },
-      ],
-    },
-    {
-      id: "c2",
-      artworkId: "w2",
-      messages: [
-        { id: "m3", from: "selger", text: "Takk for interessen – gi gjerne et bud.", createdAt: Date.now() - 3600000 },
-      ],
-    },
-  ],
-  savedSearches: [{ id: "ss1", query: "pushwagner", label: "Pushwagner under 100 000 kr" }],
-  notifications: [
-    { id: "n1", title: "Nytt bud", body: "Du har fått et bud på «Fjordlys».", read: false, createdAt: Date.now() - 5400000 },
-    { id: "n2", title: "Ny melding", body: "Galleri Fineart svarte på meldingen din.", read: false, createdAt: Date.now() - 82000000 },
-    { id: "n3", title: "Lagret søk", body: "3 nye treff på «Pushwagner».", read: true, createdAt: Date.now() - 172800000 },
-  ],
+  conversations: [],
+  savedSearches: [],
+  notifications: [],
   myListings: [],
 };
 
@@ -99,15 +79,14 @@ type Store = State & {
 
 const g = globalThis as unknown as { __diargioStoreCtx?: Context<Store | null> };
 const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext<Store | null>(null));
-const KEY = "diargio-state-v1";
-const LEGACY_KEY = "geargio-state-v1";
+const KEY = "diargio-state-v2";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY);
+      const raw = localStorage.getItem(KEY);
       if (raw) setState({ ...initialState, ...(JSON.parse(raw) as State) });
     } catch {
       /* ignore */
