@@ -11,6 +11,10 @@ export type Bid = {
   status: "Sendt" | "Godtatt" | "Avslått" | "Motbud";
   counterAmount?: number;
   createdAt: number;
+  buyerId?: string;
+  sellerId?: string;
+  conversationId?: string;
+  read?: boolean;
 };
 
 export type ChatMessage = {
@@ -35,6 +39,7 @@ export type AppNotification = {
   body: string;
   read: boolean;
   createdAt: number;
+  conversationId?: string;
 };
 
 type State = {
@@ -68,7 +73,8 @@ type Store = State & {
   createCollection: (name: string) => void;
   toggleFollowArtist: (id: string) => void;
   toggleFollowSeller: (id: string) => void;
-  placeBid: (artworkId: string, amount: number, message?: string) => void;
+  placeBid: (artworkId: string, amount: number, message?: string) => Promise<void>;
+  markBidRead: (id: string) => Promise<void>;
   sendMessage: (artworkId: string, text: string) => void;
   saveSearch: (query: string, label: string) => void;
   markAllRead: () => void;
@@ -86,6 +92,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
   const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork }[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [dbBids, setDbBids] = useState<Bid[]>([]);
+
+  const loadBids = useCallback(async () => {
+    if (!userId) { setDbBids([]); return; }
+    const { data, error } = await supabase.from("bids").select("*").order("created_at", { ascending: false });
+    if (error) return;
+    setDbBids((data ?? []).map((b) => ({
+      id: b.id, artworkId: b.listing_id, amount: Number(b.amount),
+      message: b.message ?? undefined, status: "Sendt", createdAt: new Date(b.created_at).getTime(),
+      buyerId: b.buyer_id, sellerId: b.seller_id, conversationId: b.conversation_id ?? undefined, read: Boolean(b.read_at),
+    })));
+  }, [userId]);
+
+  useEffect(() => {
+    setDbBids([]);
+    void loadBids();
+    if (!userId) return;
+    const channel = supabase.channel(`bids-${userId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "bids" }, () => { void loadBids(); })
+      .subscribe((status) => { if (status === "SUBSCRIBED") void loadBids(); });
+    const refresh = () => { void loadBids(); };
+    window.addEventListener("focus", refresh);
+    return () => { void supabase.removeChannel(channel); window.removeEventListener("focus", refresh); };
+  }, [userId, loadBids]);
 
   const loadListings = useCallback(async () => {
     const { data, error } = await supabase
@@ -135,6 +165,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Store>(
     () => ({
       ...state,
+      bids: dbBids,
+      notifications: [...dbBids.filter((b) => b.sellerId === userId).map((b) => ({
+        id: b.id, title: "Nytt bud mottatt", body: `${Number(b.amount).toLocaleString("nb-NO")} kr på «${dbListings.find((l) => l.id === b.artworkId)?.data.title ?? "kunstverk"}»`,
+        read: b.read ?? false, createdAt: b.createdAt, conversationId: b.conversationId,
+      })), ...state.notifications].sort((a, b) => b.createdAt - a.createdAt),
       myListings: dbListings.filter((l) => l.user_id === userId).map((l) => l.data),
       allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
       isFavorite: (id) => state.favorites.includes(id),
@@ -173,32 +208,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             ? s.followedSellers.filter((f) => f !== id)
             : [...s.followedSellers, id],
         })),
-      placeBid: (artworkId, amount, message) => {
-        const bid: Bid = {
-          id: `b${Date.now()}`,
-          artworkId,
-          amount,
-          ...(message ? { message } : {}),
-          status: "Sendt",
-          createdAt: Date.now(),
-        };
-        setState((s) => {
-          const existing = s.conversations.find((c) => c.artworkId === artworkId);
-          const bidMsg: ChatMessage = {
-            id: `m${Date.now()}`,
-            from: "meg",
-            bidAmount: amount,
-            ...(message ? { text: message } : {}),
-            createdAt: Date.now(),
-          };
-          const conversations = existing
-            ? s.conversations.map((c) =>
-                c.artworkId === artworkId ? { ...c, messages: [...c.messages, bidMsg] } : c,
-              )
-            : [{ id: `c${Date.now()}`, artworkId, messages: [bidMsg] }, ...s.conversations];
-          return { ...s, bids: [bid, ...s.bids], conversations };
-        });
-        notify("Bud sendt", `Budet ditt er sendt til selger.`);
+      placeBid: async (artworkId, amount, message) => {
+        if (!userId) throw new Error("Logg inn for å gi bud.");
+        if (!Number.isFinite(amount) || amount <= 0 || amount > 1000000000) throw new Error("Skriv inn et gyldig beløp.");
+        const { error } = await supabase.rpc("submit_artwork_bid", { _listing_id: artworkId, _amount: amount, _message: message ?? "" });
+        if (error) throw new Error("Budet kunne ikke sendes. Du kan ikke by på din egen annonse. Prøv igjen.");
+        await loadBids();
+      },
+      markBidRead: async (id) => {
+        const { error } = await supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("id", id);
+        if (!error) await loadBids();
       },
       sendMessage: (artworkId, text) =>
         setState((s) => {
@@ -220,8 +239,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }));
         notify("Søk lagret", `Du får varsel når nye verk matcher «${label}».`);
       },
-      markAllRead: () =>
-        setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) })),
+      markAllRead: () => {
+        setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
+        if (userId) void supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("seller_id", userId).is("read_at", null).then(() => loadBids());
+      },
       addListing: (a) => {
         void (async () => {
           const { error } = await supabase.from("listings").insert({ id: a.id, data: a as never });
@@ -253,7 +274,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         })();
       },
     }),
-    [state, notify, dbListings, userId, loadListings],
+    [state, notify, dbListings, dbBids, userId, loadListings, loadBids],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/varsler")({
   head: () => ({
@@ -16,16 +17,17 @@ export const Route = createFileRoute("/varsler")({
 });
 
 function NotificationsPage() {
-  const { notifications, markAllRead } = useStore();
+  const { notifications, markAllRead, markBidRead } = useStore();
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-5">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-semibold">Varsler</h1>
-        <button onClick={markAllRead} className="text-xs font-semibold text-brandink">
+        <Button variant="ghost" onClick={markAllRead} className="text-xs font-semibold text-brandink">
           Merk alle som lest
-        </button>
+        </Button>
       </div>
       <div className="mt-4 space-y-2">
+        {!notifications.length && <p className="text-sm text-muted-foreground">Ingen varsler ennå.</p>}
         {notifications.map((n) => (
           <div
             key={n.id}
@@ -33,6 +35,7 @@ function NotificationsPage() {
           >
             <p className="text-sm font-semibold">{n.title}</p>
             <p className="text-sm text-ink/70">{n.body}</p>
+            {n.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: n.conversationId }} onClick={() => { void markBidRead(n.id); }}>Se bud og svar kjøper</Link></Button>}
             <p className="mt-1 text-[11px] text-ink/40">
               {new Date(n.createdAt).toLocaleString("nb-NO")}
             </p>
