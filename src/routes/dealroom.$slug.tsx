@@ -43,7 +43,6 @@ function DealRoom() {
 
   const bids = convo?.messages.filter((m) => m.bidAmount) ?? [];
   const highest = bids.reduce((m, b) => Math.max(m, b.bidAmount ?? 0), 0);
-  const isSculpture = /skulptur/i.test(`${artwork.technique ?? ""} ${artwork.category ?? ""}`);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 py-6">
