@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
@@ -39,11 +39,6 @@ function Index() {
   const recentIds = useRecent();
   const recent = recentIds.map((id) => artworks.find((a) => a.id === id)).filter((a): a is (typeof artworks)[number] => Boolean(a));
 
-  const wallArts = artworks.slice(0, 10);
-  const [wallIdx, setWallIdx] = useState(0);
-  const wallArt = wallArts.length ? wallArts[wallIdx % wallArts.length] : undefined;
-  const wallArtist = wallArt ? artists.find((x) => x.id === wallArt.artistId) : undefined;
-  const wallStep = (dir: 1 | -1) => setWallIdx((i) => (i + dir + wallArts.length) % wallArts.length);
 
   const heroRef = useRef<HTMLElement>(null);
   const heroFrames = featuredArtworks.slice(0, 3);
@@ -278,89 +273,6 @@ function Index() {
         </Link>
       </section>
 
-      {wallArt && <>
-      <div className="mt-6 flex items-end justify-between">
-        <h2 className="text-sm font-bold">Se den på veggen</h2>
-        <p className="hidden text-[11px] text-ink/45 sm:block">
-          Bla gjennom verkene – og se hvordan de henger hjemme hos deg
-        </p>
-      </div>
-      <section
-        className="wall-surface relative mb-10 mt-3 overflow-hidden rounded-3xl"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowLeft") wallStep(-1);
-          if (e.key === "ArrowRight") wallStep(1);
-        }}
-      >
-        <div className="wall-floor absolute inset-x-0 bottom-0 h-[10%]" />
-        <div className="relative flex items-center gap-1 px-2 py-8 sm:px-4 md:px-6">
-          <button
-            aria-label="Forrige verk"
-            onClick={() => wallStep(-1)}
-            className="z-20 shrink-0 rounded-full bg-white/80 p-2 text-brandink glass transition-transform hover:-translate-x-0.5 md:p-3"
-          >
-            <ChevronLeft className="size-5 md:size-6" />
-          </button>
-
-          {/* Veggen: høyden tilsvarer ca. 90 cm synlig veggflate, så verket fyller mest mulig */}
-          <div className="relative flex h-[320px] flex-1 items-center justify-center md:h-[500px]">
-            <div
-              key={wallArt.id}
-              className="wall-in relative"
-              style={{
-                height: `${Math.min(92, (wallArt.heightCm / 90) * 100)}%`,
-                aspectRatio: `${wallArt.widthCm} / ${wallArt.heightCm}`,
-                maxWidth: "92%",
-              }}
-            >
-              <Link
-                to="/kunst/$slug"
-                params={{ slug: wallArt.slug }}
-                className="wall-frame block h-full w-full"
-                aria-label={`Se annonsen for ${wallArt.title}`}
-              >
-                <img
-                  src={wallArt.image}
-                  alt={wallArt.title}
-                  className="wall-glass h-full w-full object-contain"
-                />
-              </Link>
-            </div>
-          </div>
-
-          <button
-            aria-label="Neste verk"
-            onClick={() => wallStep(1)}
-            className="z-20 shrink-0 rounded-full bg-white/80 p-2 text-brandink glass transition-transform hover:translate-x-0.5 md:p-3"
-          >
-            <ChevronRight className="size-5 md:size-6" />
-          </button>
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center pb-2 text-center">
-          <p className="font-display text-sm font-semibold">{wallArt.title}</p>
-          <p className="text-[11px] text-ink/60">
-            {wallArtist?.name} · {wallArt.widthCm}×{wallArt.heightCm} cm · {formatPrice(wallArt.price)}
-          </p>
-        </div>
-
-        <div className="relative z-10 flex justify-center gap-2 pb-5">
-          {wallArts.map((a, i) => (
-            <button
-              key={a.id}
-              onClick={() => setWallIdx(i)}
-              aria-label={`Vis ${a.title}`}
-              className={`overflow-hidden rounded-lg transition-all ${
-                i === wallIdx ? "ring-2 ring-brand" : "opacity-55 hover:opacity-90"
-              }`}
-            >
-              <img src={a.image} alt="" loading="lazy" className="size-10 object-cover md:size-12" />
-            </button>
-          ))}
-        </div>
-      </section>
-      </>}
     </main>
   );
 }
