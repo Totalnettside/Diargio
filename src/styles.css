@@ -82,6 +82,11 @@
 
   --shadow-glass: inset 0 0 0 1px oklch(1 0 0 / 0.72);
   --shadow-lift: 0 24px 48px -34px oklch(0.25 0.018 155 / 0.45);
+  --gallery-wall: oklch(0.975 0 0);
+  --gallery-mat: oklch(0.995 0 0);
+  --gallery-frame: oklch(0.22 0 0);
+  --gallery-frame-edge: oklch(0.38 0 0);
+  --gallery-frame-shadow: 8px 12px 18px -5px oklch(0.15 0 0 / 0.3), 2px 3px 5px oklch(0.15 0 0 / 0.15);
 }
 
 @layer base {
@@ -226,3 +231,51 @@
 .goog-te-banner-frame, .skiptranslate iframe, #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
 body { top: 0 !important; }
 .goog-text-highlight { background: none !important; box-shadow: none !important; }
+
+/* Same original artwork, composited over gallery and interior scenes. */
+.artwork-preview { background: var(--gallery-wall); }
+.artwork-preview-slot,
+.artwork-preview-room-slot {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84%;
+  height: 84%;
+}
+.artwork-preview-frame {
+  display: flex;
+  flex: none;
+  padding: 4cqw;
+  border: 2cqw solid var(--gallery-frame);
+  background: var(--gallery-mat);
+  box-shadow: var(--gallery-frame-shadow);
+  outline: 1px solid var(--gallery-frame-edge);
+}
+.artwork-preview-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 86cqw;
+  max-height: calc(100cqh - 14cqw);
+  object-fit: contain;
+}
+.artwork-preview-room-slot {
+  position: absolute;
+  top: 9%;
+  left: 22%;
+  width: 56%;
+  height: 53%;
+}
+.artwork-preview-gallery,
+.artwork-preview-room { transition: opacity 600ms ease; }
+.artwork-preview-room { opacity: 0; pointer-events: none; }
+@media (hover: hover) {
+  .artwork-preview:hover .artwork-preview-room { opacity: 1; }
+  .artwork-preview:hover .artwork-preview-gallery { opacity: 0; }
+}
+a:focus-visible .artwork-preview-room { opacity: 1; }
+a:focus-visible .artwork-preview-gallery { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .artwork-preview-gallery, .artwork-preview-room { transition: none; }
+}
