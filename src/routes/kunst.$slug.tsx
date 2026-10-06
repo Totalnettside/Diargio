@@ -312,7 +312,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                 </div>
               )}
               <div>
-                <p className="text-sm font-semibold">{seller.name}</p>
+                <p className="text-sm font-semibold">{owner?.name ?? seller.name}</p>
                 {seller.verified && (
                   <p className="text-xs font-semibold text-brandink">✓ Verifisert {seller.type.toLowerCase()}</p>
                 )}
