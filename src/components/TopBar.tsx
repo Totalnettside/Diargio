@@ -92,10 +92,14 @@ export function TopBar() {
             <>
               <Link
                 to="/min-side"
-                className="grid size-10 place-items-center rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
+                className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
                 aria-label="Min side"
               >
-                {(user.email ?? "?").slice(0, 1).toUpperCase()}
+                {avatar ? (
+                  <img src={avatar} alt="Profilbilde" className="size-full object-cover" />
+                ) : (
+                  (user.email ?? "?").slice(0, 1).toUpperCase()
+                )}
               </Link>
               <button
                 onClick={() => void signOut()}
