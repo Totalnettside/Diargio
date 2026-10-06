@@ -43,6 +43,7 @@ function DealRoom() {
 
   const bids = convo?.messages.filter((m) => m.bidAmount) ?? [];
   const highest = bids.reduce((m, b) => Math.max(m, b.bidAmount ?? 0), 0);
+  const isSculpture = /skulptur/i.test(`${artwork.technique ?? ""} ${artwork.category ?? ""}`);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 py-6">
@@ -73,7 +74,7 @@ function DealRoom() {
               const dx = e.clientX - drag.current.x;
               const dy = e.clientY - drag.current.y;
               drag.current = { x: e.clientX, y: e.clientY };
-              setRot((r) => ({ x: Math.max(-35, Math.min(35, r.x - dy * 0.3)), y: r.y + dx * 0.4 }));
+              setRot((r) => ({ x: Math.max(-35, Math.min(35, r.x - dy * 0.3)), y: isSculpture ? r.y + dx * 0.4 : Math.max(-60, Math.min(60, r.y + dx * 0.4)) }));
             }}
             onPointerUp={() => (drag.current = null)}
             onWheel={(e) => setZoom((z) => Math.max(0.6, Math.min(1.8, z - e.deltaY * 0.001)))}
@@ -89,6 +90,26 @@ function DealRoom() {
                 transform: `scale(${zoom}) rotateX(${rot.x}deg) rotateY(${rot.y}deg)`,
               }}
             >
+              {isSculpture ? (
+                <div className="relative" style={{ transformStyle: "preserve-3d", width: 260, height: 360 }}>
+                  {[0, 45, 90, 135].map((deg) => (
+                    <img
+                      key={deg}
+                      src={artwork.image}
+                      alt={deg === 0 ? artwork.title : ""}
+                      draggable={false}
+                      className="absolute inset-x-0 top-0 h-[300px] w-full rounded-2xl object-cover"
+                      style={{ transform: `rotateY(${deg}deg)`, backfaceVisibility: "visible", opacity: deg === 0 ? 1 : 0.85 }}
+                    />
+                  ))}
+                  {/* Sokkel */}
+                  <div
+                    className="absolute left-1/2 top-[300px] h-[60px] w-[180px] -translate-x-1/2 bg-mist"
+                    style={{ transform: "translateX(-50%) rotateX(90deg) translateZ(-1px)", borderRadius: "50%" }}
+                  />
+                  <div className="absolute left-1/2 top-[300px] h-[60px] w-[180px] -translate-x-1/2 rounded-b-xl bg-mist/80" />
+                </div>
+              ) : (
               <div
                 className="relative border-[14px] border-brand/80 bg-mist p-3 shadow-2xl"
                 style={{ transformStyle: "preserve-3d", width: 300 }}
@@ -97,6 +118,7 @@ function DealRoom() {
                 {/* Ramme-dybde */}
                 <div className="absolute inset-[-14px] bg-brand/60" style={{ transform: "translateZ(-24px)" }} />
               </div>
+              )}
             </div>
           </div>
           <div className="absolute bottom-3 left-3 flex gap-2">
