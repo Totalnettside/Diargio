@@ -25,6 +25,7 @@ import { Route as KunstSlugRouteImport } from './routes/kunst.$slug'
 import { Route as KunstnerSlugRouteImport } from './routes/kunstner.$slug'
 import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
 import { Route as RedigerSlugRouteImport } from './routes/rediger.$slug'
+import { Route as SelgerIdRouteImport } from './routes/selger.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -106,6 +107,11 @@ const RedigerSlugRoute = RedigerSlugRouteImport.update({
   path: '/rediger/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SelgerIdRoute = SelgerIdRouteImport.update({
+  id: '/selger/$id',
+  path: '/selger/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
   '/rediger/$slug': typeof RedigerSlugRoute
+  '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
 }
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
   '/rediger/$slug': typeof RedigerSlugRoute
+  '/selger/$id': typeof SelgerIdRoute
   '/auth': typeof AuthIndexRoute
   '/kunst': typeof KunstIndexRoute
 }
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
   '/rediger/$slug': typeof RedigerSlugRoute
+  '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
 }
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/kunstner/$slug'
     | '/profil/$slug'
     | '/rediger/$slug'
+    | '/selger/$id'
     | '/auth/'
     | '/kunst/'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/kunstner/$slug'
     | '/profil/$slug'
     | '/rediger/$slug'
+    | '/selger/$id'
     | '/auth'
     | '/kunst'
   id:
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/kunstner/$slug'
     | '/profil/$slug'
     | '/rediger/$slug'
+    | '/selger/$id'
     | '/auth/'
     | '/kunst/'
   fileRoutesById: FileRoutesById
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   KunstnerSlugRoute: typeof KunstnerSlugRoute
   ProfilSlugRoute: typeof ProfilSlugRoute
   RedigerSlugRoute: typeof RedigerSlugRoute
+  SelgerIdRoute: typeof SelgerIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
 }
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedigerSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/selger/$id': {
+      id: '/selger/$id'
+      path: '/selger/$id'
+      fullPath: '/selger/$id'
+      preLoaderRoute: typeof SelgerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -370,6 +390,7 @@ const rootRouteChildren: RootRouteChildren = {
   KunstnerSlugRoute: KunstnerSlugRoute,
   ProfilSlugRoute: ProfilSlugRoute,
   RedigerSlugRoute: RedigerSlugRoute,
+  SelgerIdRoute: SelgerIdRoute,
   AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,
 }
