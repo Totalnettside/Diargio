@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { UnreadBadge } from "@/components/UnreadBadge";
 
 export const Route = createFileRoute("/min-side")({
+  validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s.tab === "string" ? { tab: s.tab } : {}),
   head: () => ({
     meta: [
       { title: "Min kunsthandel | Diargio" },
@@ -59,7 +60,7 @@ function Dashboard() {
   const receivedBids = bids.filter((b) => b.sellerId === user?.id);
   const sentBids = bids.filter((b) => b.buyerId === user?.id);
   const unreadBids = receivedBids.filter((b) => !b.read).length;
-  const [tab, setTab] = useState<(typeof tabs)[number]>("Oversikt");
+  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = Route.useSearch().tab; return (tabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
   const [decidingBid, setDecidingBid] = useState<string | null>(null);
   const [bidError, setBidError] = useState("");
   const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
