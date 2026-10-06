@@ -7,7 +7,7 @@ import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 
 export const Route = createFileRoute("/meldinger")({
-  validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search.c === "string" ? { c: search.c } : {},
+  validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search["c"] === "string" ? { c: search["c"] } : {},
   head: () => ({
     meta: [
       { title: "Meldinger | Diargio" },
