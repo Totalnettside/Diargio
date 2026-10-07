@@ -130,30 +130,13 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
         <div>
           <div className="overflow-hidden rounded-3xl glass-lift">
             <img
-              src={roomImage ?? artwork.image}
+              src={artwork.image}
               alt={`${artwork.title} av ${artist.name}`}
               width={1024}
               height={1024}
               className="aspect-square w-full object-cover"
             />
           </div>
-          {roomImage && (
-            <p className="mt-2 text-xs text-ink/60">
-              Romvisning: verket vises omtrentlig i {artwork.widthCm} × {artwork.heightCm} cm.
-            </p>
-          )}
-          <label className="mt-3 block w-full cursor-pointer rounded-2xl bg-white/70 px-4 py-3 text-center text-sm font-semibold text-brandink glass">
-            Se kunsten på veggen
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) setRoomImage(URL.createObjectURL(file));
-              }}
-            />
-          </label>
 
           <h1 className="mt-5 font-display text-3xl font-semibold">{artwork.title}</h1>
           {artist.slug ? (
