@@ -1,11 +1,12 @@
-import { useRef, type PointerEvent } from 'react';
+import { useRef, type PointerEvent, type ReactNode } from 'react';
 import type { Artwork } from '@/data/demo';
 import { Button } from '@/components/ui/button';
 import type { Placement } from '@/lib/visual-art';
 
-export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt }: {
+export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt, children }: {
   background: string; aspect?: number; color?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
   onSelect: (id: string) => void; onChange?: (items: Placement[]) => void; onDropArt?: (id: string, x: number, y: number) => void;
+  children?: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const gesture = useRef<{ id: string; startX: number; startY: number; initial: Placement; corner?: string } | null>(null);
@@ -55,5 +56,6 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
         </Button>
       </div>;
     })}
+    {children}
   </div>;
 }

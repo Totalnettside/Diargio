@@ -15,3 +15,4 @@
 - Visual art experiences use normalized 2D placements over room photographs in a shared ArtStage, keeping geometry consistent on all viewport sizes.
 - Art walls persist in owner-scoped art_walls with explicit opt-in sharing; room photos stay in private storage readable only by the owner or viewers of a shared wall.
 - Exhibitions persist room layouts in art_exhibitions with server-validated admin writes and RLS; public visual-art reads use a publishable server client and polling to hide sold or unavailable listings without exposing purchase details.
+- Gallery room geometry and preview pricing are shared across exhibition and placement previews; previews never persist bookings or claim payment until a server-confirmed payment integration exists.

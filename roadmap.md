@@ -10,8 +10,8 @@
 - [x] Kontroller visning og tilgang til budbeslutninger; begge knapper testet uten å endre ekte bud, RPC begrenset til selger.- [x] Legg inn Diargio-logo i toppmenyen (kremhvit, gjennomsiktig), fjern Hjem-knapp, logo større (h-14)
 - [x] Fjern romstørrelsesmåling og størrelsesknapper fra kunstveggen (flytting beholdes).
 - [x] Vis bare veggverk (maleri, grafikk, foto, tegning, street art, digital kunst) i den digitale utstillingen.
-- [ ] Behold eksisterende galleri i rom 1; reserver rom 2 og 3 for betalte veggplasser.
-- [ ] Bestillingsflyt med eget verk, rom, plass, forhåndsvisning, dato og pris.
-- [ ] Sikker betaling, midlertidig reservasjon og aktivering uten overlapp.
-- [ ] Mine galleriplasseringer, kvitteringer, forlengelse og bytte av solgt verk.
-- [ ] Adminstyring av plasser, priser, tilgjengelighet og refusjoner; faktiske besøkstall.
+- [x] Behold eksisterende galleri i rom 1; reserver rom 2 og 3 for betalte veggplasser.
+- [x] Gratis forhåndsvisning med eget verk, rom, plass, dato og pris; knapp på Min side.
+- [ ] Betaling og vedvarende booking, reservasjon, aktivering og kvittering — bruker har valgt å vente med Stripe.
+- [ ] Mine betalte galleriplasseringer, forlengelse og bytte — avventer betaling/booking.
+- [ ] Adminstyring av lagrede priser/plasser, kalender, refusjoner og faktiske tall — avventer betaling/booking.

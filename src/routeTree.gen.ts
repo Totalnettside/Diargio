@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as Diargioadmin007RouteImport } from './routes/diargioadmin007'
+import { Route as GalleriplassRouteImport } from './routes/galleriplass'
 import { Route as KunstveggRouteImport } from './routes/kunstvegg'
 import { Route as MeldingerRouteImport } from './routes/meldinger'
 import { Route as MinSideRouteImport } from './routes/min-side'
@@ -39,6 +40,11 @@ const IndexRoute = IndexRouteImport.update({
 const Diargioadmin007Route = Diargioadmin007RouteImport.update({
   id: '/diargioadmin007',
   path: '/diargioadmin007',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleriplassRoute = GalleriplassRouteImport.update({
+  id: '/galleriplass',
+  path: '/galleriplass',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KunstveggRoute = KunstveggRouteImport.update({
@@ -141,6 +147,7 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/diargioadmin007': typeof Diargioadmin007Route
+  '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diargioadmin007': typeof Diargioadmin007Route
+  '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/diargioadmin007': typeof Diargioadmin007Route
+  '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/diargioadmin007'
+    | '/galleriplass'
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/diargioadmin007'
+    | '/galleriplass'
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/diargioadmin007'
+    | '/galleriplass'
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
@@ -283,6 +295,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Diargioadmin007Route: typeof Diargioadmin007Route
+  GalleriplassRoute: typeof GalleriplassRoute
   KunstveggRoute: typeof KunstveggRoute
   MeldingerRoute: typeof MeldingerRoute
   MinSideRoute: typeof MinSideRoute
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/diargioadmin007'
       fullPath: '/diargioadmin007'
       preLoaderRoute: typeof Diargioadmin007RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galleriplass': {
+      id: '/galleriplass'
+      path: '/galleriplass'
+      fullPath: '/galleriplass'
+      preLoaderRoute: typeof GalleriplassRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kunstvegg': {
@@ -459,6 +479,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Diargioadmin007Route: Diargioadmin007Route,
+  GalleriplassRoute: GalleriplassRoute,
   KunstveggRoute: KunstveggRoute,
   MeldingerRoute: MeldingerRoute,
   MinSideRoute: MinSideRoute,

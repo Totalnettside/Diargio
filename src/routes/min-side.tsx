@@ -90,6 +90,7 @@ function Dashboard() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-5">
       <h1 className="font-display text-2xl font-semibold">Min kunsthandel</h1>
+      <Button asChild variant="outline" className="mt-3"><Link to="/galleriplass" search={{ room: 2 }}>Still ut i galleriet</Link></Button>
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {tabs.map((t) => (
