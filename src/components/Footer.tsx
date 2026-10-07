@@ -23,12 +23,12 @@ export function Footer() {
             <h3 className="text-sm font-semibold">Utforsk kunst</h3>
             <ul className="mt-3 space-y-2">
               <li><Link to="/kunst" className={linkCls}>Alle kunstverk</Link></li>
-              {[
+              {([
                 ["Malerier", "Malerier"],
                 ["Grafikk og trykk", "Grafikk & trykk"],
                 ["Fotografi", "Fotografi"],
                 ["Skulpturer", "Skulpturer"],
-              ].map(([label, k]) => (
+              ] as [string, string][]).map(([label, k]) => (
                 <li key={k}>
                   <Link to="/kunst" search={{ kategori: k }} className={linkCls}>{label}</Link>
                 </li>
