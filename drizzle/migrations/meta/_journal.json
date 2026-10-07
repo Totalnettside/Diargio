@@ -85,6 +85,13 @@
       "when": 1791397561498,
       "tag": "0011_fix_shared_wall_room_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791397669422,
+      "tag": "0012_guard_art_wall_room_ownership",
+      "breakpoints": true
     }
   ]
 }

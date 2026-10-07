@@ -1,0 +1,2 @@
+ALTER POLICY "Owners create walls" ON public.art_walls WITH CHECK (user_id = auth.uid() AND (layout->>'roomPath' IS NULL OR (split_part(layout->>'roomPath', '/', 1) = auth.uid()::text AND position('..' in layout->>'roomPath') = 0)));
+ALTER POLICY "Owners update walls" ON public.art_walls WITH CHECK (user_id = auth.uid() AND (layout->>'roomPath' IS NULL OR (split_part(layout->>'roomPath', '/', 1) = auth.uid()::text AND position('..' in layout->>'roomPath') = 0)));
