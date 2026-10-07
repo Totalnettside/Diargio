@@ -103,7 +103,6 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
   useEffect(() => addRecent(artwork.id), [artwork.id]);
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
-  const [roomImage, setRoomImage] = useState<string | null>(null);
   const navigate = useNavigate();
   const others = artworksBySeller(seller.id).filter((a) => a.id !== artwork.id).slice(0, 3);
 
