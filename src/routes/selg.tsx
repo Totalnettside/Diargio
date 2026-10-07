@@ -2,8 +2,9 @@ import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Sparkles, Upload, X } from "lucide-react";
+import { Camera, Crop, Sparkles, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 import {
   artImages,
   artTypes,
@@ -70,6 +71,8 @@ function SellPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [images, setImages] = useState<string[]>([]);
+  const [originalImages, setOriginalImages] = useState<string[]>([]);
+  const [cropIndex, setCropIndex] = useState<number | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState("");
@@ -85,6 +88,7 @@ function SellPage() {
     try {
       const urls = await Promise.all(selected.map(compressImage));
       setImages((prev) => [...prev, ...urls].slice(0, 15));
+      setOriginalImages((prev) => [...prev, ...urls].slice(0, 15));
     } catch {
       setImageError("Bildet kunne ikke åpnes. Prøv et JPG- eller PNG-bilde.");
     }
@@ -272,15 +276,24 @@ function SellPage() {
             {images.length > 0 && (
               <div className="grid grid-cols-4 gap-2">
                 {images.map((src, i) => (
-                  <div key={src} className="relative">
-                    <img src={src} alt="" className="aspect-square w-full rounded-xl object-cover" />
-                    <button
-                      onClick={() => setImages(images.filter((_, idx) => idx !== i))}
-                      className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white/85"
+                  <div key={i} className="relative min-w-0">
+                    <img src={src} alt={`Kunstbilde ${i + 1}`} className="aspect-square w-full rounded-xl bg-card object-contain" />
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="outline"
+                      onClick={() => {
+                        setImages((prev) => prev.filter((_, idx) => idx !== i));
+                        setOriginalImages((prev) => prev.filter((_, idx) => idx !== i));
+                      }}
+                      className="absolute right-1 top-1 size-7 rounded-full bg-card"
                       aria-label="Fjern bilde"
                     >
                       <X className="size-3" />
-                    </button>
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setCropIndex(i)} aria-label={`Beskjær bilde ${i + 1}`} title="Beskjær bildet" className="mt-2 h-9 w-full gap-1 px-1 text-xs">
+                      <Crop /><span className="hidden sm:inline">Beskjær</span>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -547,6 +560,14 @@ function SellPage() {
           )}
         </div>
       </section>
+      {cropIndex !== null && originalImages[cropIndex] && (
+        <ImageCropDialog
+          key={cropIndex}
+          image={originalImages[cropIndex]}
+          onClose={() => setCropIndex(null)}
+          onSave={(cropped) => setImages((prev) => prev.map((image, i) => i === cropIndex ? cropped : image))}
+        />
+      )}
     </main>
   );
 }
@@ -560,7 +581,9 @@ function compressImage(file: File): Promise<string> {
       const c = document.createElement("canvas");
       c.width = Math.round(img.width * scale);
       c.height = Math.round(img.height * scale);
-      c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+      const context = c.getContext("2d");
+      if (!context) { URL.revokeObjectURL(img.src); reject(new Error("Bildet kunne ikke åpnes.")); return; }
+      context.drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(img.src);
       resolve(c.toDataURL("image/jpeg", 0.82));
     };
