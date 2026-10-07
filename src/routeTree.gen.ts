@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as Diargioadmin007RouteImport } from './routes/diargioadmin007'
 import { Route as MeldingerRouteImport } from './routes/meldinger'
 import { Route as MinSideRouteImport } from './routes/min-side'
 import { Route as SelgRouteImport } from './routes/selg'
@@ -34,9 +34,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const Diargioadmin007Route = Diargioadmin007RouteImport.update({
+  id: '/diargioadmin007',
+  path: '/diargioadmin007',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeldingerRoute = MeldingerRouteImport.update({
@@ -128,7 +128,7 @@ const LovableEmailTransactionalPreviewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/diargioadmin007': typeof Diargioadmin007Route
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -149,7 +149,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/diargioadmin007': typeof Diargioadmin007Route
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -171,7 +171,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/diargioadmin007': typeof Diargioadmin007Route
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
@@ -194,7 +194,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
+    | '/diargioadmin007'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -215,7 +215,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
+    | '/diargioadmin007'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -236,7 +236,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
+    | '/diargioadmin007'
     | '/meldinger'
     | '/min-side'
     | '/selg'
@@ -258,7 +258,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  Diargioadmin007Route: typeof Diargioadmin007Route
   MeldingerRoute: typeof MeldingerRoute
   MinSideRoute: typeof MinSideRoute
   SelgRoute: typeof SelgRoute
@@ -287,11 +287,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/diargioadmin007': {
+      id: '/diargioadmin007'
+      path: '/diargioadmin007'
+      fullPath: '/diargioadmin007'
+      preLoaderRoute: typeof Diargioadmin007RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meldinger': {
@@ -418,7 +418,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  Diargioadmin007Route: Diargioadmin007Route,
   MeldingerRoute: MeldingerRoute,
   MinSideRoute: MinSideRoute,
   SelgRoute: SelgRoute,
