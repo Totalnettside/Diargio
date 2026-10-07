@@ -70,6 +70,8 @@ export type Artwork = {
   county: string;
   saleType: SaleType;
   price: number;
+  sellerPayout?: number;
+  artFeeApplies?: boolean;
   currentBid?: number;
   bidCount?: number;
   auctionEndsInMin?: number;

@@ -5,7 +5,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAdminOverview, setAdminRole, setVerified } from "@/lib/admin.functions";
 import { adminDeleteUser } from "@/lib/account.functions";
 import { useStore } from "@/lib/store";
-import { TOTAL_FEE_RATE, PLATFORM_FEE_RATE, ART_FEE_RATE } from "@/lib/fees";
+import { breakdownFromTotal } from "@/lib/fees";
+const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
+const TOTAL_FEE_RATE = feeShare(10000);
+const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
+const ART_FEE_RATE = breakdownFromTotal(10000).artFee / 10000;
 
 const tabs = ["Oversikt", "Brukere", "Annonser", "Bud & salg", "Toppliste", "Økonomi"] as const;
 type Tab = (typeof tabs)[number];
@@ -134,7 +138,7 @@ function Overview({ d, go }: { d: D; go: (t: Tab) => void }) {
         <Kpi label="Annonser" value={String(d.listings.length)} sub={`+${within(d.listings.map((l) => l.created_at), 7 * day)} siste 7 d`} onClick={() => go("Annonser")} />
         <Kpi label="Ventende bud" value={String(pending.length)} sub={`${d.bids.length} bud totalt`} onClick={() => go("Bud & salg")} />
         <Kpi label="Salg" value={String(d.purchases.length)} sub={kr(gmv) + " omsatt"} onClick={() => go("Økonomi")} />
-        <Kpi label="Diargio inntekt" value={kr(gmv * TOTAL_FEE_RATE)} sub="25 % av salg" onClick={() => go("Økonomi")} />
+        <Kpi label="Diargio inntekt" value={kr(gmv * TOTAL_FEE_RATE)} sub="provisjon + kunstavgift" onClick={() => go("Økonomi")} />
         <Kpi label="Meldinger 24 t" value={String(within(d.messageTimes, day))} sub={`${d.messageTimes.length} totalt`} />
         <Kpi label="Følgerskap" value={String(d.follows.length)} sub={`${d.reviews.length} omtaler`} onClick={() => go("Toppliste")} />
       </div>
@@ -369,9 +373,9 @@ function Economy({ d }: { d: D }) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Omsatt (salg)" value={kr(gmv)} />
-        <Kpi label="Diargio-gebyr 20 %" value={kr(gmv * PLATFORM_FEE_RATE)} />
-        <Kpi label="Kunstavgift 5 %" value={kr(gmv * ART_FEE_RATE)} />
-        <Kpi label="Total inntekt 25 %" value={kr(gmv * TOTAL_FEE_RATE)} />
+        <Kpi label="Provisjon" value={kr(gmv * PLATFORM_FEE_RATE)} />
+        <Kpi label="Kunstavgift" value={kr(gmv * ART_FEE_RATE)} />
+        <Kpi label="Total inntekt" value={kr(gmv * TOTAL_FEE_RATE)} />
         <Kpi label="Godkjente bud (ubetalt)" value={kr(pipeline)} sub={`${kr(pipeline * TOTAL_FEE_RATE)} i mulig inntekt`} />
         <Kpi label="Verdi på alle annonser" value={kr(inventory)} sub={`${kr(inventory * TOTAL_FEE_RATE)} om alt selges`} />
         <Kpi label="Snittpris" value={kr(avg)} />

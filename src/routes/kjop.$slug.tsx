@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo";
 import type { Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
-import { calculateTransactionFees } from "@/lib/fees";
+import { breakdownFromTotal } from "@/lib/fees";
 import { supabase } from "@/integrations/supabase/client";
 import { StripeBadge } from "@/components/StripeBadge";
 
@@ -50,7 +50,7 @@ function CheckoutPage() {
 function Checkout({ artwork }: { artwork: Artwork }) {
   const seller = sellerById(artwork.sellerId);
   const [step, setStep] = useState(0);
-  const fees = calculateTransactionFees(artwork.price);
+  const fees = breakdownFromTotal(artwork.price, artwork.artFeeApplies ?? true);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-5">
@@ -74,20 +74,24 @@ function Checkout({ artwork }: { artwork: Artwork }) {
 
       <div className="mt-4 rounded-3xl p-4 text-sm glass">
         <div className="flex justify-between">
-          <span>Verk</span>
+          <span>Verk (totalpris)</span>
           <span>{formatPrice(artwork.price)}</span>
         </div>
         <div className="mt-2 flex justify-between text-ink/60">
-          <span>Diargio-gebyr (20 %)</span>
+          <span>Herav Diargio-provisjon</span>
           <span>{formatPrice(fees.platformFee)}</span>
         </div>
         <div className="mt-1 flex justify-between text-ink/60">
-          <span>Kunstavgift (5 %)</span>
+          <span>Herav kunstavgift</span>
           <span>{formatPrice(fees.artFee)}</span>
         </div>
         <div className="mt-2 flex justify-between border-t border-border pt-2 font-bold">
-          <span>Å betale</span>
+          <span>Å betale for verket</span>
           <span>{formatPrice(fees.total)}</span>
+        </div>
+        <div className="mt-2 flex justify-between text-ink/60">
+          <span>Frakt</span>
+          <span>Avtales separat</span>
         </div>
       </div>
 
