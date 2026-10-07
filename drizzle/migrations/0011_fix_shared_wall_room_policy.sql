@@ -1,0 +1,1 @@
+ALTER POLICY "Owners and shared wall viewers read rooms" ON storage.objects USING (bucket_id = 'art-wall-rooms' AND ((storage.foldername(storage.objects.name))[1] = auth.uid()::text OR EXISTS (SELECT 1 FROM public.art_walls w WHERE w.shared = true AND w.layout->>'roomPath' = storage.objects.name)));
