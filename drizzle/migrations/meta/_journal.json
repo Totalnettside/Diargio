@@ -64,6 +64,34 @@
       "when": 1791375134463,
       "tag": "0008_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791397194553,
+      "tag": "0009_visual_art_walls_exhibitions",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791397231748,
+      "tag": "0010_art_wall_room_storage_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791397561498,
+      "tag": "0011_fix_shared_wall_room_policy",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791397669422,
+      "tag": "0012_guard_art_wall_room_ownership",
+      "breakpoints": true
     }
   ]
 }

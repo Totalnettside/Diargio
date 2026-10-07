@@ -1,4 +1,7 @@
 # Budvarsler
+- [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
+- [x] Digital utstilling: galleri/liste, rom, kunstinfo og admin-redigering.
+- [x] Koble navigasjon og profil; kontrollere mobil, tastatur og sikker tilgang.
 - [x] Lagre bud og sende melding til selger automatisk.
 - [x] Vis uleste bud og mottatte bud for selger.
 - [x] Kontroller sending og tilgangsregler; lagring/melding kontrollert, selgervisning og feilhåndtering testet.

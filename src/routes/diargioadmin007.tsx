@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ControlCenter } from "@/components/admin/ControlCenter";
 import { Link } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/diargioadmin007")({
   head: () => ({
@@ -33,5 +34,5 @@ function AdminPage() {
 }
 
 function AdminContent() {
-  return <ControlCenter />;
+  return <><div className="mx-auto flex max-w-7xl justify-end px-5 pt-5"><Button asChild variant="outline"><Link to="/utstillinger">Administrer utstillinger</Link></Button></div><ControlCenter /></>;
 }

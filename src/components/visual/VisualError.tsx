@@ -1,0 +1,3 @@
+import { Link } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+export function VisualError() { return <main className="px-6 py-20 text-center"><h1 className="text-xl font-semibold">Kunsten kunne ikke lastes</h1><p className="mt-2 text-muted-foreground">Prøv igjen om et øyeblikk.</p><Button variant="outline" asChild className="mt-4"><Link to="/kunst">Se alle kunstverk</Link></Button></main>; }

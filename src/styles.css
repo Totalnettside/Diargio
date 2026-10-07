@@ -91,6 +91,11 @@
   --gallery-frame: oklch(0.22 0 0);
   --gallery-frame-edge: oklch(0.38 0 0);
   --gallery-frame-shadow: 8px 12px 18px -5px oklch(0.15 0 0 / 0.3), 2px 3px 5px oklch(0.15 0 0 / 0.15);
+  --wall-ivory: oklch(0.96 0.012 90);
+  --wall-gray: oklch(0.78 0.005 100);
+  --wall-sage: oklch(0.73 0.035 135);
+  --wall-clay: oklch(0.75 0.045 65);
+  --art-placement-shadow: 3px 5px 10px color-mix(in oklab, var(--foreground) 22%, transparent);
 }
 
 @layer base {
@@ -292,3 +297,47 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   .artwork-preview-gallery, .artwork-preview-room { transition: none; }
 }
+
+/* Shared 2D art experiences. Geometry is normalized to the room photograph. */
+.visual-page { width:100%; background:var(--card); }
+.visual-page-heading { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:24px 28px; border-bottom:1px solid var(--border); }
+.visual-eyebrow { font-size:10px; font-weight:600; color:var(--muted-foreground); margin-bottom:8px; }
+.visual-workspace { display:grid; grid-template-columns:220px minmax(0,1fr); position:relative; }
+.visual-sidebar { padding:22px; display:flex; flex-direction:column; gap:18px; border-right:1px solid var(--border); }
+.visual-label { display:flex; flex-direction:column; gap:7px; font-size:12px; font-weight:600; }
+.visual-label select { width:100%; border:1px solid var(--border); border-radius:6px; background:var(--background); padding:9px; font-size:12px; font-weight:400; }
+.visual-stage-area { position:relative; align-self:start; min-width:0; }
+.art-stage { width:100%; position:relative; overflow:hidden; background:var(--muted); isolation:isolate; }
+.wall-tint { position:absolute; inset:0 0 28% 0; pointer-events:none; mix-blend-mode:multiply; }
+.wall-tone-ivory .wall-tint,.tone-ivory { background:var(--wall-ivory); }
+.wall-tone-gray .wall-tint,.tone-gray { background:var(--wall-gray); }
+.wall-tone-sage .wall-tint,.tone-sage { background:var(--wall-sage); }
+.wall-tone-clay .wall-tint,.tone-clay { background:var(--wall-clay); }
+.tone-original { background:var(--card); }
+.wall-swatch { border-radius:50%; width:28px; height:28px; padding:4px; }
+.wall-swatch[aria-pressed=true] { outline:1px solid var(--primary); outline-offset:3px; }
+.placed-art { position:absolute; box-shadow:var(--art-placement-shadow); }
+.placed-art.is-selected { outline:2px solid var(--primary); outline-offset:4px; z-index:2; }
+.placed-art-button { width:100%; height:100%; display:block; padding:0; border:0; border-radius:0; background:transparent; touch-action:none; }
+.placed-art-button:hover { background:transparent; }
+.placed-art-button img { width:100%; height:100%; object-fit:contain; display:block; pointer-events:none; }
+.resize-handle { position:absolute; width:12px; height:12px; padding:0; border:2px solid var(--card); border-radius:50%; touch-action:none; }
+.handle-top-left { left:-9px;top:-9px;cursor:nwse-resize; }
+.handle-top-right { right:-9px;top:-9px;cursor:nesw-resize; }
+.handle-bottom-left { left:-9px;bottom:-9px;cursor:nesw-resize; }
+.handle-bottom-right { right:-9px;bottom:-9px;cursor:nwse-resize; }
+.art-marker { position:absolute; left:7px;top:7px; border:2px solid var(--card); border-radius:50%; width:24px; height:24px; display:grid; place-items:center; background:var(--foreground); color:var(--primary-foreground); font-size:11px; }
+.visual-details { position:absolute; right:22px; top:22px; width:255px; z-index:5; padding:28px 20px 20px; background:var(--card); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-lift); max-height:calc(100% - 44px); overflow-y:auto; }
+.visual-workspace:has(.visual-details) { padding-right:290px; }
+.stage-empty { position:absolute; left:50%;top:35%;transform:translate(-50%,-50%);text-align:center; width:min(360px,80%); pointer-events:none; background:color-mix(in oklab,var(--card) 85%,transparent); padding:20px; border-radius:8px; }
+.art-tray { border-top:1px solid var(--border);padding:20px 26px; }
+.calibration-line { position:absolute; top:12%;border-top:2px solid var(--primary);z-index:3;pointer-events:none; }
+.calibration-line::before,.calibration-line::after { content:'';position:absolute;top:-7px;height:12px;border-left:2px solid var(--primary); }
+.calibration-line::after { right:0; }
+.calibration-line span { position:absolute;left:50%;bottom:5px;transform:translateX(-50%);background:var(--card);padding:3px 6px;font-size:10px;white-space:nowrap; }
+.exhibition-space { position:relative; }
+.exhibition-space .art-stage { max-height:760px; }
+.gallery-room-nav { position:absolute; left:24px;bottom:24px;background:color-mix(in oklab,var(--card) 94%,transparent);padding:20px; border-radius:8px; min-width:280px; box-shadow:var(--shadow-lift); }
+@media(max-width:1100px) { .visual-workspace { grid-template-columns:190px minmax(0,1fr); } .visual-workspace:has(.visual-details) { padding-right:0; } .visual-details { position:relative;grid-column:2;right:auto;top:auto;width:100%;max-height:none;border-radius:0;box-shadow:none; } .exhibition-space .visual-details { grid-column:auto; } }
+@media(max-width:767px) { .visual-page-heading { padding:20px;align-items:flex-start;flex-direction:column; } .visual-workspace { display:flex;flex-direction:column; } .visual-sidebar { display:grid;grid-template-columns:1fr 1fr;padding:16px;gap:14px;border-right:0;order:2; } .visual-stage-area { width:100%;order:0; } .visual-details { order:1;padding:24px 20px; } .visual-details>img { max-height:160px; } .visual-sidebar>div:last-child { grid-column:1/-1; } .art-tray { padding:18px 16px; } .art-stage { min-height:0; } .gallery-room-nav { position:relative;left:auto;bottom:auto;box-shadow:none;border-radius:0;border-bottom:1px solid var(--border); } .exhibition-space .visual-details { position:relative;right:auto;top:auto;width:100%; } .exhibition-space .art-stage { max-height:none; } .art-marker { width:20px;height:20px;left:2px;top:2px; } }
+@media(prefers-reduced-motion:reduce) { .visual-page * { scroll-behavior:auto; } }

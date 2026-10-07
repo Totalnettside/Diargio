@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { Button } from "@/components/ui/button";
 import { UnreadBadge } from "@/components/UnreadBadge";
+import { SavedWalls } from "@/components/visual/SavedWalls";
 
 export const Route = createFileRoute("/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
@@ -33,6 +34,7 @@ const tabs = [
   "Min profil",
   "Mine annonser",
   "Favoritter",
+  "Kunstvegger",
   "Lagrede søk",
   "Bud",
   "Følger",
@@ -133,6 +135,7 @@ function Dashboard() {
         </>
       )}
 
+      {tab === "Kunstvegger" && <SavedWalls />}
       {tab === "Min profil" && (
         <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
           <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>
