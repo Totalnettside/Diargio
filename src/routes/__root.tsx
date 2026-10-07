@@ -134,6 +134,12 @@ function RootComponent() {
           <TopBar />
           {/* Required: nested routes render here. */}
           <Outlet />
+          <footer className="border-t border-border py-6 text-center text-xs text-ink/60">
+            Kontakt oss:{" "}
+            <a href="mailto:Post@diargio.com" className="font-semibold text-brandink hover:underline">
+              Post@diargio.com
+            </a>
+          </footer>
           <BottomNav />
           <OnboardingDialog />
         </div>
