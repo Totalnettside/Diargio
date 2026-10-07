@@ -17,6 +17,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ChatProvider } from "@/hooks/useChat";
 import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { TopBar } from "@/components/TopBar";
+import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 
 function NotFoundComponent() {
@@ -134,12 +135,7 @@ function RootComponent() {
           <TopBar />
           {/* Required: nested routes render here. */}
           <Outlet />
-          <footer className="border-t border-border py-6 text-center text-xs text-ink/60">
-            Kontakt oss:{" "}
-            <a href="mailto:Post@diargio.com" className="font-semibold text-brandink hover:underline">
-              Post@diargio.com
-            </a>
-          </footer>
+          <Footer />
           <BottomNav />
           <OnboardingDialog />
         </div>
