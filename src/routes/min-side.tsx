@@ -4,6 +4,7 @@ import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, formatPrice, reviews, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { ProfileForm } from "@/components/ProfileForm";
+import { DeleteAccount } from "@/components/DeleteAccount";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
