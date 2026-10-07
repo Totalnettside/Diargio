@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "react-image-crop/dist/ReactCrop.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -96,7 +97,12 @@
   --wall-sage: oklch(0.73 0.035 135);
   --wall-clay: oklch(0.75 0.045 65);
   --art-placement-shadow: 3px 5px 10px color-mix(in oklab, var(--foreground) 22%, transparent);
+  --crop-overlay: oklch(0.15 0 0 / 0.55);
 }
+
+.image-crop-dialog .ReactCrop__crop-selection { box-shadow: 0 0 0 9999em var(--crop-overlay); border-color:var(--primary-foreground); }
+.image-crop-dialog .ReactCrop__drag-handle::after { background:var(--primary); border-color:var(--primary-foreground); }
+.image-crop-dialog .ReactCrop__crop-selection:focus { outline-color:var(--ring); }
 
 @layer base {
   * {
