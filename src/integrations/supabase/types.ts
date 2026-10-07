@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      artist_follows: {
+        Row: {
+          artist_id: string
+          created_at: string
+          follower_id: string
+          last_seen_at: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          follower_id?: string
+          last_seen_at?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          follower_id?: string
+          last_seen_at?: string
+        }
+        Relationships: []
+      }
       bids: {
         Row: {
           amount: number
@@ -170,6 +191,9 @@ export type Database = {
           location: string | null
           onboarded: boolean
           phone: string | null
+          story: string | null
+          studio_images: string[]
+          techniques: string[]
           updated_at: string
           vipps_sub: string | null
           website: string | null
@@ -186,6 +210,9 @@ export type Database = {
           location?: string | null
           onboarded?: boolean
           phone?: string | null
+          story?: string | null
+          studio_images?: string[]
+          techniques?: string[]
           updated_at?: string
           vipps_sub?: string | null
           website?: string | null
@@ -202,6 +229,9 @@ export type Database = {
           location?: string | null
           onboarded?: boolean
           phone?: string | null
+          story?: string | null
+          studio_images?: string[]
+          techniques?: string[]
           updated_at?: string
           vipps_sub?: string | null
           website?: string | null
@@ -282,6 +312,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      artist_follower_count: { Args: { _artist: string }; Returns: number }
       decide_artwork_bid: {
         Args: { _bid_id: string; _decision: string }
         Returns: undefined
@@ -297,6 +328,7 @@ export type Database = {
         Args: { _cid: string; _uid: string }
         Returns: boolean
       }
+      sold_listing_ids: { Args: { _seller: string }; Returns: string[] }
       submit_artwork_bid: {
         Args: { _amount: number; _listing_id: string; _message?: string }
         Returns: string
