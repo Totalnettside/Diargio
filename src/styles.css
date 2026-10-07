@@ -346,5 +346,38 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 .gallery-slot-selected { outline:2px solid var(--primary); outline-offset:3px; }
 .gallery-preview-layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; align-items:start; }
 .gallery-preview-layout>section:last-child { border-left:1px solid var(--border); }
+.messages-page {
+  --background: #f1f3ed;
+  --foreground: #1a2e24;
+  --primary: #2d4a39;
+  --primary-foreground: #ffffff;
+  --muted-foreground: #64766a;
+  --border: #e8ebe4;
+  --message-selected: #e4eadf;
+  --message-selected-border: #dce3d5;
+  --message-paper: #ffffff;
+  --message-incoming: #f8f9f6;
+  --message-title-font: "Playfair Display", Georgia, serif;
+  --message-shadow: 0 2px 8px color-mix(in oklab, var(--foreground) 4%, transparent);
+  color: var(--foreground);
+  background: var(--background);
+}
+.messages-title { font-family: var(--message-title-font); }
+.messages-list { max-height: 640px; }
+.messages-conversation { background: color-mix(in oklab, var(--message-paper) 40%, transparent); border-color: transparent; color:var(--foreground); }
+.messages-conversation:hover { background:var(--message-paper); border-color:var(--message-paper); color:var(--foreground); }
+.messages-conversation.is-active { background:var(--message-selected); border-color:var(--message-selected-border); box-shadow:var(--message-shadow); }
+.messages-thumbnail { background:var(--message-paper); }
+.messages-chat { height:640px; background:var(--message-paper); border-color:var(--border); box-shadow:var(--message-shadow); }
+.messages-context:hover { background:var(--message-incoming); }
+.messages-bubble-sent, .messages-send { background:var(--primary); color:var(--primary-foreground); }
+.messages-bubble-received { background:var(--message-incoming); border-color:var(--background); color:var(--foreground); }
+.messages-compose { background:var(--message-incoming); border-color:var(--background); }
+.messages-compose:focus-within { border-color:var(--primary); }
+@media(max-width:767px) {
+  .messages-list { max-height:240px; }
+  .messages-chat { height:560px; border-radius:24px; }
+}
+@media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } }
 @media(max-width:900px) { .gallery-preview-layout { grid-template-columns:minmax(0,1fr); } .gallery-preview-layout>section:last-child { border-left:0; } }
 @media(max-width:600px) { .gallery-slot { padding:4px 6px; gap:3px; font-size:10px; } .gallery-slot-number { width:16px; height:16px; font-size:9px; } }

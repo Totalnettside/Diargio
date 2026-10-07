@@ -5,10 +5,13 @@ import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight, MessageCircle, Send } from "lucide-react";
 
 export const Route = createFileRoute("/meldinger")({
   validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search["c"] === "string" ? { c: search["c"] } : {},
   head: () => ({
+    links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" }],
     meta: [
       { title: "Meldinger | Diargio" },
       { name: "description", content: "Samtaler med kjøpere og selgere, koblet til kunstverket." },
@@ -28,7 +31,7 @@ function MessagesPage() {
   const { conversations, messages, names, unreadFor, send, markRead } = useChat();
   const [activeId, setActiveId] = useState("");
   const [text, setText] = useState("");
-  const endRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
   const active = conversations.find((conversation) => conversation.id === (activeId || c)) ?? conversations[0];
   const thread = active ? messages.filter((m) => m.conversation_id === active.id) : [];
   const artwork = active ? allArtworks.find((a) => a.id === active.listing_id) : undefined;
@@ -44,29 +47,32 @@ function MessagesPage() {
   }, [active?.id, bids, user?.id, markBidRead]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end" });
-  }, [thread.length]);
+    const container = threadRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
+  }, [active?.id, thread.length]);
 
   if (!loading && !user) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-5 py-10 text-center">
-        <h1 className="font-display text-2xl font-semibold">Meldinger</h1>
+      <main className="messages-page mx-auto w-full max-w-3xl px-5 py-16 text-center">
+        <MessageCircle className="mx-auto mb-5 size-8 text-primary" />
+        <h1 className="messages-title text-3xl font-semibold">Meldinger</h1>
         <p className="mt-2 text-sm text-ink/60">Logg inn for å se meldingene dine.</p>
-        <Link to="/auth" className="mt-4 inline-block rounded-2xl bg-brandink px-6 py-3 text-sm font-semibold text-primary-foreground">
+        <Button asChild className="mt-6"><Link to="/auth">
           Logg inn
-        </Link>
+        </Link></Button>
       </main>
     );
   }
 
   if (conversations.length === 0) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-5 py-10 text-center">
-        <h1 className="font-display text-2xl font-semibold">Meldinger</h1>
+      <main className="messages-page mx-auto w-full max-w-3xl px-5 py-16 text-center">
+        <MessageCircle className="mx-auto mb-5 size-8 text-primary" />
+        <h1 className="messages-title text-3xl font-semibold">Meldinger</h1>
         <p className="mt-2 text-sm text-ink/60">Du har ingen samtaler ennå. Kontakt en selger fra en annonse.</p>
-        <Link to="/kunst" className="mt-4 inline-block rounded-2xl bg-brandink px-6 py-3 text-sm font-semibold text-primary-foreground">
+        <Button asChild className="mt-6"><Link to="/kunst">
           Utforsk kunst
-        </Link>
+        </Link></Button>
       </main>
     );
   }
@@ -75,62 +81,66 @@ function MessagesPage() {
     names[c.buyer_id === user?.id ? c.seller_id : c.buyer_id] ?? "Bruker";
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Meldinger</h1>
-      <div className="mt-4 grid gap-4 md:grid-cols-[300px_1fr]">
-        <aside className="space-y-2">
+    <main className="messages-page mx-auto w-full max-w-6xl px-4 py-8 md:px-5 md:py-10">
+      <h1 className="messages-title text-3xl font-semibold">Meldinger</h1>
+      <div className="messages-workspace mt-6 grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)]">
+        <aside aria-label="Samtaler" className="messages-list flex min-w-0 flex-col gap-3 overflow-y-auto">
           {conversations.map((c) => {
             const art = allArtworks.find((a) => a.id === c.listing_id);
             const last = messages.filter((m) => m.conversation_id === c.id).at(-1);
             const n = unreadFor(c.id);
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={c.id}
                 onClick={() => setActiveId(c.id)}
-                className={`flex w-full items-center gap-3 rounded-2xl p-3 text-left glass ${c.id === active?.id ? "bg-lav/50" : ""}`}
+                aria-pressed={c.id === active?.id}
+                className={`messages-conversation h-auto w-full shrink-0 justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-left ${c.id === active?.id ? "is-active" : ""}`}
               >
-                {art && <img src={art.image} alt={art.title} loading="lazy" className="size-12 rounded-xl object-cover" />}
+                {art ? <img src={art.image} alt={art.title} loading="lazy" className="messages-thumbnail size-14 shrink-0 rounded-xl object-contain" /> : <MessageCircle className="size-14 shrink-0 p-3 text-muted-foreground" />}
                 <div className="min-w-0 flex-1">
                   <p className={`truncate text-sm ${n ? "font-bold" : "font-semibold"}`}>{otherName(c)}</p>
-                  <p className="truncate text-xs text-ink/55">{art?.title}</p>
-                  <p className={`truncate text-xs ${n ? "font-semibold text-ink" : "text-ink/55"}`}>{last?.body}</p>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{art?.title}</p>
+                  <p className={`mt-1.5 truncate text-xs ${n || c.id === active?.id ? "font-semibold text-primary" : "text-muted-foreground"}`}>{last?.body}</p>
                 </div>
                 <UnreadBadge count={n} />
-              </button>
+              </Button>
             );
           })}
         </aside>
 
-        <section className="flex flex-col rounded-3xl p-4 glass">
+        <section aria-label="Aktiv samtale" className="messages-chat flex min-w-0 flex-col overflow-hidden rounded-[2rem] border">
           {artwork && (
-            <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="flex items-center gap-3 rounded-2xl bg-white/70 p-3 glass">
-              <img src={artwork.image} alt={artwork.title} loading="lazy" className="size-14 rounded-xl object-cover" />
-              <div>
-                <p className="text-sm font-semibold">{artwork.title}</p>
-                <p className="text-xs text-ink/55">{formatPrice(artwork.price)}</p>
-                {active && <p className="text-xs text-ink/45">Samtale med {otherName(active)}</p>}
+            <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="messages-context flex shrink-0 items-center gap-4 border-b p-5 transition-colors">
+              <img src={artwork.image} alt={artwork.title} loading="lazy" className="messages-thumbnail size-16 shrink-0 rounded-xl object-contain" />
+              <div className="min-w-0 flex-1">
+                <h2 className="truncate text-lg font-semibold">{artwork.title}</h2>
+                <p className="mt-0.5 text-sm font-bold text-primary">{formatPrice(artwork.price)}</p>
+                {active && <p className="mt-1 text-xs text-muted-foreground">Samtale med {otherName(active)}</p>}
               </div>
+              <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" />
             </Link>
           )}
 
-          <div className="mt-4 max-h-[55vh] space-y-2 overflow-y-auto">
+          <div ref={threadRef} role="log" aria-label="Meldinger i samtalen" className="messages-thread flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-5 md:p-8">
             {thread.map((m) => {
               const mine = m.sender_id === user?.id;
               return (
-                <div key={m.id} className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${mine ? "ml-auto bg-brandink text-primary-foreground" : "bg-white/80 glass"}`}>
-                  <p className="whitespace-pre-wrap">{m.body}</p>
-                  <p className="mt-1 text-[10px] opacity-60">
+                <div key={m.id} className={`flex flex-col gap-1.5 ${mine ? "items-end" : "items-start"}`}>
+                  <div className={`messages-bubble max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed md:max-w-[75%] ${mine ? "messages-bubble-sent rounded-tr-none" : "messages-bubble-received rounded-tl-none border"}`}>
+                    <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{m.body}</p>
+                  </div>
+                  <p className="px-1 text-[10px] text-muted-foreground">
                     {new Date(m.created_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                     {mine && m.read_at ? " · Sett" : ""}
                   </p>
                 </div>
               );
             })}
-            <div ref={endRef} />
           </div>
 
           <form
-            className="mt-4 flex gap-2"
+            className="messages-compose mx-5 mb-5 flex shrink-0 items-center gap-2 rounded-2xl border p-2 md:mx-6 md:mb-6"
             onSubmit={(e) => {
               e.preventDefault();
               if (!text.trim() || !active) return;
@@ -142,9 +152,10 @@ function MessagesPage() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Skriv en melding …"
-              className="w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none glass"
+              aria-label="Skriv en melding"
+              className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
-            <button className="rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground">Send</button>
+            <Button type="submit" disabled={!text.trim() || !active} className="messages-send h-11 shrink-0 rounded-xl px-4 font-semibold md:px-6"><Send /><span>Send</span></Button>
           </form>
         </section>
       </div>
