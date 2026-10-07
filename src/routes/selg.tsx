@@ -1,8 +1,9 @@
 import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Upload, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Camera, Sparkles, Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   artImages,
   artTypes,
@@ -69,6 +70,25 @@ function SellPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [images, setImages] = useState<string[]>([]);
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [imageError, setImageError] = useState("");
+
+  async function addImages(files: File[]) {
+    setImageError("");
+    const remaining = Math.max(0, 15 - images.length);
+    const selected = files.filter((file) => file.type.startsWith("image/")).slice(0, remaining);
+    if (selected.length === 0) {
+      if (files.length > 0) setImageError(remaining === 0 ? "Du kan legge til opptil 15 bilder." : "Velg en bildefil.");
+      return;
+    }
+    try {
+      const urls = await Promise.all(selected.map(compressImage));
+      setImages((prev) => [...prev, ...urls].slice(0, 15));
+    } catch {
+      setImageError("Bildet kunne ikke åpnes. Prøv et JPG- eller PNG-bilde.");
+    }
+  }
   const [artistName, setArtistName] = useState("");
   const [title, setTitle] = useState("");
   const [webArtists, setWebArtists] = useState<{ id: string; label: string; description?: string }[]>([]);
@@ -203,30 +223,52 @@ function SellPage() {
           <>
             <p className="font-display text-lg font-semibold">Last opp bilder</p>
             <p className="text-sm text-ink/60">Dra og slipp eller velg opptil 15 bilder.</p>
-            <label
+            <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
-                const files = Array.from(e.dataTransfer.files).slice(0, 15);
-                void Promise.all(files.map(compressImage)).then((urls) => setImages((prev) => [...prev, ...urls].slice(0, 15)));
+                void addImages(Array.from(e.dataTransfer.files));
               }}
-              className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-dashed border-brand/40 bg-white/50 px-4 py-10 text-center text-sm text-ink/60"
+              className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-brand/40 bg-card/60 px-4 py-8 text-center text-sm text-muted-foreground"
             >
               <Upload className="size-5 text-brandink" />
-              Slipp bildene her, eller trykk for å velge
+              <span>Slipp bildene her</span>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button type="button" onClick={() => cameraInput.current?.click()} disabled={images.length >= 15}>
+                  <Camera /> Bruk kamera
+                </Button>
+                <Button type="button" variant="outline" onClick={() => fileInput.current?.click()} disabled={images.length >= 15}>
+                  <Upload /> Velg fil
+                </Button>
+              </div>
               <input
+                ref={fileInput}
                 type="file"
                 accept="image/*"
                 multiple
+                aria-label="Velg bildefiler"
                 className="hidden"
                 onChange={(e) => {
                   const files = Array.from(e.target.files ?? []);
-                  void Promise.all(files.map(compressImage)).then((urls) =>
-                    setImages((prev) => [...prev, ...urls].slice(0, 15)),
-                  );
+                  e.target.value = "";
+                  void addImages(files);
                 }}
               />
-            </label>
+              <input
+                ref={cameraInput}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                aria-label="Ta bilde med kamera"
+                className="hidden"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  e.target.value = "";
+                  void addImages(files);
+                }}
+              />
+            </div>
+            {imageError && <p role="alert" className="text-sm text-destructive">{imageError}</p>}
             {images.length > 0 && (
               <div className="grid grid-cols-4 gap-2">
                 {images.map((src, i) => (
