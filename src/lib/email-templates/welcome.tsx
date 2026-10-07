@@ -34,6 +34,7 @@ export const template = {
 const main = { backgroundColor: '#ffffff', fontFamily: 'Georgia, serif' }
 const container = { padding: '24px 28px', maxWidth: '560px' }
 const h1 = { fontSize: '24px', color: '#111111', fontWeight: 'normal' as const }
+const logo = { display: 'block', margin: '0 auto 18px' as const }
 const text = { fontSize: '15px', color: '#333333', lineHeight: '1.6' }
 const button = { backgroundColor: '#111111', color: '#ffffff', padding: '12px 22px', borderRadius: '6px', fontSize: '14px', textDecoration: 'none' }
 const hr = { borderColor: '#e5e5e5', margin: '28px 0 16px' }
