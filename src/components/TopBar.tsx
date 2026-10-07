@@ -109,12 +109,20 @@ export function TopBar() {
               </button>
             </>
           ) : (
-            <Link
-              to="/auth"
-              className="rounded-2xl bg-brand px-4 py-2.5 text-sm font-semibold text-white"
-            >
-              Logg inn
-            </Link>
+            <>
+              <Link
+                to="/auth"
+                className="hidden rounded-2xl px-3 py-2.5 text-sm font-semibold text-ink underline-offset-4 hover:underline md:block"
+              >
+                Logg inn
+              </Link>
+              <Link
+                to="/auth"
+                className="rounded-2xl bg-sage px-5 py-2.5 text-sm font-bold text-white shadow-md ring-2 ring-sage/30 transition hover:bg-sagelight hover:shadow-lg"
+              >
+                Opprett bruker
+              </Link>
+            </>
           )}
         </div>
       </div>
