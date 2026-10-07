@@ -9,3 +9,4 @@
 - [x] La selger godkjenne eller avslå bud; vis svar til kjøper uten betaling.
 - [x] Kontroller visning og tilgang til budbeslutninger; begge knapper testet uten å endre ekte bud, RPC begrenset til selger.- [x] Legg inn Diargio-logo i toppmenyen (kremhvit, gjennomsiktig), fjern Hjem-knapp, logo større (h-14)
 - [x] Fjern romstørrelsesmåling og størrelsesknapper fra kunstveggen (flytting beholdes).
+- [x] Vis bare veggverk (maleri, grafikk, foto, tegning, street art, digital kunst) i den digitale utstillingen.
