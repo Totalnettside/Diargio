@@ -36,6 +36,7 @@ function NotificationsPage() {
             <p className="text-sm font-semibold">{n.title}</p>
             <p className="text-sm text-ink/70">{n.body}</p>
             {n.conversationId && <Button asChild variant="link" className="px-0"><Link to="/min-side" search={{ tab: "Bud" }} onClick={() => { void markBidRead(n.id); }}>Godkjenn eller avslå bud</Link></Button>}
+            {n.slug && <Button asChild variant="link" className="px-0"><Link to="/kunst/$slug" params={{ slug: n.slug }}>Se verket</Link></Button>}
             <p className="mt-1 text-[11px] text-ink/40">
               {new Date(n.createdAt).toLocaleString("nb-NO")}
             </p>
