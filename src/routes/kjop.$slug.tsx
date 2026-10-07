@@ -1,3 +1,4 @@
+import { notifySeller } from "@/lib/seller-notice.functions";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check } from "lucide-react";
@@ -112,6 +113,7 @@ function Checkout({ artwork }: { artwork: Artwork }) {
             if (step === 0) {
               const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
               if (l) await supabase.from("purchases").upsert({ seller_id: l.user_id, listing_id: artwork.id }, { onConflict: "buyer_id,listing_id", ignoreDuplicates: true });
+              if (l) void notifySeller({ data: { kind: "sale", listingId: artwork.id } }).catch(() => {});
             }
             setStep((s) => s + 1);
           }}

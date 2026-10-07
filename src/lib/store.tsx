@@ -1,3 +1,4 @@
+import { notifySeller } from "@/lib/seller-notice.functions";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
@@ -226,6 +227,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!Number.isFinite(amount) || amount <= 0 || amount > 1000000000) throw new Error("Skriv inn et gyldig beløp.");
         const { error } = await supabase.rpc("submit_artwork_bid", { _listing_id: artworkId, _amount: amount, _message: message ?? "" });
         if (error) throw new Error("Budet kunne ikke sendes. Du kan ikke by på din egen annonse. Prøv igjen.");
+        void notifySeller({ data: { kind: "bid", listingId: artworkId } }).catch(() => {});
         await loadBids();
       },
       markBidRead: async (id) => {
