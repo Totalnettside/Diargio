@@ -14,6 +14,8 @@ const schema = z.object({
   bio: z.string().trim().max(1000).optional(),
   location: z.string().trim().max(100).optional(),
   website: z.string().trim().max(200).optional(),
+  story: z.string().trim().max(2000).optional(),
+  techniques: z.string().trim().max(300).optional(),
 });
 
 type Values = {
@@ -24,9 +26,11 @@ type Values = {
   location: string;
   website: string;
   avatar_url: string;
+  story: string;
+  techniques: string;
 };
 
-const empty: Values = { first_name: "", last_name: "", phone: "", bio: "", location: "", website: "", avatar_url: "" };
+const empty: Values = { first_name: "", last_name: "", phone: "", bio: "", location: "", website: "", avatar_url: "", story: "", techniques: "" };
 
 export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; onSaved?: () => void }) {
   const { user } = useAuth();
@@ -34,18 +38,20 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [studio, setStudio] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) return;
     void supabase
       .from("profiles")
-      .select("first_name,last_name,phone,bio,location,website,avatar_url")
+      .select("first_name,last_name,phone,bio,location,website,avatar_url,story,techniques,studio_images")
       .eq("id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
-          const d = data as Record<string, string | null>;
-          setV(Object.fromEntries(Object.keys(empty).map((k) => [k, d[k] ?? ""])) as Values);
+          const d = data as unknown as Record<string, string | null>;
+          setV({ ...(Object.fromEntries(Object.keys(empty).map((k) => [k, d[k] ?? ""])) as Values), techniques: (data.techniques ?? []).join(", ") });
+          setStudio(data.studio_images ?? []);
         }
       });
   }, [user]);
@@ -71,6 +77,30 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
     setBusy(false);
   }
 
+  async function uploadStudio(files: FileList) {
+    if (!user) return;
+    setBusy(true);
+    const next = [...studio];
+    for (const file of Array.from(files).slice(0, 6 - next.length)) {
+      if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) continue;
+      const path = `${user.id}/studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${file.name.split(".").pop() ?? "jpg"}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file);
+      if (upErr) continue;
+      const { data } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+      if (data?.signedUrl) next.push(data.signedUrl);
+    }
+    await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    setStudio(next);
+    setBusy(false);
+  }
+
+  async function removeStudio(url: string) {
+    if (!user) return;
+    const next = studio.filter((u) => u !== url);
+    await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    setStudio(next);
+  }
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -89,6 +119,8 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
         bio: d.bio || null,
         location: d.location || null,
         website: d.website || null,
+        story: d.story || null,
+        techniques: (d.techniques ?? "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 12),
         display_name: `${d.first_name} ${d.last_name}`,
         onboarded: true,
       })
@@ -123,7 +155,26 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
         <>
           <label className="block text-sm font-medium">Sted<input className={input} value={v.location} onChange={set("location")} placeholder="Oslo" /></label>
           <label className="block text-sm font-medium">Nettside<input className={input} value={v.website} onChange={set("website")} placeholder="https://" /></label>
-          <label className="block text-sm font-medium">Om meg<textarea rows={4} className={input} value={v.bio} onChange={set("bio")} placeholder="Fortell litt om deg selv og kunsten din" /></label>
+          <label className="block text-sm font-medium">Om meg<textarea rows={4} className={input} value={v.bio} onChange={set("bio")} placeholder="Kort biografi: hvem er du som kunstner?" /></label>
+          <label className="block text-sm font-medium">Historien bak kunsten<textarea rows={4} className={input} value={v.story} onChange={set("story")} placeholder="Hva inspirerer deg, og hvordan jobber du?" /></label>
+          <label className="block text-sm font-medium">Teknikker og uttrykk<input className={input} value={v.techniques} onChange={set("techniques")} placeholder="Akryl, olje, abstrakt, landskap" /><span className="text-xs font-normal text-ink/50">Skill med komma</span></label>
+          <div className="text-sm font-medium">
+            Bilder fra atelieret eller arbeidsprosessen ({studio.length}/6)
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {studio.map((u) => (
+                <div key={u} className="relative">
+                  <img src={u} alt="Atelierbilde" className="aspect-square w-full rounded-xl object-cover" />
+                  <button type="button" onClick={() => void removeStudio(u)} className="absolute right-1 top-1 rounded-full bg-card/90 px-2 text-xs" aria-label="Fjern bilde">✕</button>
+                </div>
+              ))}
+              {studio.length < 6 && (
+                <label className="grid aspect-square cursor-pointer place-items-center rounded-xl border border-dashed border-border text-xs text-ink/50">
+                  <Camera className="size-5" />
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && void uploadStudio(e.target.files)} />
+                </label>
+              )}
+            </div>
+          </div>
         </>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
