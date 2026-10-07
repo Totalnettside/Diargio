@@ -1,3 +1,5 @@
+import { PriceCalculator } from "@/components/PriceCalculator";
+import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Sparkles, Upload, X } from "lucide-react";
@@ -85,6 +87,7 @@ function SellPage() {
   const [description, setDescription] = useState("");
   const [saleType, setSaleType] = useState<SaleType>("Fastpris");
   const [price, setPrice] = useState("15000");
+  const [artFeeApplies, setArtFeeApplies] = useState(true);
   const [delivery, setDelivery] = useState("Begge deler");
   const [county, setCounty] = useState(counties[0]!);
 
@@ -144,7 +147,9 @@ function SellPage() {
       location: county,
       county,
       saleType,
-      price: Number(price) || 0,
+      price: priceFromPayout(Number(price) || 0, artFeeApplies).total,
+      sellerPayout: Number(price) || 0,
+      artFeeApplies,
       image: images[0] ?? artImages[0]!,
       views: 0,
       favorites: 0,
@@ -380,7 +385,8 @@ function SellPage() {
               ))}
             </div>
             {saleType !== "Pris på forespørsel" && (
-              <Field label={saleType === "Auksjon" ? "Startpris" : "Pris"}>
+              <>
+              <Field label={saleType === "Auksjon" ? "Ønsket utbetaling ved startpris (kr)" : "Ønsket utbetaling til deg (kr)"}>
                 <input
                   value={price}
                   inputMode="numeric"
@@ -388,6 +394,8 @@ function SellPage() {
                   className={inputClass}
                 />
               </Field>
+              <PriceCalculator payout={Number(price) || 0} artFeeApplies={artFeeApplies} onArtFeeChange={setArtFeeApplies} />
+              </>
             )}
             <p className="rounded-2xl bg-white/70 p-3 text-xs text-ink/60 glass">
               <Sparkles className="mr-1 inline size-3.5 text-brandink" />
@@ -430,7 +438,7 @@ function SellPage() {
                 <p className="mt-1 text-lg font-bold">
                   {saleType === "Pris på forespørsel"
                     ? "Pris på forespørsel"
-                    : formatPrice(Number(price) || 0)}
+                    : formatPrice(priceFromPayout(Number(price) || 0, artFeeApplies).total)}
                 </p>
                 <p className="mt-2 text-sm text-ink/70">{description || "Ingen beskrivelse."}</p>
               </div>

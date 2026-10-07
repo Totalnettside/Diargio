@@ -207,6 +207,9 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                     ? "Pris på forespørsel"
                     : formatPrice(artwork.price)}
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Inkl. provisjon og eventuell kunstavgift. Frakt kommer i tillegg.
+                </p>
                 <p className="mt-1 text-sm text-ink/60">{artwork.saleType}</p>
               </>
             )}

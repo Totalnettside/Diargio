@@ -1,3 +1,5 @@
+import { PriceCalculator } from "@/components/PriceCalculator";
+import { breakdownFromTotal, priceFromPayout } from "@/lib/fees";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -45,7 +47,8 @@ function EditListingPage() {
   const listing = myListings.find((l) => l.slug === slug);
 
   const [title, setTitle] = useState(listing?.title ?? "");
-  const [price, setPrice] = useState(String(listing?.price ?? ""));
+  const [price, setPrice] = useState(String(listing ? (listing.sellerPayout ?? breakdownFromTotal(listing.price, listing.artFeeApplies ?? true).payout) : ""));
+  const [artFeeApplies, setArtFeeApplies] = useState(listing?.artFeeApplies ?? true);
   const [category, setCategory] = useState(listing?.category ?? categories[0]!);
   const [style, setStyle] = useState(listing?.style ?? styles[0]!);
   const [technique, setTechnique] = useState(listing?.technique ?? techniques[0]!);
@@ -76,7 +79,7 @@ function EditListingPage() {
     updateListing({
       ...listing!,
       title: title || listing!.title,
-      price: Number(price) || listing!.price,
+      ...(Number(price) ? { price: priceFromPayout(Number(price), artFeeApplies).total, sellerPayout: Number(price), artFeeApplies } : {}),
       category,
       style,
       technique,
@@ -106,7 +109,7 @@ function EditListingPage() {
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Pris (kr)">
+          <Field label="Ønsket utbetaling (kr)">
             <input
               value={price}
               onChange={(e) => setPrice(e.target.value.replace(/\D/g, ""))}
@@ -122,6 +125,7 @@ function EditListingPage() {
             </select>
           </Field>
         </div>
+        <PriceCalculator payout={Number(price) || 0} artFeeApplies={artFeeApplies} onArtFeeChange={setArtFeeApplies} />
         <div className="grid grid-cols-2 gap-3">
           <Field label="Kategori">
             <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
