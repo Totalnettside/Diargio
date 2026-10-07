@@ -65,7 +65,7 @@ function GalleryPreview() {
         {slot && <section className="space-y-2 border-t border-border pt-4" aria-label="Oppsummering"><h3 className="font-medium">Oppsummering</h3><p className="text-sm">{art?.title ?? 'Kunstverk ikke valgt'}</p><p className="text-sm">Rom {roomNumber} · Plass {room.slots.indexOf(slot) + 1} · {GALLERY_TIERS[slot.tier]}</p>{validDate && <p className="text-sm">{dateText(new Date(`${start}T12:00:00`))} – {dateText(end)}</p>}<p className="text-xl font-semibold">{formatPrice(GALLERY_PREVIEW_PRICES[slot.tier][days])}</p><p className="text-xs text-muted-foreground">Totalpris inkludert eventuell mva · Ingen automatisk fornyelse</p></section>}
         <div className="border-t border-border pt-4"><p className="text-sm font-medium">Betaling er ikke åpnet ennå</p><p className="mt-1 text-xs text-muted-foreground">Forhåndsvisningen er gratis og oppretter ingen bestilling.</p></div>
         <p className="text-xs text-muted-foreground">Du betaler for plassering i galleriet. Plasseringen garanterer ikke visninger eller salg. Diargios ordinære salgsprovisjon gjelder dersom kunstverket blir solgt.</p>
-        <Button asChild variant="link" className="h-auto whitespace-normal px-0"><Link to="/info/$page" params={{ page: 'gebyrer' }}>Se Diargios salgsprovisjon</Link></Button>
+        <Button asChild variant="link" className="h-auto whitespace-normal px-0"><Link to="/info/$page" params={{ page: 'priser-og-gebyrer' }}>Se Diargios salgsprovisjon</Link></Button>
         <p className="text-xs text-muted-foreground">Avbestilling: full refusjon før perioden starter. Ingen refusjon etter start, med forbehold om lovpålagte rettigheter.</p>
       </section>
     </div>

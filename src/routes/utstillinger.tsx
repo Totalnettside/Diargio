@@ -24,12 +24,6 @@ function ExhibitionsPage(){
   const rooms=GALLERY_ROOMS.map((hall,r)=>({hall,placements:r===0?hall.slots.flatMap((s,k)=>{const a=wallArt[k];return a?[fitGalleryArt(s,a.widthCm&&a.heightCm?a.widthCm/a.heightCm:1,a.id)]:[];}):[]}));
   const idx=Math.min(roomIndex,rooms.length-1); const room=rooms[idx];
   if(!room) return <VisualError />;
-  const arts=data.artworks.filter((a)=>WALL_CATEGORIES.has(a.category)); const out:{hall:typeof HALLS[number];placements:Placement[]}[]=[]; let i=0; let r=0;
-    do{ const hall=HALLS[r%HALLS.length]!; const placements=hall.slots.map((s,k)=>{const a=arts[i+k]; return a?fit(s,(a.widthCm&&a.heightCm)?a.widthCm/a.heightCm:1,a.id,`${r}-${k}`):null;}).filter(Boolean) as Placement[];
-      out.push({hall,placements}); i+=hall.slots.length; r++; }while(i<arts.length||r<HALLS.length);
-    return out;
-  },[data.artworks]);
-  const idx=Math.min(roomIndex,rooms.length-1); const room=rooms[idx]!;
   const arts=data.artworks.filter((a)=>room.placements.some((p)=>p.artworkId===a.id));
   const art=data.artworks.find((a)=>a.id===room.placements.find((p)=>p.id===selected)?.artworkId);
   const go=(d:number)=>{setRoomIndex(idx+d);setSelected(null);};
