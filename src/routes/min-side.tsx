@@ -137,6 +137,7 @@ function Dashboard() {
         <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
           <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>
           <ProfileForm />
+          <DeleteAccount />
         </section>
       )}
 
