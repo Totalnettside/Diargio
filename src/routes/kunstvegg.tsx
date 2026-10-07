@@ -68,7 +68,7 @@ function ArtWallPage() {
   function add(art: Artwork, x?: number, y?: number) {
     if (layout.placements.length >= 30) { setMessage('Maksimalt 30 verk per kunstvegg.'); return; }
     const item = newPlacement(art.id,art.widthCm / art.heightCm,layout.placements.length);
-    if (layout.calibration && art.widthCm > 0) item.width = Math.max(0.02,Math.min(0.8,art.widthCm/layout.calibration.cm*Math.abs(layout.calibration.end-layout.calibration.start)));
+    if (art.widthCm > 0) item.width = Math.max(0.02,Math.min(0.8,art.widthCm/(layout.calibration?.cm ?? 300)*(layout.calibration ? Math.abs(layout.calibration.end-layout.calibration.start) : 1)));
     item.width = Math.min(item.width,0.7*item.ratio/layout.aspect);
     if (x !== undefined) item.x = Math.max(0,Math.min(1-item.width,x-item.width/2));
     if (y !== undefined) item.y = Math.max(0,Math.min(1-item.width*layout.aspect/item.ratio,y));
