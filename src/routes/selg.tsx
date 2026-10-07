@@ -1,7 +1,7 @@
 import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Upload, X } from "lucide-react";
 import {
   artImages,
@@ -131,6 +131,7 @@ function SellPage() {
   }
 
   function publish() {
+    if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
     if (!toCm(width) || !toCm(height)) {
       alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
       return;
@@ -188,7 +189,7 @@ function SellPage() {
             key={t}
             onClick={() => i <= maxStep && setStep(i)}
             disabled={i > maxStep}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold glass ${
+            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold glass disabled:opacity-40 ${
               i === step ? "bg-brandink text-primary-foreground" : "bg-white/60"
             }`}
           >
