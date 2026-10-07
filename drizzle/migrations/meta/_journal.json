@@ -64,6 +64,13 @@
       "when": 1791375134463,
       "tag": "0008_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791397194553,
+      "tag": "0009_visual_art_walls_exhibitions",
+      "breakpoints": true
     }
   ]
 }

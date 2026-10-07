@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      art_exhibitions: {
+        Row: {
+          created_at: string
+          id: string
+          published: boolean
+          rooms: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          rooms?: Json
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          rooms?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      art_walls: {
+        Row: {
+          created_at: string
+          id: string
+          layout: Json
+          name: string
+          shared: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          layout?: Json
+          name?: string
+          shared?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          layout?: Json
+          name?: string
+          shared?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       artist_follows: {
         Row: {
           artist_id: string
@@ -333,6 +390,7 @@ export type Database = {
         Args: { _amount: number; _listing_id: string; _message?: string }
         Returns: string
       }
+      unavailable_artwork_ids: { Args: never; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
