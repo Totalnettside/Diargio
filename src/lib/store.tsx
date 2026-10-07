@@ -293,7 +293,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         })();
       },
     }),
-    [state, notify, dbListings, dbBids, userId, loadListings, loadBids],
+    [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
