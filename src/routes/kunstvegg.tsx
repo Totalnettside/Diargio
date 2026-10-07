@@ -15,7 +15,7 @@ import { ArtDetails } from '@/components/visual/ArtDetails';
 import { VisualError } from '@/components/visual/VisualError';
 
 export const Route = createFileRoute('/kunstvegg')({
-  validateSearch: (s: Record<string, unknown>): { wall?: string } => typeof s.wall === 'string' && /^[0-9a-f-]{36}$/i.test(s.wall) ? { wall: s.wall } : {},
+  validateSearch: (s: Record<string, unknown>): { wall?: string } => typeof s['wall'] === 'string' && /^[0-9a-f-]{36}$/i.test(s['wall']) ? { wall: s['wall'] } : {},
   loaderDeps: ({ search }) => ({ wall: search.wall }),
   loader: async ({ context, deps }) => {
     const [, shared] = await Promise.all([context.queryClient.ensureQueryData(visualArtOptions()), deps.wall ? getSharedWall({ data: { id: deps.wall } }) : Promise.resolve(null)]);
@@ -35,7 +35,9 @@ function ArtWallPage() {
   const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false); const [shareUrl, setShareUrl] = useState(''); const [isShared, setIsShared] = useState(false);
   const [photo, setPhoto] = useState<File>(); const fileInput = useRef<HTMLInputElement>(null);
   const [calibrating, setCalibrating] = useState(false); const [point, setPoint] = useState<number | null>(null); const [knownCm, setKnownCm] = useState('300');
+  const [measureStart,setMeasureStart] = useState(15); const [measureEnd,setMeasureEnd] = useState(85);
   const strip = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (!shared) return; setLayout(shared.layout);setRoomUrl(shared.roomUrl??'');setName(shared.name);setOwnId(undefined);setIsShared(false);setSelected(null); },[shared]);
   useEffect(() => {
     if (!wallSearch || !user) return;
     let alive = true;
@@ -47,7 +49,13 @@ function ArtWallPage() {
       if (parsed.data.roomPath) { const { data: signed } = await supabase.storage.from('art-wall-rooms').createSignedUrl(parsed.data.roomPath,3600); if (alive && signed) setRoomUrl(signed.signedUrl); }
     })();
     return () => { alive=false; };
-  }, [wallSearch,user?.id]);
+  }, [wallSearch,user?.id,shared]);
+  useEffect(() => {
+    if (!layout.roomPath) return;
+    const path=layout.roomPath; let active=true;
+    const timer=window.setInterval(()=>{ void supabase.storage.from('art-wall-rooms').createSignedUrl(path,3600).then(({data})=>{if(active&&data)setRoomUrl(data.signedUrl);}); },45*60*1000);
+    return ()=>{active=false;window.clearInterval(timer);};
+  },[layout.roomPath]);
   useEffect(() => {
     if (!user) return;
     try { const draft = sessionStorage.getItem('diargio-wall-draft'); if (draft && !wallSearch) { const d = JSON.parse(draft); const parsed = wallLayoutSchema.safeParse(d.layout); if (parsed.success) { setLayout(parsed.data); setName(d.name || 'Min kunstvegg'); } sessionStorage.removeItem('diargio-wall-draft'); } } catch { /* No draft */ }
@@ -99,6 +107,7 @@ function ArtWallPage() {
         <Button variant="outline" onClick={() => fileInput.current?.click()} className="w-full"><ImagePlus />Last opp ditt rom</Button>
         <div className="border-t border-border pt-4"><label className="visual-label">Kjent lengde på veggen (cm)<Input type="number" min="1" max="10000" value={knownCm} onChange={(e) => setKnownCm(e.target.value)} /></label><Button variant="outline" className="mt-2 w-full" onClick={() => { setCalibrating(!calibrating); setPoint(null); }}> {calibrating ? 'Avbryt måling' : 'Marker kjent lengde'}</Button>
         {calibrating && <p role="status" className="mt-2 text-xs text-primary">{point === null ? 'Velg første punkt på veggen.' : 'Velg andre punkt på veggen.'}</p>}
+        {calibrating && <div className="mt-3 space-y-2"><label className="visual-label">Startpunkt (%)<Input type="number" min="0" max="95" value={measureStart} onChange={(e)=>setMeasureStart(Number(e.target.value))} /></label><label className="visual-label">Sluttpunkt (%)<Input type="number" min="5" max="100" value={measureEnd} onChange={(e)=>setMeasureEnd(Number(e.target.value))} /></label><Button variant="outline" className="w-full" onClick={()=>{const cm=Number(knownCm);const start=measureStart/100,end=measureEnd/100;if(!Number.isFinite(cm)||cm<1||cm>10000||start<0||end>1||end-start<0.05){setMessage('Oppgi gyldig lengde og to punkter med litt avstand.');return;}setLayout((l)=>({...l,calibration:{start,end,cm},placements:l.placements.map((p)=>{const art=data.artworks.find((a)=>a.id===p.artworkId);const width=art&&art.widthCm>0?Math.max(0.02,Math.min(0.9,art.widthCm/cm*(end-start))):p.width;return {...p,width:Math.min(width,1-p.x,(1-p.y)*p.ratio/l.aspect)};})}));setCalibrating(false);setPoint(null);}}>Bruk målepunkter</Button></div>}
         <p className="mt-2 text-xs text-muted-foreground">{layout.calibration ? 'Omtrentlig kalibrert størrelse. Perspektiv kan påvirke visningen.' : 'Illustrasjon – størrelse er ikke kalibrert'}</p>
         {layout.calibration && <Button variant="link" className="px-0 text-xs" onClick={() => setLayout((l) => ({ ...l,calibration:null }))}>Fjern kalibrering</Button>}
         </div>

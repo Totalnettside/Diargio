@@ -6,7 +6,7 @@ import type { Placement } from '@/lib/visual-art';
 export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt, calibration, onCalibrationPoint }: {
   background: string; aspect?: number; color?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
   onSelect: (id: string) => void; onChange?: (items: Placement[]) => void; onDropArt?: (id: string, x: number, y: number) => void;
-  calibration?: { start: number; end: number; cm: number } | null; onCalibrationPoint?: (x: number) => void;
+  calibration?: { start: number; end: number; cm: number } | null; onCalibrationPoint?: ((x: number) => void) | undefined;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const gesture = useRef<{ id: string; startX: number; startY: number; initial: Placement; corner?: string } | null>(null);
@@ -16,7 +16,7 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
     if (!onChange) return;
     e.preventDefault(); e.stopPropagation();
     onSelect(p.id);
-    gesture.current = { id: p.id, startX: e.clientX, startY: e.clientY, initial: p, corner };
+    gesture.current = { id: p.id, startX: e.clientX, startY: e.clientY, initial: p, ...(corner ? { corner } : {}) };
     e.currentTarget.setPointerCapture(e.pointerId);
   }
   function move(e: PointerEvent) {
@@ -48,7 +48,8 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
             if (!onChange) return;
             const step = e.shiftKey ? 0.025 : 0.005;
             const keys: Record<string, [number, number]> = { ArrowLeft: [-step,0], ArrowRight: [step,0], ArrowUp: [0,-step], ArrowDown: [0,step] };
-            if (keys[e.key]) { e.preventDefault(); const [x,y] = keys[e.key]; update(p.id, { x: clamp(p.x+x,0,1-p.width), y: clamp(p.y+y,0,1-p.width*aspect/p.ratio) }); }
+            const delta = keys[e.key];
+            if (delta) { e.preventDefault(); const [x,y] = delta; update(p.id, { x: clamp(p.x+x,0,1-p.width), y: clamp(p.y+y,0,1-p.width*aspect/p.ratio) }); }
             if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); onChange(placements.filter((x) => x.id !== p.id)); }
           }}>
           <img src={a.image} alt={a.title} draggable={false} onLoad={(e) => { const img = e.currentTarget; const ratio = img.naturalWidth / img.naturalHeight; if (onChange && Number.isFinite(ratio) && Math.abs(ratio-p.ratio) > 0.01) update(p.id, { ratio, width: Math.min(p.width, (1-p.y)*ratio/aspect) }); }} />
