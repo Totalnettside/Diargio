@@ -55,7 +55,6 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
           <img src={a.image} alt={a.title} draggable={false} onLoad={(e) => { const img = e.currentTarget; const ratio = img.naturalWidth / img.naturalHeight; if (onChange && Number.isFinite(ratio) && Math.abs(ratio-p.ratio) > 0.01) update(p.id, { ratio, width: Math.min(p.width, (1-p.y)*ratio/aspect) }); }} />
           {!onChange && <span className="art-marker">{i+1}</span>}
         </Button>
-        {onChange && selected === p.id && ['top-left','top-right','bottom-left','bottom-right'].map((corner) => <Button key={corner} variant="default" size="icon" className={`resize-handle handle-${corner}`} aria-label={`Juster størrelse ${a.title} ${corner}`} onPointerDown={(e) => start(e,p,corner)} onPointerMove={move} onPointerUp={() => { gesture.current=null; }} onKeyDown={(e) => { if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); update(p.id, { width: clamp(p.width + (e.key === 'ArrowUp' ? 0.01 : -0.01),0.02,Math.min(1-p.x,(1-p.y)*p.ratio/aspect,0.9)) }); } }} />)}
       </div>;
     })}
   </div>;
