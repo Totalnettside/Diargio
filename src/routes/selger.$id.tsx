@@ -9,7 +9,7 @@ import type { Artwork } from "@/data/demo";
 export const Route = createFileRoute("/selger/$id")({
   head: () => ({
     meta: [
-      { title: "Selgerprofil | Diargio" },
+      { title: "Kunstnerprofil | Diargio" },
       { name: "description", content: "Se selgerens kunst, omtaler og vurderinger på Diargio." },
       { property: "og:title", content: "Selgerprofil | Diargio" },
       { property: "og:description", content: "Kunst, omtaler og stjerner fra kjøpere." },
@@ -31,6 +31,9 @@ type Profile = {
   website: string | null;
   bankid_verified: boolean;
   created_at: string;
+  story: string | null;
+  techniques: string[];
+  studio_images: string[];
 };
 type Review = { id: string; reviewer_id: string; rating: number; comment: string | null; created_at: string };
 
@@ -57,14 +60,34 @@ function SellerPage() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [err, setErr] = useState("");
+  const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(false);
+  useEffect(() => {
+    if (!user || user.id === id) return setFollowing(false);
+    void supabase.from("artist_follows").select("artist_id").eq("follower_id", user.id).eq("artist_id", id).maybeSingle().then(({ data }) => setFollowing(!!data));
+  }, [user, id]);
+  const toggleFollow = async () => {
+    if (!user) return;
+    const { error } = following
+      ? await supabase.from("artist_follows").delete().eq("follower_id", user.id).eq("artist_id", id)
+      : await supabase.from("artist_follows").insert({ artist_id: id });
+    if (!error) { setFollowing(!following); setFollowers((n) => n + (following ? -1 : 1)); }
+  };
 
   const load = useCallback(async () => {
     const [{ data: p }, { data: l }, { data: r }] = await Promise.all([
-      supabase.from("profiles").select("id, display_name, first_name, last_name, avatar_url, bio, location, website, bankid_verified, created_at").eq("id", id).maybeSingle(),
-      supabase.from("listings").select("data").eq("user_id", id).order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, display_name, first_name, last_name, avatar_url, bio, location, website, bankid_verified, created_at, story, techniques, studio_images").eq("id", id).maybeSingle(),
+      supabase.from("listings").select("id, data").eq("user_id", id).order("created_at", { ascending: false }),
       supabase.from("reviews").select("id, reviewer_id, rating, comment, created_at").eq("seller_id", id).order("created_at", { ascending: false }),
     ]);
     setProfile(p ?? null);
+    const [{ data: sold }, { data: fc }] = await Promise.all([
+      supabase.rpc("sold_listing_ids", { _seller: id }),
+      supabase.rpc("artist_follower_count", { _artist: id }),
+    ]);
+    setSoldIds(new Set((sold ?? []) as string[]));
+    setFollowers(fc ?? 0);
     setListings((l ?? []).map((x) => x.data as unknown as Artwork));
     setReviews(r ?? []);
     const ids = [...new Set((r ?? []).map((x) => x.reviewer_id))];
@@ -93,6 +116,8 @@ function SellerPage() {
     );
 
   const name = nameOf(profile);
+  const available = listings.filter((a) => !soldIds.has(a.id));
+  const soldWorks = listings.filter((a) => soldIds.has(a.id));
   const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   const mine = reviews.find((r) => r.reviewer_id === user?.id);
   const canReview = user && user.id !== id && hasBought;
@@ -120,12 +145,11 @@ function SellerPage() {
         <div className="flex-1">
           <h1 className="font-display text-3xl font-semibold">{name}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink/60">
-            <Stars value={avg} />
-            <span>{avg.toFixed(1)} · {reviews.length} omtaler</span>
+            {reviews.length ? (<><Stars value={avg} /><span>{avg.toFixed(1)} · {reviews.length} omtaler</span></>) : <span>Ny selger · Ingen vurderinger ennå</span>}
             {profile.bankid_verified && <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-brandink">✓ BankID</span>}
           </div>
           <p className="mt-1 text-sm text-ink/55">
-            {profile.location ? `${profile.location} · ` : ""}Medlem siden {new Date(profile.created_at).getFullYear()} · {listings.length} annonser
+            {profile.location ? `${profile.location} · ` : ""}Medlem siden {new Date(profile.created_at).getFullYear()} · {followers} følgere
           </p>
           {profile.bio && <p className="mt-3 max-w-2xl whitespace-pre-wrap text-sm">{profile.bio}</p>}
           {profile.website && (
@@ -133,16 +157,53 @@ function SellerPage() {
               {profile.website}
             </a>
           )}
+          {profile.techniques.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {profile.techniques.map((t) => <span key={t} className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-brandink">{t}</span>)}
+            </div>
+          )}
+          {user && user.id !== id && (
+            <button onClick={() => void toggleFollow()} className={`mt-4 rounded-2xl px-5 py-2 text-sm font-semibold ${following ? "bg-secondary text-brandink" : "bg-brandink text-primary-foreground"}`}>
+              {following ? "Følger ✓" : "Følg kunstner"}
+            </button>
+          )}
+          {!user && <p className="mt-3 text-xs text-ink/55"><Link to="/auth" className="underline">Logg inn</Link> for å følge og få varsel om nye verk.</p>}
+          {following && <p className="mt-1 text-xs text-ink/55">Du får varsel når {name} legger ut nye verk.</p>}
         </div>
       </section>
 
-      <h2 className="mt-8 font-display text-xl font-semibold">Annonser ({listings.length})</h2>
-      {listings.length === 0 ? (
-        <p className="mt-2 text-sm text-ink/60">Ingen annonser ennå.</p>
+      {profile.story && (
+        <section className="mt-8 rounded-3xl p-6 glass">
+          <h2 className="font-display text-xl font-semibold">Historien bak kunsten</h2>
+          <p className="mt-2 max-w-3xl whitespace-pre-wrap text-sm leading-relaxed">{profile.story}</p>
+        </section>
+      )}
+
+      {profile.studio_images.length > 0 && (
+        <>
+          <h2 className="mt-8 font-display text-xl font-semibold">Fra atelieret</h2>
+          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
+            {profile.studio_images.map((u) => <img key={u} src={u} alt={`Fra atelieret til ${name}`} loading="lazy" className="aspect-[4/3] w-full rounded-2xl object-cover" />)}
+          </div>
+        </>
+      )}
+
+      <h2 className="mt-8 font-display text-xl font-semibold">Tilgjengelige verk ({available.length})</h2>
+      {available.length === 0 ? (
+        <p className="mt-2 text-sm text-ink/60">Ingen tilgjengelige verk akkurat nå.</p>
       ) : (
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {listings.map((a) => <ArtworkCard key={a.id} artwork={a} />)}
+          {available.map((a) => <ArtworkCard key={a.id} artwork={a} />)}
         </div>
+      )}
+
+      {soldWorks.length > 0 && (
+        <>
+          <h2 className="mt-8 font-display text-xl font-semibold">Solgte verk ({soldWorks.length})</h2>
+          <div className="mt-4 grid grid-cols-2 gap-4 opacity-75 md:grid-cols-4">
+            {soldWorks.map((a) => <ArtworkCard key={a.id} artwork={a} />)}
+          </div>
+        </>
       )}
 
       <h2 className="mt-10 font-display text-xl font-semibold">Omtaler ({reviews.length})</h2>
