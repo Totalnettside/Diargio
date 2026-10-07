@@ -30,7 +30,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       (authUsers.data?.users ?? []).map((u) => [u.id, { email: u.email ?? null, last_sign_in_at: u.last_sign_in_at ?? null, provider: (u.app_metadata?.provider as string) ?? "email" }]),
     );
     const listingRows = (listings.data ?? []).map((l) => {
-      const d = (l.data ?? {}) as Record<string, unknown>;
+      const d = (l.data ?? {}) as { title?: string; price?: number; images?: string[]; image?: string; slug?: string; category?: string; technique?: string };
       return {
         id: l.id,
         user_id: l.user_id,

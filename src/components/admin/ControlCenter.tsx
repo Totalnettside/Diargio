@@ -98,7 +98,7 @@ const series14 = (dates: string[]) => {
   const start = new Date().setHours(0, 0, 0, 0) - 13 * day;
   dates.forEach((t) => {
     const i = Math.floor((new Date(t).getTime() - start) / day);
-    if (i >= 0 && i < 14) out[i]++;
+    if (i >= 0 && i < 14) out[i] = (out[i] ?? 0) + 1;
   });
   return out;
 };
