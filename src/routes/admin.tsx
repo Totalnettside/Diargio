@@ -57,6 +57,7 @@ function AdminPage() {
 function AdminContent() {
   const [section, setSection] = useState<(typeof sections)[number]>("Dashboard");
   const { allArtworks: artworks, deleteListing } = useStore();
+  const delUser = useServerFn(adminDeleteUser);
   const [users, setUsers] = useState<{ id: string; display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null; location: string | null; created_at: string; bankid_verified: boolean }[]>([]);
   useEffect(() => {
     void supabase
@@ -165,6 +166,20 @@ function AdminContent() {
               <span className="ml-auto rounded-full bg-mint/60 px-3 py-1 text-xs font-semibold text-brandink">
                 {u.bankid_verified ? "Verifisert" : "Ikke verifisert"}
               </span>
+              <button
+                onClick={async () => {
+                  if (!confirm("Slette denne brukeren og alt innholdet? Dette kan ikke angres.")) return;
+                  try {
+                    await delUser({ data: { userId: u.id } });
+                    setUsers((p) => p.filter((x) => x.id !== u.id));
+                  } catch (e) {
+                    alert((e as Error).message);
+                  }
+                }}
+                className="rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground"
+              >
+                Slett
+              </button>
             </div>
           ))}
         </div>
