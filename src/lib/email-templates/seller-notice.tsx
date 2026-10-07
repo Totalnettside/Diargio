@@ -35,7 +35,7 @@ const Email = ({ kind = 'bid', title = 'verket ditt', amount }: Props) => {
 
 export const template = {
   component: Email,
-  subject: (d: Record<string, any>) => (d.kind === 'sale' ? 'Verket ditt er solgt' : 'Nytt bud på verket ditt'),
+  subject: (d: Record<string, any>) => (d['kind'] === 'sale' ? 'Verket ditt er solgt' : 'Nytt bud på verket ditt'),
   displayName: 'Bud / salg til selger',
   previewData: { kind: 'bid', title: 'Sommerkveld', amount: '4 500' },
 } satisfies TemplateEntry
