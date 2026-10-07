@@ -47,7 +47,7 @@ export function TopBar() {
 
 
         <form
-          className="hidden flex-1 items-center gap-2 rounded-2xl border border-border bg-white px-4 py-2.5 md:flex"
+          className="hidden min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 xl:flex"
           onSubmit={(e) => {
             e.preventDefault();
             void navigate({ to: "/sok", search: { q } });
@@ -62,10 +62,12 @@ export function TopBar() {
           />
         </form>
 
-        <nav className="hidden items-center gap-5 text-sm font-semibold tracking-wide text-ink md:flex">
+        <nav className="hidden shrink-0 items-center gap-4 text-sm font-semibold text-ink lg:flex">
           <Link to="/kunst" className="transition-colors hover:text-brandink">
             Kunst
           </Link>
+          <Link to="/kunstvegg" className="whitespace-nowrap transition-colors hover:text-brandink">Din kunstvegg</Link>
+          <Link to="/utstillinger" className="transition-colors hover:text-brandink">Utstillinger</Link>
           <Link to="/selg" className="transition-colors hover:text-brandink">
             Selg kunst
           </Link>
@@ -126,6 +128,9 @@ export function TopBar() {
           )}
         </div>
       </div>
+      <nav aria-label="Oppdag kunst" className="flex gap-5 overflow-x-auto border-t border-border px-5 py-2 text-xs font-semibold lg:hidden">
+        <Link to="/kunst" className="shrink-0">Kunst</Link><Link to="/kunstvegg" className="shrink-0">Din kunstvegg</Link><Link to="/utstillinger" className="shrink-0">Utstillinger</Link><Link to="/selg" className="shrink-0">Selg kunst</Link>
+      </nav>
     </header>
   );
 }
