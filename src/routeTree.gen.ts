@@ -16,6 +16,7 @@ import { Route as MeldingerRouteImport } from './routes/meldinger'
 import { Route as MinSideRouteImport } from './routes/min-side'
 import { Route as SelgRouteImport } from './routes/selg'
 import { Route as SokRouteImport } from './routes/sok'
+import { Route as UtstillingerRouteImport } from './routes/utstillinger'
 import { Route as VarslerRouteImport } from './routes/varsler'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthVippsRouteImport } from './routes/auth.vipps'
@@ -63,6 +64,11 @@ const SelgRoute = SelgRouteImport.update({
 const SokRoute = SokRouteImport.update({
   id: '/sok',
   path: '/sok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtstillingerRoute = UtstillingerRouteImport.update({
+  id: '/utstillinger',
+  path: '/utstillinger',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VarslerRoute = VarslerRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
+  '/utstillinger': typeof UtstillingerRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
+  '/utstillinger': typeof UtstillingerRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/min-side': typeof MinSideRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
+  '/utstillinger': typeof UtstillingerRoute
   '/varsler': typeof VarslerRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/min-side'
     | '/selg'
     | '/sok'
+    | '/utstillinger'
     | '/varsler'
     | '/auth/vipps'
     | '/dealroom/$slug'
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
     | '/min-side'
     | '/selg'
     | '/sok'
+    | '/utstillinger'
     | '/varsler'
     | '/auth/vipps'
     | '/dealroom/$slug'
@@ -253,6 +264,7 @@ export interface FileRouteTypes {
     | '/min-side'
     | '/selg'
     | '/sok'
+    | '/utstillinger'
     | '/varsler'
     | '/auth/vipps'
     | '/dealroom/$slug'
@@ -276,6 +288,7 @@ export interface RootRouteChildren {
   MinSideRoute: typeof MinSideRoute
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
+  UtstillingerRoute: typeof UtstillingerRoute
   VarslerRoute: typeof VarslerRoute
   AuthVippsRoute: typeof AuthVippsRoute
   DealroomSlugRoute: typeof DealroomSlugRoute
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/sok'
       fullPath: '/sok'
       preLoaderRoute: typeof SokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utstillinger': {
+      id: '/utstillinger'
+      path: '/utstillinger'
+      fullPath: '/utstillinger'
+      preLoaderRoute: typeof UtstillingerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/varsler': {
@@ -444,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinSideRoute: MinSideRoute,
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
+  UtstillingerRoute: UtstillingerRoute,
   VarslerRoute: VarslerRoute,
   AuthVippsRoute: AuthVippsRoute,
   DealroomSlugRoute: DealroomSlugRoute,
