@@ -71,6 +71,13 @@
       "when": 1791397194553,
       "tag": "0009_visual_art_walls_exhibitions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791397231748,
+      "tag": "0010_art_wall_room_storage_policies",
+      "breakpoints": true
     }
   ]
 }

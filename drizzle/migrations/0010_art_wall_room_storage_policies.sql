@@ -1,0 +1,3 @@
+CREATE POLICY "Owners upload room photos" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'art-wall-rooms' AND (storage.foldername(name))[1] = auth.uid()::text);
+CREATE POLICY "Owners and shared wall viewers read rooms" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'art-wall-rooms' AND ((storage.foldername(name))[1] = auth.uid()::text OR EXISTS (SELECT 1 FROM public.art_walls w WHERE w.shared = true AND w.layout->>'roomPath' = name)));
+CREATE POLICY "Owners delete room photos" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'art-wall-rooms' AND (storage.foldername(name))[1] = auth.uid()::text);
