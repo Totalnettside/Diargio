@@ -103,7 +103,6 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
   useEffect(() => addRecent(artwork.id), [artwork.id]);
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
-  const [roomImage, setRoomImage] = useState<string | null>(null);
   const navigate = useNavigate();
   const others = artworksBySeller(seller.id).filter((a) => a.id !== artwork.id).slice(0, 3);
 
@@ -130,30 +129,13 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
         <div>
           <div className="overflow-hidden rounded-3xl glass-lift">
             <img
-              src={roomImage ?? artwork.image}
+              src={artwork.image}
               alt={`${artwork.title} av ${artist.name}`}
               width={1024}
               height={1024}
               className="aspect-square w-full object-cover"
             />
           </div>
-          {roomImage && (
-            <p className="mt-2 text-xs text-ink/60">
-              Romvisning: verket vises omtrentlig i {artwork.widthCm} × {artwork.heightCm} cm.
-            </p>
-          )}
-          <label className="mt-3 block w-full cursor-pointer rounded-2xl bg-white/70 px-4 py-3 text-center text-sm font-semibold text-brandink glass">
-            Se kunsten på veggen
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) setRoomImage(URL.createObjectURL(file));
-              }}
-            />
-          </label>
 
           <h1 className="mt-5 font-display text-3xl font-semibold">{artwork.title}</h1>
           {artist.slug ? (
