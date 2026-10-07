@@ -71,6 +71,22 @@ function SellPage() {
   const [images, setImages] = useState<string[]>([]);
   const [artistName, setArtistName] = useState("");
   const [title, setTitle] = useState("");
+  const [webArtists, setWebArtists] = useState<{ id: string; label: string; description?: string }[]>([]);
+  useEffect(() => {
+    const q = artistName.trim();
+    if (q.length < 2) { setWebArtists([]); return; }
+    const ctrl = new AbortController();
+    const t = setTimeout(() => {
+      fetch(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(q)}&language=nb&uselang=nb&type=item&limit=15&format=json&origin=*`, { signal: ctrl.signal })
+        .then((r) => r.json())
+        .then((j: { search?: { id: string; label: string; description?: string }[] }) => {
+          const re = /(kunstner|maler|billedhugger|skulptør|fotograf|grafiker|tegner|illustratør|artist|painter|sculptor|photographer|printmaker|designer|keramiker)/i;
+          setWebArtists((j.search ?? []).filter((x) => x.description && re.test(x.description)).slice(0, 6));
+        })
+        .catch(() => {});
+    }, 300);
+    return () => { clearTimeout(t); ctrl.abort(); };
+  }, [artistName]);
   const [year, setYear] = useState("2026");
   const [category, setCategory] = useState(categories[0]!);
   const [technique, setTechnique] = useState(techniques[0]!);
@@ -162,6 +178,7 @@ function SellPage() {
     void navigate({ to: "/min-side" });
   }
 
+  const maxStep = images.length === 0 ? 0 : !title.trim() ? 2 : stepTitles.length - 1;
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-5">
       <h1 className="font-display text-2xl font-semibold">Legg ut kunst</h1>
@@ -169,7 +186,8 @@ function SellPage() {
         {stepTitles.map((t, i) => (
           <button
             key={t}
-            onClick={() => setStep(i)}
+            onClick={() => i <= maxStep && setStep(i)}
+            disabled={i > maxStep}
             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold glass ${
               i === step ? "bg-brandink text-primary-foreground" : "bg-white/60"
             }`}
@@ -250,7 +268,23 @@ function SellPage() {
                 ))}
               </div>
             )}
-            {artistName.length > 1 && suggestions.length === 0 && (
+            {webArtists.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-muted-foreground">Fra kunstnerdatabasen (Wikidata)</p>
+                {webArtists.filter((w) => w.label !== artistName).map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={() => setArtistName(w.label)}
+                    className="flex w-full flex-col rounded-2xl bg-white/70 px-3 py-2 text-left text-sm glass"
+                  >
+                    <span className="font-semibold">{w.label}</span>
+                    <span className="text-xs text-muted-foreground">{w.description}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Valgfritt – trykk «Hopp over» hvis du ikke vil oppgi kunstner.</p>
+            {artistName.length > 1 && suggestions.length === 0 && webArtists.length === 0 && (
               <p className="rounded-2xl bg-peach/40 p-3 text-sm glass">
                 Fant ikke «{artistName}». Den legges til som ny kunstner når du publiserer.
               </p>
@@ -262,7 +296,7 @@ function SellPage() {
           <>
             <p className="font-display text-lg font-semibold">Informasjon om verket</p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Verkets navn">
+              <Field label="Verkets navn *">
                 <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
               </Field>
               <Field label="År">
@@ -462,10 +496,10 @@ function SellPage() {
           </button>
           {step < stepTitles.length - 1 && (
             <button
-              onClick={() => setStep((s) => s + 1)}
+              onClick={() => step < maxStep ? setStep((s) => s + 1) : alert(images.length === 0 ? "Last opp minst ett bilde før du går videre." : "Skriv inn verkets navn før du går videre.")}
               className="rounded-2xl bg-brandink px-6 py-2.5 text-sm font-semibold text-primary-foreground"
             >
-              Neste
+              {step === 1 && !artistName.trim() ? "Hopp over" : "Neste"}
             </button>
           )}
         </div>
