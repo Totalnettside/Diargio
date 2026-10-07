@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ImagePlus, Minus, Plus, Save, Share2, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ImagePlus, Plus, Save, Share2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { categories, formatPrice, type Artwork } from '@/data/demo';
@@ -34,8 +34,6 @@ function ArtWallPage() {
   const [selected, setSelected] = useState<string | null>(null); const [budget, setBudget] = useState(''); const [category, setCategory] = useState(''); const [size, setSize] = useState('');
   const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false); const [shareUrl, setShareUrl] = useState(''); const [isShared, setIsShared] = useState(false);
   const [photo, setPhoto] = useState<File>(); const fileInput = useRef<HTMLInputElement>(null);
-  const [calibrating, setCalibrating] = useState(false); const [point, setPoint] = useState<number | null>(null); const [knownCm, setKnownCm] = useState('300');
-  const [measureStart,setMeasureStart] = useState(15); const [measureEnd,setMeasureEnd] = useState(85);
   const strip = useRef<HTMLDivElement>(null);
   useEffect(() => { if (!shared) return; setLayout(shared.layout);setRoomUrl(shared.roomUrl??'');setName(shared.name);setOwnId(undefined);setIsShared(false);setSelected(null); },[shared]);
   useEffect(() => {
@@ -68,7 +66,7 @@ function ArtWallPage() {
   function add(art: Artwork, x?: number, y?: number) {
     if (layout.placements.length >= 30) { setMessage('Maksimalt 30 verk per kunstvegg.'); return; }
     const item = newPlacement(art.id,art.widthCm / art.heightCm,layout.placements.length);
-    if (art.widthCm > 0) item.width = Math.max(0.02,Math.min(0.8,art.widthCm/(layout.calibration?.cm ?? 300)*(layout.calibration ? Math.abs(layout.calibration.end-layout.calibration.start) : 1)));
+    if (art.widthCm > 0) item.width = Math.max(0.02,Math.min(0.8,art.widthCm/300));
     item.width = Math.min(item.width,0.7*item.ratio/layout.aspect);
     if (x !== undefined) item.x = Math.max(0,Math.min(1-item.width,x-item.width/2));
     if (y !== undefined) item.y = Math.max(0,Math.min(1-item.width*layout.aspect/item.ratio,y));
@@ -105,23 +103,16 @@ function ArtWallPage() {
         <label className="visual-label">Rom<select value={roomUrl ? 'custom' : layout.scene} onChange={(e) => { setRoomUrl(''); setPhoto(undefined); setLayout((l) => ({ ...l,scene:e.target.value as WallLayout['scene'],roomPath:undefined,aspect:1.5,calibration:null })); }}><option value="custom" disabled>Ditt rom</option>{roomScenes.map((r) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label>
         <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" aria-label="Last opp romfoto" onChange={async (e) => { const f=e.target.files?.[0]; if (!f) return; if (!['image/jpeg','image/png','image/webp'].includes(f.type) || f.size>10*1024*1024) { setMessage('Velg JPG, PNG eller WebP under 10 MB.'); return; } const url=URL.createObjectURL(f); const img=new Image(); img.onload=() => { const aspect=img.width/img.height; if (aspect<0.2 || aspect>5) { setMessage('Romfotoet har et format som ikke støttes.'); URL.revokeObjectURL(url); return; } setPhoto(f); setRoomUrl(url); setLayout((l) => ({ ...l,roomPath:undefined,aspect,calibration:null })); }; img.src=url; }} />
         <Button variant="outline" onClick={() => fileInput.current?.click()} className="w-full"><ImagePlus />Last opp ditt rom</Button>
-        <div className="border-t border-border pt-4"><label className="visual-label">Kjent lengde på veggen (cm)<Input type="number" min="1" max="10000" value={knownCm} onChange={(e) => setKnownCm(e.target.value)} /></label><Button variant="outline" className="mt-2 w-full" onClick={() => { setCalibrating(!calibrating); setPoint(null); }}> {calibrating ? 'Avbryt måling' : 'Marker kjent lengde'}</Button>
-        {calibrating && <p role="status" className="mt-2 text-xs text-primary">{point === null ? 'Velg første punkt på veggen.' : 'Velg andre punkt på veggen.'}</p>}
-        {calibrating && <div className="mt-3 space-y-2"><label className="visual-label">Startpunkt (%)<Input type="number" min="0" max="95" value={measureStart} onChange={(e)=>setMeasureStart(Number(e.target.value))} /></label><label className="visual-label">Sluttpunkt (%)<Input type="number" min="5" max="100" value={measureEnd} onChange={(e)=>setMeasureEnd(Number(e.target.value))} /></label><Button variant="outline" className="w-full" onClick={()=>{const cm=Number(knownCm);const start=measureStart/100,end=measureEnd/100;if(!Number.isFinite(cm)||cm<1||cm>10000||start<0||end>1||end-start<0.05){setMessage('Oppgi gyldig lengde og to punkter med litt avstand.');return;}setLayout((l)=>({...l,calibration:{start,end,cm},placements:l.placements.map((p)=>{const art=data.artworks.find((a)=>a.id===p.artworkId);const width=art&&art.widthCm>0?Math.max(0.02,Math.min(0.9,art.widthCm/cm*(end-start))):p.width;return {...p,width:Math.min(width,1-p.x,(1-p.y)*p.ratio/l.aspect)};})}));setCalibrating(false);setPoint(null);}}>Bruk målepunkter</Button></div>}
-        <p className="mt-2 text-xs text-muted-foreground">{layout.calibration ? 'Omtrentlig kalibrert størrelse. Perspektiv kan påvirke visningen.' : 'Illustrasjon – størrelse er ikke kalibrert'}</p>
-        {layout.calibration && <Button variant="link" className="px-0 text-xs" onClick={() => setLayout((l) => ({ ...l,calibration:null }))}>Fjern kalibrering</Button>}
-        </div>
       </aside>
       <div className="visual-stage-area">
         <ArtStage background={roomUrl || sceneImage(layout.scene)} aspect={layout.aspect} color={layout.color} placements={layout.placements} artworks={data.artworks} selected={selected} onSelect={setSelected}
           onChange={(placements) => setLayout((l) => ({ ...l,placements }))}
-          onDropArt={(id,x,y) => { const art=data.artworks.find((a) => a.id===id); if (art) add(art,x,y); }} calibration={layout.calibration}
-          onCalibrationPoint={calibrating ? (x) => { if (point===null) { setPoint(x); return; } const cm=Number(knownCm); if (!Number.isFinite(cm) || cm<=0 || cm>10000 || Math.abs(x-point)<0.05) { setMessage('Oppgi gyldig lengde og velg to punkter med litt avstand.'); return; } const calibration={start:point,end:x,cm}; setLayout((l) => ({ ...l,calibration,placements:l.placements.map((p) => { const art=data.artworks.find((a) => a.id===p.artworkId); const width=art && art.widthCm>0 ? Math.max(0.02,Math.min(0.9,art.widthCm/cm*Math.abs(x-point))) : p.width; return {...p,width:Math.min(width,(1-p.x),(1-p.y)*p.ratio/l.aspect)}; }) })); setCalibrating(false); setPoint(null); } : undefined} />
+          onDropArt={(id,x,y) => { const art=data.artworks.find((a) => a.id===id); if (art) add(art,x,y); }} />
         {layout.placements.length===0 && <div className="stage-empty"><ImagePlus className="mx-auto mb-2 size-6" /><p>Velg ditt første verk</p></div>}
-        <div className="flex flex-wrap justify-between gap-2 px-4 py-3 text-xs text-muted-foreground"><span>{layout.calibration ? 'Omtrentlig kalibrert' : 'Illustrasjon – størrelse er ikke kalibrert'}</span><span>{layout.placements.length} verk · {formatPrice(total)} · Frakt separat</span></div>
+        <div className="flex flex-wrap justify-between gap-2 px-4 py-3 text-xs text-muted-foreground"><span>Verkene henger i reelle størrelsesforhold</span><span>{layout.placements.length} verk · {formatPrice(total)} · Frakt separat</span></div>
         {missing>0 && <p role="status" className="px-4 pb-3 text-xs text-muted-foreground">{missing} verk er solgt eller utilgjengelig og vises ikke lenger.</p>}
       </div>
-      {a && <ArtDetails artwork={a} onClose={() => setSelected(null)}>{p && <div className="mt-4 border-t border-border pt-3"><div className="flex flex-wrap gap-1">{[[ArrowLeft,-0.02,0,'Flytt venstre'],[ArrowRight,0.02,0,'Flytt høyre'],[ArrowUp,0,-0.02,'Flytt opp'],[ArrowDown,0,0.02,'Flytt ned']].map(([Icon,dx,dy,label]) => { const I=Icon as typeof ArrowLeft; return <Button key={String(label)} size="icon" variant="outline" aria-label={String(label)} onClick={() => adjust({x:Math.max(0,Math.min(1-p.width,p.x+Number(dx))),y:Math.max(0,Math.min(1-p.width*layout.aspect/p.ratio,p.y+Number(dy)))})}><I /></Button>; })}<Button size="icon" variant="outline" aria-label="Mindre kunstverk" onClick={() => adjust({width:Math.max(0.02,p.width-0.015)})}><Minus /></Button><Button size="icon" variant="outline" aria-label="Større kunstverk" onClick={() => adjust({width:Math.min(0.9,1-p.x,(1-p.y)*p.ratio/layout.aspect,p.width+0.015)})}><Plus /></Button><Button size="icon" variant="ghost" aria-label="Fjern fra veggen" onClick={() => { setLayout((l) => ({...l,placements:l.placements.filter((v) => v.id!==p.id)})); setSelected(null); }}><Trash2 /></Button></div></div>}</ArtDetails>}
+      {a && <ArtDetails artwork={a} onClose={() => setSelected(null)}>{p && <div className="mt-4 border-t border-border pt-3"><div className="flex flex-wrap gap-1">{[[ArrowLeft,-0.02,0,'Flytt venstre'],[ArrowRight,0.02,0,'Flytt høyre'],[ArrowUp,0,-0.02,'Flytt opp'],[ArrowDown,0,0.02,'Flytt ned']].map(([Icon,dx,dy,label]) => { const I=Icon as typeof ArrowLeft; return <Button key={String(label)} size="icon" variant="outline" aria-label={String(label)} onClick={() => adjust({x:Math.max(0,Math.min(1-p.width,p.x+Number(dx))),y:Math.max(0,Math.min(1-p.width*layout.aspect/p.ratio,p.y+Number(dy)))})}><I /></Button>; })}<Button size="icon" variant="ghost" aria-label="Fjern fra veggen" onClick={() => { setLayout((l) => ({...l,placements:l.placements.filter((v) => v.id!==p.id)})); setSelected(null); }}><Trash2 /></Button></div></div>}</ArtDetails>}
     </div>
     {(message || (!user && message)) && <div className="px-6 py-3 text-sm" role="status">{message}{!user && <Button asChild variant="link"><Link to="/auth" onClick={() => { sessionStorage.setItem('diargio-wall-draft',JSON.stringify({layout,name})); }}>Logg inn</Link></Button>}</div>}
     {shareUrl && <label className="visual-label mx-6 mb-4">Delingslenke<Input readOnly value={shareUrl} onFocus={(e) => e.currentTarget.select()} /></label>}

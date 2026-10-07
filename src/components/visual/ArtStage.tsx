@@ -3,10 +3,9 @@ import type { Artwork } from '@/data/demo';
 import { Button } from '@/components/ui/button';
 import type { Placement } from '@/lib/visual-art';
 
-export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt, calibration, onCalibrationPoint }: {
+export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt }: {
   background: string; aspect?: number; color?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
   onSelect: (id: string) => void; onChange?: (items: Placement[]) => void; onDropArt?: (id: string, x: number, y: number) => void;
-  calibration?: { start: number; end: number; cm: number } | null; onCalibrationPoint?: ((x: number) => void) | undefined;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const gesture = useRef<{ id: string; startX: number; startY: number; initial: Placement; corner?: string } | null>(null);
@@ -35,10 +34,9 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
   }
   return <div ref={ref} className={`art-stage wall-tone-${color}`} style={{ aspectRatio: aspect }}
     onDragOver={(e) => { if (onDropArt) e.preventDefault(); }} onDrop={(e) => { e.preventDefault(); const r = ref.current?.getBoundingClientRect(); if (r) onDropArt?.(e.dataTransfer.getData('text/plain'), (e.clientX-r.left)/r.width, (e.clientY-r.top)/r.height); }}
-    onClick={(e) => { if (onCalibrationPoint) { const r = ref.current?.getBoundingClientRect(); if (r) onCalibrationPoint((e.clientX-r.left)/r.width); } }}>
+    >
     <img src={background} alt="Rom med vegg for kunst" className="absolute inset-0 size-full object-fill" />
     <div className="wall-tint" />
-    {calibration && <div className="calibration-line" style={{ left: `${Math.min(calibration.start, calibration.end)*100}%`, width: `${Math.abs(calibration.end-calibration.start)*100}%` }}><span>{calibration.cm} cm</span></div>}
     {placements.map((p, i) => {
       const a = artworks.find((a) => a.id === p.artworkId); if (!a) return null;
       return <div key={p.id} className={`placed-art ${selected === p.id ? 'is-selected' : ''}`} style={{ left: `${p.x*100}%`, top: `${p.y*100}%`, width: `${p.width*100}%`, aspectRatio: p.ratio }}>
