@@ -1,8 +1,10 @@
 import React from 'react'
-import { Body, Container, Head, Heading, Html, Preview, Text, Button, Hr } from '@react-email/components'
+import { Body, Container, Head, Heading, Html, Preview, Text, Button, Hr, Img } from '@react-email/components'
 import type { TemplateEntry } from './registry'
 
 interface Props { name?: string }
+
+const LOGO_URL = 'https://diargio.com/diargio-logo.png'
 
 const Email = ({ name }: Props) => (
   <Html lang="nb" dir="ltr">
@@ -10,6 +12,7 @@ const Email = ({ name }: Props) => (
     <Preview>Velkommen til Diargio</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src={LOGO_URL} alt="Diargio" width="160" style={logo} />
         <Heading style={h1}>Velkommen til Diargio{name ? `, ${name}` : ''}!</Heading>
         <Text style={text}>Så fint at du har laget bruker hos oss. Diargio er en norsk markedsplass for kjøp og salg av kunst.</Text>
         <Text style={text}>Utforsk kunst fra kunstnere over hele Norge, gi bud på verk du liker, eller legg ut din egen kunst.</Text>
