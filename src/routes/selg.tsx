@@ -112,6 +112,10 @@ function SellPage() {
   }
 
   function publish() {
+    if (!toCm(width) || !toCm(height)) {
+      alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
+      return;
+    }
     const slug = `${(title || "nytt-verk")
       .toLowerCase()
       .replace(/[^a-z0-9æøå ]/g, "")
@@ -122,6 +126,7 @@ function SellPage() {
       slug,
       title: title || "Nytt verk",
       artistId: artists.find((a) => a.name === artistName)?.id ?? "self",
+      ...(artistName.trim() ? { artistName: artistName.trim() } : {}),
       sellerId: "s1",
       category,
       style,
@@ -129,8 +134,8 @@ function SellPage() {
       type,
       condition,
       year: Number(year) || 2026,
-      widthCm: Number(width) || 0,
-      heightCm: Number(height) || 0,
+      widthCm: toCm(width),
+      heightCm: toCm(height),
       ...(edition ? { edition } : {}),
       signed,
       framed,
@@ -214,12 +219,6 @@ function SellPage() {
                 ))}
               </div>
             )}
-            <button
-              onClick={() => setImages(artImages.slice(0, 3) as string[])}
-              className="flex items-center gap-2 rounded-2xl bg-lav/60 px-4 py-2 text-xs font-semibold text-brandink glass"
-            >
-              <Sparkles className="size-3.5" /> Bruk demobilder
-            </button>
           </>
         )}
 
@@ -483,4 +482,9 @@ function compressImage(file: File): Promise<string> {
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
   });
+}
+
+function toCm(v: string) {
+  const n = Number(v.replace(",", ".").trim());
+  return Number.isFinite(n) && n > 0 ? n : 0;
 }

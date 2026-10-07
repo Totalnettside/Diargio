@@ -51,6 +51,7 @@ export type Artwork = {
   slug: string;
   title: string;
   artistId: string;
+  artistName?: string;
   sellerId: string;
   category: string;
   style: string;
@@ -546,6 +547,10 @@ const unknownArtist: Artist = { id: "self", slug: "", name: "Ukjent kunstner", n
 const selfSeller: Seller = { id: "s1", slug: "", name: "Deg", type: "Privat", verified: false, rating: 0, reviewCount: 0, sales: 0, memberSince: "2026", responseRate: 0, location: "Norge", avatar: "", followers: 0 };
 export function artistById(id: string): Artist {
   return artists.find((a) => a.id === id) ?? unknownArtist;
+}
+export function artistFor(a: { artistId: string; artistName?: string }): Artist {
+  const base = artistById(a.artistId);
+  return a.artistName && !base.slug ? { ...base, name: a.artistName } : base;
 }
 export function sellerById(id: string): Seller {
   return sellers.find((s) => s.id === id) ?? selfSeller;

@@ -6,7 +6,7 @@ import { BidDialog } from "@/components/BidDialog";
 import { StripeBadge } from "@/components/StripeBadge";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import {
-  artistById,
+  artistById, artistFor,
   artworkBySlug,
   artworksBySeller,
   countdown,
@@ -22,7 +22,7 @@ import { useChat } from "@/hooks/useChat";
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
     const artwork = artworkBySlug(params.slug) ?? null;
-    return { artwork, artistName: artwork ? artistById(artwork.artistId).name : "" };
+    return { artwork, artistName: artwork ? artistFor(artwork).name : "" };
   },
   head: ({ loaderData }) => {
     if (!loaderData?.artwork) {
@@ -79,7 +79,7 @@ function ArtworkPage() {
 }
 
 function ArtworkView({ artwork }: { artwork: Artwork }) {
-  const artist = artistById(artwork.artistId);
+  const artist = artistFor(artwork);
   const seller = sellerById(artwork.sellerId);
   const { isFavorite, toggleFavorite, toggleFollowSeller, followedSellers } = useStore();
   const { user } = useAuth();
@@ -156,13 +156,13 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
           </label>
 
           <h1 className="mt-5 font-display text-3xl font-semibold">{artwork.title}</h1>
-          <Link
-            to="/kunstner/$slug"
-            params={{ slug: artist.slug }}
-            className="text-sm font-semibold text-brandink"
-          >
-            {artist.name}
-          </Link>
+          {artist.slug ? (
+            <Link to="/kunstner/$slug" params={{ slug: artist.slug }} className="text-sm font-semibold text-brandink">
+              {artist.name}
+            </Link>
+          ) : (
+            <p className="text-sm font-semibold text-brandink">{artist.name}</p>
+          )}
 
           <dl className="mt-4 grid grid-cols-2 gap-3 rounded-3xl p-4 glass">
             {facts.map(([k, v]) => (
@@ -316,14 +316,19 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                 {seller.verified && (
                   <p className="text-xs font-semibold text-brandink">✓ Verifisert {seller.type.toLowerCase()}</p>
                 )}
-                <p className="flex items-center gap-1 text-xs text-ink/60">
-                  <Star className="size-3 fill-brand text-brand" /> {seller.rating.toFixed(1)} ·{" "}
-                  {seller.reviewCount} vurderinger
-                </p>
+                {seller.reviewCount > 0 ? (
+                  <p className="flex items-center gap-1 text-xs text-ink/60">
+                    <Star className="size-3 fill-brand text-brand" /> {seller.rating.toFixed(1)} ·{" "}
+                    {seller.reviewCount} vurderinger
+                  </p>
+                ) : (
+                  <p className="text-xs text-ink/60">Ny selger · Ingen vurderinger ennå</p>
+                )}
               </div>
             </div>
             <p className="mt-2 text-xs text-ink/50">
-              Medlem siden {seller.memberSince} · Svarer på {seller.responseRate}% av henvendelser
+              Medlem siden {seller.memberSince}
+              {seller.responseRate > 0 && ` · Svarer på ${seller.responseRate}% av henvendelser`}
             </p>
 
             <textarea

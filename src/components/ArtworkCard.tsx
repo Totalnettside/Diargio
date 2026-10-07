@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import { artistById, formatPrice, type Artwork } from "@/data/demo";
+import { artistFor, formatPrice, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { ArtworkPreview } from "@/components/ArtworkPreview";
 import { Button } from "@/components/ui/button";
 
 export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; large?: boolean }) {
   const { isFavorite, toggleFavorite } = useStore();
-  const artist = artistById(artwork.artistId);
+  const artist = artistFor(artwork);
   const fav = isFavorite(artwork.id);
 
   return (
@@ -34,13 +34,17 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
         </div>
       </div>
       <div className={large ? "px-1 py-4" : "px-1 py-3"}>
-        <Link
-          to="/kunstner/$slug"
-          params={{ slug: artist?.slug ?? "" }}
-          className={`font-semibold text-brandink hover:text-foreground ${large ? "text-sm" : "text-xs"}`}
-        >
-          {artist?.name}
-        </Link>
+        {artist.slug ? (
+          <Link
+            to="/kunstner/$slug"
+            params={{ slug: artist.slug }}
+            className={`font-semibold text-brandink hover:text-foreground ${large ? "text-sm" : "text-xs"}`}
+          >
+            {artist.name}
+          </Link>
+        ) : (
+          <span className={`font-semibold text-brandink ${large ? "text-sm" : "text-xs"}`}>{artist.name}</span>
+        )}
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="block">
           <p className={`truncate font-display font-medium ${large ? "text-xl" : "text-[13px]"}`}>{artwork.title}</p>
         </Link>
