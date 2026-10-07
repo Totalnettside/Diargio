@@ -148,7 +148,7 @@ function AuthPage() {
 
         <button
           onClick={() => setMode(mode === "inn" ? "ny" : "inn")}
-          className="mt-5 text-sm font-semibold text-brandink"
+          className="mt-5 w-full rounded-2xl border-2 border-sage px-4 py-3 text-sm font-semibold text-sage transition hover:bg-sage hover:text-white"
         >
           {mode === "inn" ? "Ny her? Opprett konto" : "Har du konto? Logg inn"}
         </button>
