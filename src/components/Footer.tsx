@@ -39,26 +39,26 @@ export function Footer() {
             <h3 className="text-sm font-semibold">Selg på Diargio</h3>
             <ul className="mt-3 space-y-2">
               <li><Link to="/selg" className={linkCls}>Legg ut kunst</Link></li>
-              <li><Link to="/selg" className={linkCls}>For kunstnere</Link></li>
-              <li><Link to="/selg" className={linkCls}>For gallerier</Link></li>
-              <li><Link to="/selg" className={linkCls}>For private selgere</Link></li>
-              <li><Link to="/selg" className={linkCls}>Guide til å selge kunst</Link></li>
+              <li><Link to="/info/$page" params={{ page: "for-kunstnere" }} className={linkCls}>For kunstnere</Link></li>
+              <li><Link to="/info/$page" params={{ page: "for-gallerier" }} className={linkCls}>For gallerier</Link></li>
+              <li><Link to="/info/$page" params={{ page: "for-private-selgere" }} className={linkCls}>For private selgere</Link></li>
+              <li><Link to="/info/$page" params={{ page: "guide-til-a-selge-kunst" }} className={linkCls}>Guide til å selge kunst</Link></li>
             </ul>
           </nav>
           <nav aria-label="Hjelp og trygghet">
             <h3 className="text-sm font-semibold">Hjelp og trygghet</h3>
             <ul className="mt-3 space-y-2">
-              {["Slik fungerer Diargio", "Trygg kunsthandel", "Betaling og levering", "Priser og gebyrer", "Ofte stilte spørsmål"].map((t) => (
-                <li key={t}>
-                  <a href={`mailto:post@diargio.com?subject=${encodeURIComponent(t)}`} className={linkCls}>{t}</a>
-                </li>
-              ))}
+              <li><Link to="/info/$page" params={{ page: "slik-fungerer-diargio" }} className={linkCls}>Slik fungerer Diargio</Link></li>
+              <li><Link to="/info/$page" params={{ page: "trygg-kunsthandel" }} className={linkCls}>Trygg kunsthandel</Link></li>
+              <li><Link to="/info/$page" params={{ page: "betaling-og-levering" }} className={linkCls}>Betaling og levering</Link></li>
+              <li><Link to="/info/$page" params={{ page: "priser-og-gebyrer" }} className={linkCls}>Priser og gebyrer</Link></li>
+              <li><Link to="/info/$page" params={{ page: "ofte-stilte-sporsmal" }} className={linkCls}>Ofte stilte spørsmål</Link></li>
             </ul>
           </nav>
           <nav aria-label="Om Diargio">
             <h3 className="text-sm font-semibold">Om Diargio</h3>
             <ul className="mt-3 space-y-2">
-              <li><a href="mailto:post@diargio.com?subject=Om%20oss" className={linkCls}>Om oss</a></li>
+              <li><Link to="/info/$page" params={{ page: "om-oss" }} className={linkCls}>Om oss</Link></li>
               <li><a href="mailto:post@diargio.com" className={linkCls}>Kontakt oss</a></li>
               <li><a href="https://www.instagram.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Instagram</a></li>
               <li><a href="https://www.facebook.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Facebook</a></li>
