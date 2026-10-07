@@ -8,12 +8,12 @@ import { Link } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { artists, formatPrice } from "@/data/demo";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/diargioadmin007")({
   head: () => ({
     meta: [
-      { title: "Adminpanel | Diargio" },
+      { title: "Kontrollsenter | Diargio" },
       { name: "description", content: "Administrer brukere, annonser, transaksjoner og moderering." },
-      { property: "og:title", content: "Adminpanel | Diargio" },
+      { property: "og:title", content: "Kontrollsenter | Diargio" },
       { property: "og:description", content: "Administrer Diargios markedsplass." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -126,7 +126,7 @@ function Dashboard() {
             <Link to="/meldinger" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
               Meldinger
             </Link>
-            {isAdmin && <Link to="/admin" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
+            {isAdmin && <Link to="/diargioadmin007" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
               Adminpanel
             </Link>}
           </div>
