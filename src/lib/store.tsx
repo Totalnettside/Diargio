@@ -40,6 +40,7 @@ export type AppNotification = {
   read: boolean;
   createdAt: number;
   conversationId?: string | undefined;
+  slug?: string | undefined;
 };
 
 type State = {
@@ -91,9 +92,16 @@ const KEY = "diargio-state-v2";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
-  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork }[]>([]);
+  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork; created_at?: string }[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [dbBids, setDbBids] = useState<Bid[]>([]);
+  const [follows, setFollows] = useState<{ artist_id: string; created_at: string; last_seen_at: string }[]>([]);
+  const loadFollows = useCallback(async () => {
+    if (!userId) { setFollows([]); return; }
+    const { data } = await supabase.from("artist_follows").select("artist_id,created_at,last_seen_at").eq("follower_id", userId);
+    setFollows(data ?? []);
+  }, [userId]);
+  useEffect(() => { void loadFollows(); }, [loadFollows]);
 
   const loadBids = useCallback(async () => {
     if (!userId) { setDbBids([]); return; }
@@ -121,10 +129,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const loadListings = useCallback(async () => {
     const { data, error } = await supabase
       .from("listings")
-      .select("id,user_id,data")
+      .select("id,user_id,data,created_at")
       .order("created_at", { ascending: false });
     if (error) console.error("listings", error);
-    else setDbListings((data ?? []) as unknown as { id: string; user_id: string; data: Artwork }[]);
+    else setDbListings((data ?? []) as unknown as { id: string; user_id: string; data: Artwork; created_at?: string }[]);
   }, []);
 
   useEffect(() => {
@@ -170,7 +178,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       notifications: [...dbBids.filter((b) => b.sellerId === userId).map((b) => ({
         id: b.id, title: "Nytt bud mottatt", body: `${Number(b.amount).toLocaleString("nb-NO")} kr på «${dbListings.find((l) => l.id === b.artworkId)?.data.title ?? "kunstverk"}»`,
         read: b.read ?? false, createdAt: b.createdAt, conversationId: b.conversationId,
-      })), ...state.notifications].sort((a, b) => b.createdAt - a.createdAt),
+      })), ...dbListings.flatMap((l) => {
+        const f = follows.find((x) => x.artist_id === l.user_id);
+        if (!f || !l.created_at || l.created_at <= f.created_at) return [];
+        return [{ id: `nw-${l.id}`, title: "Nytt verk fra en kunstner du følger", body: `«${l.data.title}»`, read: l.created_at <= f.last_seen_at, createdAt: new Date(l.created_at).getTime(), slug: l.data.slug }];
+      }), ...state.notifications].sort((a, b) => b.createdAt - a.createdAt),
       myListings: dbListings.filter((l) => l.user_id === userId).map((l) => l.data),
       allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
       isFavorite: (id) => state.favorites.includes(id),
@@ -247,6 +259,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       markAllRead: () => {
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
+        if (userId) void supabase.from("artist_follows").update({ last_seen_at: new Date().toISOString() }).eq("follower_id", userId).then(() => loadFollows());
         if (userId) void supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("seller_id", userId).is("read_at", null).then(() => loadBids());
       },
       addListing: (a) => {
