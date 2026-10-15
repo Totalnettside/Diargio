@@ -24,13 +24,14 @@ function ExhibitionsPage(){
   const {data}=useSuspenseQuery(visualArtOptions());
   const {investor}=Route.useSearch();
   const [roomIndex,setRoomIndex]=useState(0); const [mode,setMode]=useState<'gallery'|'list'>('gallery'); const [selected,setSelected]=useState<string|null>(null);
-  const displayedArt=investor?investorArtworks:data.artworks;
+  const displayedArt=investor?investorArtworks:[...data.artworks,...investorArtworks];
   const wallArt=displayedArt.filter((a)=>WALL_CATEGORIES.has(a.category));
-  const rooms=GALLERY_ROOMS.map((hall,r)=>({hall,placements:investor||r===0?hall.slots.flatMap((s,k)=>{const a=wallArt[investor?r*4+k:k];return a?[fitGalleryArt(s,a.widthCm&&a.heightCm?a.widthCm/a.heightCm:1,a.id)]:[];}):[]}));
+  const rooms=GALLERY_ROOMS.map((hall,r)=>({hall,placements:investor||r===0?hall.slots.flatMap((s,k)=>{const a=investor?wallArt[r*4+k]:investorArtworks[k];return a?[fitGalleryArt(s,a.widthCm&&a.heightCm?a.widthCm/a.heightCm:1,a.id)]:[];}):[]}));
   const idx=Math.min(roomIndex,rooms.length-1); const room=rooms[idx];
   if(!room) return <VisualError />;
   const arts=displayedArt.filter((a)=>room.placements.some((p)=>p.artworkId===a.id));
   const art=displayedArt.find((a)=>a.id===room.placements.find((p)=>p.id===selected)?.artworkId);
+  const isDemo=(a:{id:string})=>a.id.startsWith('investor-demo-');
   const go=(d:number)=>{setRoomIndex(idx+d);setSelected(null);};
   const nav=<div className="mt-3 flex items-center gap-2"><Button variant="outline" disabled={idx===0} onClick={()=>go(-1)}><ArrowLeft />Forrige rom</Button><Button disabled={idx>=rooms.length-1} onClick={()=>go(1)}>Neste rom<ArrowRight /></Button></div>;
   return <main className="visual-page"><div className="visual-page-heading"><div><p className="visual-eyebrow">DIARGIO / DIGITAL UTSTILLING</p><h1 className="text-2xl font-medium">Gå på kunstjakt</h1><p className="text-sm text-muted-foreground">Klikk på et verk for å se pris og kunstner.</p></div><div className="flex flex-wrap items-center gap-2"><Button asChild><Link to="/galleriplass" search={{room:2}}>Still ut i galleriet</Link></Button><div className="flex border border-border p-1" role="group" aria-label="Utstillingsvisning"><Button variant={mode==='gallery'?'default':'ghost'} aria-pressed={mode==='gallery'} onClick={()=>setMode('gallery')}><PanelsTopLeft />Galleri</Button><Button variant={mode==='list'?'default':'ghost'} aria-pressed={mode==='list'} onClick={()=>setMode('list')}><Grid2X2 />Liste</Button></div></div></div>
