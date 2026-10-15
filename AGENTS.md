@@ -18,3 +18,4 @@
 - Gallery room geometry and preview pricing are shared across exhibition and placement previews; previews never persist bookings or claim payment until a server-confirmed payment integration exists.
 - Scope messaging visual tokens and typography to the messages page; preserve shared chat persistence and read-status logic to avoid redesign changes affecting other pages.
 - Use react-image-crop with browser canvas for seller-selected photo crops, retaining the source photo during listing creation so crops can be reset without altering the artwork.
+- Keep investor artwork in a separate presentation-only catalog and explicit exhibition search mode; never merge it into listings, commerce, favorites, or user records, so demo content cannot be mistaken for available inventory.
