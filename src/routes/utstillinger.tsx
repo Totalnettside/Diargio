@@ -14,7 +14,7 @@ import { GALLERY_ASPECT, GALLERY_ROOMS, WALL_CATEGORIES, fitGalleryArt } from '@
 import { investorArtworks } from '@/data/investor-art';
 import { InvestorArtCard, InvestorArtDetails } from '@/components/InvestorArt';
 export const Route=createFileRoute('/utstillinger')({
-  validateSearch: (search: Record<string, unknown>): { investor?: boolean } => ({ investor: search.investor === true || search.investor === 'true' ? true : undefined }),
+  validateSearch: (search: Record<string, unknown>): { investor?: boolean } => search['investor'] === true || search['investor'] === 'true' ? { investor: true } : {},
   loader:({context})=>context.queryClient.ensureQueryData(visualArtOptions()),
   head:()=>visualHead('Digital utstilling','Gå på kunstjakt gjennom Diargios digitale gallerirom med ekte kunstverk.'),
   component:ExhibitionsPage,errorComponent:VisualError,notFoundComponent:VisualError,
@@ -34,7 +34,7 @@ function ExhibitionsPage(){
   const go=(d:number)=>{setRoomIndex(idx+d);setSelected(null);};
   const nav=<div className="mt-3 flex items-center gap-2"><Button variant="outline" disabled={idx===0} onClick={()=>go(-1)}><ArrowLeft />Forrige rom</Button><Button disabled={idx>=rooms.length-1} onClick={()=>go(1)}>Neste rom<ArrowRight /></Button></div>;
   return <main className="visual-page"><div className="visual-page-heading"><div><p className="visual-eyebrow">DIARGIO / DIGITAL UTSTILLING</p><h1 className="text-2xl font-medium">Gå på kunstjakt</h1><p className="text-sm text-muted-foreground">Klikk på et verk for å se pris og kunstner.</p></div><div className="flex flex-wrap items-center gap-2"><Button asChild><Link to="/galleriplass" search={{room:2}}>Still ut i galleriet</Link></Button><div className="flex border border-border p-1" role="group" aria-label="Utstillingsvisning"><Button variant={mode==='gallery'?'default':'ghost'} aria-pressed={mode==='gallery'} onClick={()=>setMode('gallery')}><PanelsTopLeft />Galleri</Button><Button variant={mode==='list'?'default':'ghost'} aria-pressed={mode==='list'} onClick={()=>setMode('list')}><Grid2X2 />Liste</Button></div></div></div>
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary px-6 py-3"><p className="text-xs font-medium">{investor?'Investorvisning · AI-genererte demoverk · Eksempelpriser · Ikke til salgs':'Ekte kunstverk'}</p><Button asChild variant="outline" size="sm"><Link to="/utstillinger" search={{investor:investor?undefined:true}} onClick={()=>{setSelected(null);setRoomIndex(0);}}>{investor?'Vis ekte kunst':'Vis investorutstilling'}</Link></Button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary px-6 py-3"><p className="text-xs font-medium">{investor?'Investorvisning · AI-genererte demoverk · Eksempelpriser · Ikke til salgs':'Ekte kunstverk'}</p><Button asChild variant="outline" size="sm"><Link to="/utstillinger" search={investor?{}:{investor:true}} onClick={()=>{setSelected(null);setRoomIndex(0);}}>{investor?'Vis ekte kunst':'Vis investorutstilling'}</Link></Button></div>
     {mode==='gallery'?<div className="exhibition-space"><ArtStage background={room.hall.image} aspect={GALLERY_ASPECT} placements={room.placements} artworks={displayedArt} selected={selected} onSelect={setSelected} >
         {idx>0&&!investor&&<GallerySlots slots={room.hall.slots} onSelect={(slot)=>{window.location.assign(`/galleriplass?room=${idx+1}&slot=${slot.id}`);}} />}
       </ArtStage>
