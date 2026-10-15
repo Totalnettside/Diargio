@@ -1,4 +1,5 @@
 # Budvarsler
+- [x] Legg til ti merkede investorverk på forsiden og i utstillingene, og kontroller visningen.
 - [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
 - [x] Digital utstilling: galleri/liste, rom, kunstinfo og admin-redigering.
 - [x] Koble navigasjon og profil; kontrollere mobil, tastatur og sikker tilgang.

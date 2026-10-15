@@ -5,6 +5,9 @@ import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
+import { investorArtworks } from '@/data/investor-art';
+import { InvestorArtCard } from '@/components/InvestorArt';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -176,6 +179,14 @@ function Index() {
           </Link>
         ))}
       </div>
+
+      <section className="mt-8 border-y border-border py-6" aria-label="Investorvisning">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="font-display text-lg font-medium">Investorvisning — ti demoverk</h2><p className="mt-1 text-xs text-muted-foreground">AI-genererte illustrasjoner · Eksempelpriser · Ikke til salgs</p></div>
+          <Button asChild variant="outline"><Link to="/utstillinger" search={{ investor: true }}>Se demoutstillingen</Link></Button>
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div>
+      </section>
 
       <div className="mt-6 flex items-center justify-between">
         <h2 className="text-sm font-bold">Fremhevede annonser</h2>
