@@ -21,3 +21,11 @@
 - Keep investor artwork in a separate presentation-only catalog and explicit exhibition search mode; never merge it into listings, commerce, favorites, or user records, so demo content cannot be mistaken for available inventory.
 - Scope authentication presentation to `.auth-page` and preserve existing sign-in and signup calls so visual changes cannot alter account access.
 - Payments go through Lovable's built-in payments using the shared gateway utility; checkout charges the listing total the buyer already sees (fees included) plus shipping as its own line, and never recomputes commission or the art fee in the cart — seller payouts wait for connected artist accounts.
+
+- Use immutable art_orders and server-confirmed Stripe state for trade status; sandbox orders never create live purchase records, so preview tests cannot sell real inventory.
+- Keep account, messages, notifications, editing and admin views under the authenticated pathless layout; enforce roles in server functions because navigation guards are not authorization.
+- Store libraries by authenticated owner in account_library; do not restore cross-account browser favorites or bids.
+- Validate listing versions and accepted bids within the reservation lock; release uncertain reservations only after Stripe reconciliation to avoid charged-but-unfulfilled purchases.
+- Serialize refund claims and use leased payment events with retryable processing; every lifecycle side effect must be idempotent.
+- Preserve trade and conversation history by blocking destructive account deletion when counterparties have records; do not recreate self-service deletion.
+- Route payment account creation and status through the shared gateway, with live checkout and transfers blocked until operational and legal requirements are approved.

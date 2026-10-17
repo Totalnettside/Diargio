@@ -2,7 +2,7 @@
 
 ## Evidence and boundaries
 
-Reviewed application source, all 13 existing migrations, current public-table policies and constraints, hosted public Auth settings, Stripe sandbox products/accounts/webhook registrations, email-domain status, and signed-out/signed-in browser flows. No purchase, profile update, deletion, payment, or role change was performed. This is an audit, not a completed fix or an end-to-end payment certification.
+Reviewed application source, all 13 existing migrations, current public-table policies and constraints, hosted public Auth settings, Stripe sandbox products/accounts/webhook registrations, email-domain status, and signed-out/signed-in browser flows. The initial audit was read-only. Subsequent approved implementation saved/read back the requesting user’s unchanged profile and performed one isolated NOK 7,000 sandbox payment for an existing listing, receipt approval and full sandbox refund. No live purchase or seller transfer was performed.
 
 ## Current implementation
 
@@ -61,3 +61,33 @@ Use a real buyer account and a different real seller account, with an explicitly
 ## Outstanding decisions/blockers
 
 Await owner choices on rollout scope, shipping, how to handle buyer nonresponse/disputes and whether delayed-transfer connected-account setup satisfies the intended retention model. Live activation remains an owner onboarding task. Norwegian VAT/art-fee classification and allocation require qualified confirmation; physical art cannot use full digital-product compliance handling. Automatic tax calculation/collection, if applicable, adds 0.5% processor cost and does not file/remit taxes for Diargio.
+
+## Implemented and verified after approval
+
+- Simulated purchases disabled; browser writes to purchases rejected. Profile phone reads and BankID writes rejected for authenticated browser callers. Message/conversation update grants narrowed.
+- Private profile owner read; authenticated layouts for account/messages/notifications/edit/admin; obsolete Vipps endpoints disabled.
+- Recovery/reset and current-password-protected email/password changes; safe intended-destination handling. Unchanged profile save/read-back verified; recovery page rendered. Email delivery and complete Google/recovery email round trips remain unverified.
+- Seller-defined shipping or eligible pickup; publication/edit/delete awaited. Server trigger validates owner and recalculates entered payout prices using agreed rules.
+- Owner-scoped favorites/collections/saved searches and persistent follows. Invented account graph removed; legacy sales excluded from confirmed financial revenue.
+- Embedded gateway Stripe checkout, immutable authoritative order snapshot, accepted-bid and listing-version validation under lock, verified payment matching, event retry leases, refund/dispute reconciliation and one live sale per artwork.
+- Order view, buyer-only approval, seller shipping, full admin refund, receipt retrieval and reservation cancellation. Test orders do not create live purchases. Auctions and gallery bookings remain unavailable.
+- 15 unit tests passed. Browser: authenticated safety checks, profile roundtrip, Stripe card form, NOK 7,000 test charge, paid order readback, receipt approval and full refund verified; no app runtime errors during verified flows.
+- Seller-account onboarding attempted through managed gateway: Stripe refuses account creation because the sandbox is unclaimed and Connect is not enabled. No seller account or transfer was created.
+
+## Exact preview checklist
+
+1. Use two existing real accounts, buyer and seller. Open a real listing whose seller is different from buyer. Seller must specify shipping, or buyer selects pickup when offered.
+2. Open secure card payment in the preview; select NOK if Stripe offers currency conversion. Use `4242 4242 4242 4242`, `12/30`, CVC `123`, and a cardholder name. Never use a real card.
+3. Open **Ordre og oppgjør**, choose **Kontroller betaling**, and confirm **Betalt · venter på levering**. Reload: same order and amount. Test order must not mark the real artwork sold.
+4. Seller registers delivery; buyer approves receipt or opens a dispute. Approval must show payout waiting, never a claimed seller transfer. Admin may refund the entire test amount; confirm **Refundert** after reload.
+5. Retry with decline card `4000 0000 0000 0002` and authentication card `4000 0025 0000 3155`. These two cases are provided for owner testing, not yet browser-certified. Unpaid reservation may be canceled; uncertain payment must be checked, not assumed failed.
+6. Test profile save/reload, wrong-current-password rejection, recovery email link and email-change confirmation. Do not test account deletion on accounts with trade/message history; it is deliberately blocked.
+
+## Remaining launch gates
+
+- Owner completes Payments claim/activation; Stripe Connect onboarding and gateway transfer capability must then be verified. Actual transfers, transfer reversals and bank payout timings are not enabled.
+- Qualified Norwegian VAT/art-levy classification, recipient, fee VAT and invoice wording; agreed UI fee model is implemented but is not legal advice. Live checkout remains explicitly disabled.
+- Platform balance retention/liquidity and maximum holding periods require confirmation with Stripe; this is not escrow and no automatic release exists.
+- Hosted recovery/email-change redirects and actual recovery/receipt-email delivery remain to be certified. Existing welcome/bid templates are not a durable payment-email outbox.
+- Scheduled reconciliation, payment expiry concurrency stress tests, orphan-session recovery and fully private internal audit notes need final operational review before live launch. Current ambiguous reservations stay blocked rather than being released blindly.
+- Gallery booking, renewals, subscriptions, BankID and newsletter delivery remain deferred/unavailable by scope; no paid entitlements are falsely granted.
