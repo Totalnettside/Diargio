@@ -1,5 +1,6 @@
 # Budvarsler
-- [ ] Gjennomgå alle kjøps-, betalings-, konto- og tilgangsflyter; avklare mangler og valg med eierne.
+- [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
+- [ ] Avklare betalingsomfang, frakt, mottak/oppgjør og avgiftsbehandling med eierne — venter på svar.
 - [ ] Gjennomføre godkjent rettingsplan med tester og testveiledning for forhåndsvisningen.
 - [x] Legg til ti merkede investorverk på forsiden og i utstillingene, og kontroller visningen.
 - [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
