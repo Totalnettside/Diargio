@@ -56,11 +56,12 @@ function Index() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pt-4">
+    <div className="bg-topbar">
+      <main className="mx-auto w-full max-w-6xl px-5 pt-4">
       <section
         ref={heroRef}
         onMouseMove={onHeroMove}
-        className="hero-surface relative mt-2 overflow-hidden rounded-3xl"
+        className="home-hero relative mt-2 overflow-hidden rounded-3xl"
       >
         <div className="grid items-center gap-8 p-5 md:p-10 lg:min-h-[480px] lg:grid-cols-[1.05fr_1fr] lg:gap-4">
           <div className="relative z-10">
@@ -304,6 +305,7 @@ function Index() {
         </Link>
       </section>
 
-    </main>
+      </main>
+    </div>
   );
 }
