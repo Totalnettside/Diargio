@@ -138,8 +138,9 @@ function Index() {
                     style={{ animationDelay: `${i * 1.2}s`, ["--r" as string]: `${[-1.5, -6, 3][i]}deg` }}
                   >
                     <Link
-                      to="/kunst/$slug"
-                      params={{ slug: a.slug }}
+                      to={a.id.startsWith("investor-demo") ? "/utstillinger" : "/kunst/$slug"}
+                      params={a.id.startsWith("investor-demo") ? undefined : { slug: a.slug }}
+                      search={a.id.startsWith("investor-demo") ? { investor: true } : undefined}
                       className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
                     >
                       <img
