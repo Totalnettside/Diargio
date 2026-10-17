@@ -62,6 +62,7 @@ export function Footer() {
               <li><a href="mailto:post@diargio.com" className={linkCls}>Kontakt oss</a></li>
               <li><a href="https://www.instagram.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Instagram</a></li>
               <li><a href="https://www.facebook.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Facebook</a></li>
+              <li><a href="https://www.linkedin.com/company/diargio/about/" target="_blank" rel="noreferrer" className={linkCls}>LinkedIn</a></li>
             </ul>
           </nav>
         </div>
