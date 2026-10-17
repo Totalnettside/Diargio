@@ -30,7 +30,10 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const chipTints = ["bg-lilac/50", "bg-sea/45", "bg-butter/60", "bg-coral/45", "bg-mint/55", "bg-blush/50"];
+
 function Index() {
+
   const [q, setQ] = useState("");
   const navigate = useNavigate();
   const { allArtworks, toggleFollowArtist, followedArtists } = useStore();
@@ -103,14 +106,15 @@ function Index() {
             <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
               <Link
                 to="/kunst"
-                className="flex-1 rounded-2xl bg-brandink py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 md:flex-none md:px-8"
-                style={{ boxShadow: "0 12px 24px -14px oklch(0.48 0.219 285)" }}
+                className="hero-cta flex-1 rounded-2xl py-3 text-center text-sm font-semibold transition-transform duration-200 hover:-translate-y-0.5 md:flex-none md:px-8"
+
               >
                 Utforsk kunst
               </Link>
               <Link
                 to="/selg"
-                className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-brandink glass transition-transform duration-200 hover:-translate-y-0.5"
+                className="hero-cta-ghost rounded-2xl px-4 py-3 text-sm font-semibold transition-transform duration-200 hover:-translate-y-0.5"
+
               >
                 Selg kunst
               </Link>
@@ -189,13 +193,16 @@ function Index() {
 
       <p className="mb-3 mt-6 text-sm font-bold">Utforsk kunst</p>
       <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar md:flex-nowrap">
-        {categories.map((c) => (
+        {categories.map((c, i) => (
           <Link
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className="shrink-0 whitespace-nowrap rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-sage hover:text-white hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
+            className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold tracking-wide text-brandink ring-1 ring-white/70 transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center ${
+              chipTints[i % chipTints.length]
+            }`}
           >
+
             {c}
           </Link>
         ))}
@@ -211,7 +218,7 @@ function Index() {
 
       <div className="mt-6 flex items-center justify-between">
         <h2 className="text-sm font-bold">Fremhevede annonser</h2>
-        <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
+        <span className="hero-cta rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">Fremhevet</span>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
         {featuredArtworks.length === 0 ? (
@@ -272,9 +279,10 @@ function Index() {
               <p className="text-[11px] text-ink/45">{artworksByArtist(artist.id).length} verk</p>
               <button
                 onClick={() => toggleFollowArtist(artist.id)}
-                className={`mt-2 w-full rounded-xl py-1.5 text-[11px] font-semibold text-brandink glass ${
-                  following ? "bg-mint/70" : "bg-lav/70"
+                className={`mt-2 w-full rounded-xl py-1.5 text-[11px] font-semibold text-brandink ring-1 ring-white/70 ${
+                  following ? "bg-sea/50" : "bg-blush/50"
                 }`}
+
               >
                 {following ? "Følger" : "Følg"}
               </button>
@@ -299,7 +307,8 @@ function Index() {
         </p>
         <Link
           to="/selg"
-          className="mt-3 block w-full rounded-2xl bg-ink py-3 text-center text-sm font-semibold text-primary-foreground md:w-auto md:px-8"
+          className="hero-cta mt-3 block w-full rounded-2xl py-3 text-center text-sm font-semibold md:w-auto md:px-8"
+
         >
           Legg ut kunst
         </Link>
