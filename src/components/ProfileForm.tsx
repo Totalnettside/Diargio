@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getOwnProfile } from "@/lib/private-profile.functions";
 import { useAuth } from "@/hooks/useAuth";
 
 const schema = z.object({
@@ -42,18 +43,13 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
 
   useEffect(() => {
     if (!user) return;
-    void supabase
-      .from("profiles")
-      .select("first_name,last_name,phone,bio,location,website,avatar_url,story,techniques,studio_images")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) {
-          const d = data as unknown as Record<string, string | null>;
-          setV({ ...(Object.fromEntries(Object.keys(empty).map((k) => [k, d[k] ?? ""])) as Values), techniques: (data.techniques ?? []).join(", ") });
-          setStudio(data.studio_images ?? []);
-        }
-      });
+    void getOwnProfile().then((data) => {
+      if (data) {
+        const d = data as unknown as Record<string, string | null>;
+        setV({ ...(Object.fromEntries(Object.keys(empty).map((k) => [k, d[k] ?? ""])) as Values), techniques: (data.techniques ?? []).join(", ") });
+        setStudio(data.studio_images ?? []);
+      }
+    }).catch(() => setError("Kunne ikke hente profilen."));
   }, [user]);
 
   const set = (k: keyof Values) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -72,7 +68,8 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
     }
     const { data } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
     const url = data?.signedUrl ?? "";
-    await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+    const { error: saveError } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+    if (saveError || !url) { setBusy(false); return setError("Profilbildet kunne ikke lagres."); }
     setV((p) => ({ ...p, avatar_url: url }));
     setBusy(false);
   }
@@ -89,7 +86,8 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
       const { data } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
       if (data?.signedUrl) next.push(data.signedUrl);
     }
-    await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    const {error: saveError} = await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    if(saveError) { setBusy(false); return setError("Bildene kunne ikke lagres."); }
     setStudio(next);
     setBusy(false);
   }
@@ -97,7 +95,8 @@ export function ProfileForm({ compact = false, onSaved }: { compact?: boolean; o
   async function removeStudio(url: string) {
     if (!user) return;
     const next = studio.filter((u) => u !== url);
-    await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    const {error: saveError} = await supabase.from("profiles").update({ studio_images: next }).eq("id", user.id);
+    if(saveError) { setBusy(false); return setError("Bildene kunne ikke lagres."); }
     setStudio(next);
   }
 

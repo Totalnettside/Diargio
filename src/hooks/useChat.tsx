@@ -71,11 +71,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       const ids = [...new Set(list.flatMap((c) => [c.buyer_id, c.seller_id]))];
       const { data: profs } = await supabase
         .from("profiles")
-        .select("id, display_name, first_name, last_name")
+        .select("id, display_name")
         .in("id", ids);
       const map: Record<string, string> = {};
       for (const p of profs ?? [])
-        map[p.id] = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Bruker";
+        map[p.id] = p.display_name || "Bruker";
       setNames(map);
     } else setMessages([]);
   }, [uid]);
@@ -120,7 +120,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       unread: messages.filter(isUnread).length,
       unreadFor: (cid) => messages.filter((m) => m.conversation_id === cid && isUnread(m)).length,
       send: async (cid, body) => {
-        const { data } = await supabase.from("messages").insert({ conversation_id: cid, body }).select().single();
+        const { data, error } = await supabase.from("messages").insert({ conversation_id: cid, body }).select().single();
+        if (error) throw new Error("Meldingen kunne ikke sendes.");
         if (data) setMessages((prev) => (prev.some((x) => x.id === data.id) ? prev : [...prev, data]));
       },
       markRead: async (cid) => {
@@ -157,7 +158,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           cid = created?.id;
         }
         if (!cid) return null;
-        await supabase.from("messages").insert({ conversation_id: cid, body });
+        const {error} = await supabase.from("messages").insert({ conversation_id: cid, body });
+        if(error) throw new Error("Meldingen kunne ikke sendes.");
         await load();
         return cid;
       },
