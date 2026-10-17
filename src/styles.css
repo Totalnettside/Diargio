@@ -72,17 +72,13 @@
   --topbar: oklch(0.895 0.014 118);
   --hero: oklch(0.77 0.022 122);
 
-  /* Levende fargepalett — brukes i hero-vaske og på forsidens knapper */
+  /* Levende fargepalett — bare til hero-veggen på forsiden */
   --lilac: oklch(0.86 0.11 305);
   --sea: oklch(0.85 0.11 225);
   --butter: oklch(0.9 0.13 95);
   --coral: oklch(0.83 0.14 35);
   --blush: oklch(0.87 0.1 15);
 
-  --cta-a: oklch(0.47 0.13 305);
-  --cta-b: oklch(0.45 0.11 230);
-  --cta-c: oklch(0.5 0.14 35);
-  --cta-ink: oklch(0.99 0.005 115);
 
 
   --background: var(--mist);
@@ -194,32 +190,18 @@
   }
 }
 
-/* Knappene på forsiden tar fargene fra hero-veggen */
-@utility hero-cta {
-  background-image: linear-gradient(115deg, var(--cta-a) 0%, var(--cta-b) 52%, var(--cta-c) 100%);
-  color: var(--cta-ink);
-  box-shadow:
-    0 14px 28px -16px color-mix(in oklab, var(--cta-b) 75%, transparent),
-    inset 0 0 0 1px oklch(1 0 0 / 0.18);
-}
-
-@utility hero-cta-ghost {
-  background-color: oklch(1 0 0 / 0.68);
-  color: var(--brandink);
-  box-shadow:
-    inset 0 0 0 1.5px color-mix(in oklab, var(--lilac) 60%, oklch(1 0 0)),
-    var(--shadow-glass);
-}
 
 
 @utility sell-surface {
-  background-image:
-    radial-gradient(58% 88% at 6% 0%, color-mix(in oklab, var(--butter) 62%, transparent), transparent 62%),
-    radial-gradient(52% 82% at 94% 6%, color-mix(in oklab, var(--coral) 50%, transparent), transparent 64%),
-    radial-gradient(66% 96% at 58% 100%, color-mix(in oklab, var(--sea) 44%, transparent), transparent 66%),
-    linear-gradient(135deg, color-mix(in oklab, var(--peach) 85%, transparent), oklch(1 0 0), color-mix(in oklab, var(--lilac) 60%, transparent));
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--peach) 85%, transparent),
+    oklch(1 0 0),
+    color-mix(in oklab, var(--lav) 75%, transparent)
+  );
   box-shadow: var(--shadow-glass);
 }
+
 
 
 @utility no-scrollbar {
