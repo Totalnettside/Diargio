@@ -1,4 +1,6 @@
 # Budvarsler
+- [ ] Gjennomgå alle kjøps-, betalings-, konto- og tilgangsflyter; avklare mangler og valg med eierne.
+- [ ] Gjennomføre godkjent rettingsplan med tester og testveiledning for forhåndsvisningen.
 - [x] Legg til ti merkede investorverk på forsiden og i utstillingene, og kontroller visningen.
 - [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
 - [x] Digital utstilling: galleri/liste, rom, kunstinfo og admin-redigering.
