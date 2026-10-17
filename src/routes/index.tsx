@@ -56,11 +56,12 @@ function Index() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pt-4">
+    <div className="bg-topbar">
+      <main className="mx-auto w-full max-w-6xl px-5 pt-4">
       <section
         ref={heroRef}
         onMouseMove={onHeroMove}
-        className="hero-surface relative mt-2 overflow-hidden rounded-3xl"
+        className="home-hero relative mt-2 overflow-hidden rounded-3xl"
       >
         <div className="grid items-center gap-8 p-5 md:p-10 lg:min-h-[480px] lg:grid-cols-[1.05fr_1fr] lg:gap-4">
           <div className="relative z-10">
@@ -77,7 +78,7 @@ function Index() {
               Finn kunst du <em className="italic text-brand">faktisk</em> vil ha på veggen.
             </h1>
             <p
-              className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-ink/60 md:text-base"
+              className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-ink/85 md:text-base"
               style={{ animationDelay: "180ms" }}
             >
               Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere,
@@ -96,7 +97,7 @@ function Index() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Søk etter kunstner, verk, stil eller kategori"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink/45"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-ink/80"
               />
             </form>
             <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
@@ -304,6 +305,7 @@ function Index() {
         </Link>
       </section>
 
-    </main>
+      </main>
+    </div>
   );
 }

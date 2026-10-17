@@ -46,6 +46,7 @@
   --color-ink: var(--ink);
   --color-mist: var(--mist);
   --color-topbar: var(--topbar);
+  --color-hero: var(--hero);
   --font-display: var(--font-display-family);
   --font-body: var(--font-body-family);
 }
@@ -63,6 +64,7 @@
   --ink: oklch(0.25 0.018 155);
   --mist: oklch(0.965 0.01 115);
   --topbar: oklch(0.895 0.014 118);
+  --hero: oklch(0.77 0.022 122);
 
   --background: var(--mist);
   --foreground: var(--ink);
@@ -143,6 +145,11 @@
     color-mix(in oklab, var(--mint) 80%, transparent)
   );
   box-shadow: var(--shadow-glass), 0 20px 40px -28px oklch(0.63 0.176 288 / 0.7);
+}
+
+@utility home-hero {
+  background-color: var(--hero);
+  box-shadow: var(--shadow-glass), 0 22px 44px -30px oklch(0.25 0.018 155 / 0.55);
 }
 
 @utility sell-surface {
