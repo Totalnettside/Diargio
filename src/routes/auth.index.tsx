@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { startVippsLogin } from "@/lib/vipps.functions";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth/")({
@@ -12,12 +11,12 @@ export const Route = createFileRoute("/auth/")({
       {
         name: "description",
         content:
-          "Logg inn på Diargio med e-post, Google eller Vipps (BankID) for å kjøpe og selge kunst.",
+          "Logg inn på Diargio med e-post eller Google for å kjøpe og selge kunst.",
       },
       { property: "og:title", content: "Logg inn – Diargio" },
       {
         property: "og:description",
-        content: "Logg inn med e-post, Google eller Vipps (BankID) på Diargio.",
+        content: "Logg inn med e-post eller Google på Diargio.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -66,27 +65,6 @@ function AuthPage() {
     if (result.error) setMsg("Google-innlogging feilet.");
   };
 
-  const vipps = async () => {
-    setBusy(true);
-    setMsg(null);
-    try {
-      const state = crypto.randomUUID();
-      sessionStorage.setItem("vipps_state", state);
-      const { authorizationUrl, error } = await startVippsLogin({
-        data: { redirectUri: `${window.location.origin}/auth/vipps`, state },
-      });
-      if (!authorizationUrl) {
-        setMsg(error ?? "Vipps-innlogging feilet.");
-        setBusy(false);
-        return;
-      }
-      window.location.href = authorizationUrl;
-    } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Vipps-innlogging feilet.");
-      setBusy(false);
-    }
-  };
-
   return (
     <main className="mx-auto w-full max-w-md px-4 py-10 pb-28 md:pb-12">
       <div className="rounded-3xl bg-white/70 p-6 glass">
@@ -98,13 +76,6 @@ function AuthPage() {
         </p>
 
         <div className="mt-6 space-y-2">
-          <button
-            onClick={vipps}
-            disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#ff5b24] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
-          >
-            Fortsett med Vipps (BankID)
-          </button>
           <button
             onClick={google}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-ink glass"
