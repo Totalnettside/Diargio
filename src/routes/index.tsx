@@ -105,10 +105,8 @@ function Index() {
             <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
               <Link
                 to="/kunst"
-                className="flex-1 rounded-2xl bg-brandink py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 md:flex-none md:px-8"
-                style={{ boxShadow: "0 12px 24px -14px oklch(0.48 0.219 285)" }}
-
-
+                className="flex-1 rounded-2xl bg-gronn py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 md:flex-none md:px-8"
+                style={{ boxShadow: "0 12px 24px -14px oklch(0.25 0.018 155 / 0.55)" }}
               >
                 Utforsk kunst
               </Link>

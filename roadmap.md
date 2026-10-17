@@ -16,3 +16,4 @@
 - [ ] Betaling og vedvarende booking, reservasjon, aktivering og kvittering — bruker har valgt å vente med Stripe.
 - [ ] Mine betalte galleriplasseringer, forlengelse og bytte — avventer betaling/booking.
 - [ ] Adminstyring av lagrede priser/plasser, kalender, refusjoner og faktiske tall — avventer betaling/booking.
+- [x] Lysere hero-vegg; «Utforsk kunst» grønn uten lilla skygge.

@@ -54,6 +54,8 @@
   --color-sand: var(--sand);
   --color-champagne: var(--champagne);
   --color-bronse: var(--bronse);
+  --color-gronn: var(--gronn);
+  --color-gronnlys: var(--gronnlys);
 
 
   --font-display: var(--font-display-family);
@@ -67,6 +69,8 @@
   --brandink: oklch(0.4 0.045 158);
   --sage: oklch(0.49 0.028 133);
   --sagelight: oklch(0.56 0.032 133);
+  --gronn: oklch(0.49 0.028 133);
+  --gronnlys: oklch(0.56 0.032 133);
   --mint: oklch(0.9 0.035 135);
   --peach: oklch(0.89 0.04 70);
   --lav: oklch(0.92 0.02 130);
