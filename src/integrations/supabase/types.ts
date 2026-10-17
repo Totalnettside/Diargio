@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_library: {
+        Row: {
+          data: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          data?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          data?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       art_exhibitions: {
         Row: {
           created_at: string
@@ -37,6 +55,81 @@ export type Database = {
           published?: boolean
           rooms?: Json
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      art_orders: {
+        Row: {
+          admin_note: string | null
+          approved_at: string | null
+          artwork_amount: number
+          buyer_id: string
+          created_at: string
+          currency: string
+          dispute_note: string | null
+          environment: string
+          expires_at: string
+          id: string
+          listing_id: string
+          paid_at: string | null
+          seller_id: string
+          shipping_amount: number
+          shipping_note: string | null
+          snapshot: Json
+          status: string
+          stripe_payment_id: string | null
+          stripe_refund_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          approved_at?: string | null
+          artwork_amount: number
+          buyer_id: string
+          created_at?: string
+          currency?: string
+          dispute_note?: string | null
+          environment: string
+          expires_at?: string
+          id?: string
+          listing_id: string
+          paid_at?: string | null
+          seller_id: string
+          shipping_amount?: number
+          shipping_note?: string | null
+          snapshot: Json
+          status?: string
+          stripe_payment_id?: string | null
+          stripe_refund_id?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          approved_at?: string | null
+          artwork_amount?: number
+          buyer_id?: string
+          created_at?: string
+          currency?: string
+          dispute_note?: string | null
+          environment?: string
+          expires_at?: string
+          id?: string
+          listing_id?: string
+          paid_at?: string | null
+          seller_id?: string
+          shipping_amount?: number
+          shipping_note?: string | null
+          snapshot?: Json
+          status?: string
+          stripe_payment_id?: string | null
+          stripe_refund_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
           updated_at?: string
         }
         Relationships: []
@@ -89,6 +182,27 @@ export type Database = {
           created_at?: string
           follower_id?: string
           last_seen_at?: string
+        }
+        Relationships: []
+      }
+      artist_payment_accounts: {
+        Row: {
+          created_at: string
+          environment: string
+          stripe_account_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          stripe_account_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          stripe_account_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -235,6 +349,24 @@ export type Database = {
           },
         ]
       }
+      payment_events: {
+        Row: {
+          created_at: string
+          environment: string
+          event_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          event_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          event_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -370,6 +502,16 @@ export type Database = {
     }
     Functions: {
       artist_follower_count: { Args: { _artist: string }; Returns: number }
+      confirm_art_payment: {
+        Args: {
+          _amount: number
+          _currency: string
+          _order: string
+          _payment: string
+          _session: string
+        }
+        Returns: undefined
+      }
       decide_artwork_bid: {
         Args: { _bid_id: string; _decision: string }
         Returns: undefined
@@ -384,6 +526,46 @@ export type Database = {
       is_conversation_member: {
         Args: { _cid: string; _uid: string }
         Returns: boolean
+      }
+      reserve_art_order: {
+        Args: {
+          _artwork: number
+          _buyer: string
+          _environment: string
+          _listing: string
+          _shipping: number
+          _snapshot: Json
+        }
+        Returns: {
+          admin_note: string | null
+          approved_at: string | null
+          artwork_amount: number
+          buyer_id: string
+          created_at: string
+          currency: string
+          dispute_note: string | null
+          environment: string
+          expires_at: string
+          id: string
+          listing_id: string
+          paid_at: string | null
+          seller_id: string
+          shipping_amount: number
+          shipping_note: string | null
+          snapshot: Json
+          status: string
+          stripe_payment_id: string | null
+          stripe_refund_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "art_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       sold_listing_ids: { Args: { _seller: string }; Returns: string[] }
       submit_artwork_bid: {

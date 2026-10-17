@@ -1,145 +1,30 @@
-import { notifySeller } from "@/lib/seller-notice.functions";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Check } from "lucide-react";
-import { artistById, artworkBySlug, formatPrice, sellerById } from "@/data/demo";
-import type { Artwork } from "@/data/demo";
-import { useStore } from "@/lib/store";
-import { breakdownFromTotal } from "@/lib/fees";
-import { supabase } from "@/integrations/supabase/client";
-import { StripeBadge } from "@/components/StripeBadge";
-
-export const Route = createFileRoute("/kjop/$slug")({
-  loader: ({ params }) => {
-    return { artwork: artworkBySlug(params.slug) ?? null };
-  },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: loaderData?.artwork ? `Kjøp ${loaderData.artwork.title} | Diargio` : "Kjøp | Diargio" },
-      {
-        name: "description",
-        content: "Trygg kunsthandel: pengene holdes tilbake til du har bekreftet mottak.",
-      },
-      { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Trygg kunsthandel | Diargio" },
-      { property: "og:description", content: "Kjøp kunst med tydelig prisoversikt og trygg betaling." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: CheckoutPage,
-});
-
-const steps = [
-  "Kjøper betaler",
-  "Pengene reserveres",
-  "Selger sender verket",
-  "Kjøper bekrefter mottak",
-  "Selger får pengene",
-];
-
-function CheckoutPage() {
-  const { artwork: demo } = Route.useLoaderData();
-  const { slug } = Route.useParams();
-  const { allArtworks } = useStore();
-  const artwork = demo ?? allArtworks.find((a) => a.slug === slug);
-  if (!artwork) return <main className="px-5 py-16 text-center"><Link to="/kunst" className="font-semibold text-brandink">Fant ikke annonsen – tilbake til kunst</Link></main>;
-  return <Checkout artwork={artwork} />;
-}
-
-function Checkout({ artwork }: { artwork: Artwork }) {
-  const seller = sellerById(artwork.sellerId);
-  const [step, setStep] = useState(0);
-  const fees = breakdownFromTotal(artwork.price, artwork.artFeeApplies ?? true);
-
-  return (
-    <main className="mx-auto w-full max-w-3xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Trygg kunsthandel</h1>
-      <div className="mt-4 flex items-center gap-3 rounded-3xl p-4 glass">
-        <img
-          src={artwork.image}
-          alt={artwork.title}
-          width={512}
-          height={512}
-          className="size-20 rounded-2xl object-cover"
-        />
-        <div>
-          <p className="font-display text-lg">{artwork.title}</p>
-          <p className="text-sm text-ink/60">
-            {artistById(artwork.artistId).name} · selges av {seller.name}
-          </p>
-          <p className="mt-1 text-lg font-bold">{formatPrice(artwork.price)}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-3xl p-4 text-sm glass">
-        <div className="flex justify-between">
-          <span>Verk (totalpris)</span>
-          <span>{formatPrice(artwork.price)}</span>
-        </div>
-        <div className="mt-2 flex justify-between text-ink/60">
-          <span>Herav Diargio-provisjon</span>
-          <span>{formatPrice(fees.platformFee)}</span>
-        </div>
-        <div className="mt-1 flex justify-between text-ink/60">
-          <span>Herav kunstavgift</span>
-          <span>{formatPrice(fees.artFee)}</span>
-        </div>
-        <div className="mt-2 flex justify-between border-t border-border pt-2 font-bold">
-          <span>Å betale for verket</span>
-          <span>{formatPrice(fees.total)}</span>
-        </div>
-        <div className="mt-2 flex justify-between text-ink/60">
-          <span>Frakt</span>
-          <span>Avtales separat</span>
-        </div>
-      </div>
-
-      <ol className="mt-4 space-y-2">
-        {steps.map((s, i) => (
-          <li
-            key={s}
-            className={`flex items-center gap-3 rounded-2xl p-3 glass ${
-              i <= step ? "bg-mint/40" : "opacity-70"
-            }`}
-          >
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/80 text-xs font-bold">
-              {i < step ? <Check className="size-4 text-brandink" /> : i + 1}
-            </span>
-            <span className="text-sm font-semibold">{s}</span>
-          </li>
-        ))}
-      </ol>
-
-      {step < steps.length - 1 ? (
-        <button
-          onClick={async () => {
-            if (step === 0) {
-              const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
-              if (l) await supabase.from("purchases").upsert({ seller_id: l.user_id, listing_id: artwork.id }, { onConflict: "buyer_id,listing_id", ignoreDuplicates: true });
-              if (l) void notifySeller({ data: { kind: "sale", listingId: artwork.id } }).catch(() => {});
-            }
-            setStep((s) => s + 1);
-          }}
-          className="mt-4 w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
-        >
-          {step === 0 ? "Betal trygt gjennom Diargio" : "Neste steg"}
-        </button>
-      ) : (
-        <p className="mt-4 rounded-2xl bg-mint/50 p-4 text-sm font-semibold text-brandink glass">
-          Handelen er fullført. Gi gjerne en vurdering av selger.
-        </p>
-      )}
-
-      <div className="mt-3 flex items-center gap-2">
-        <StripeBadge />
-        <p className="text-xs text-ink/50">
-          Demoflyt. Betalingsreservasjon kobles på senere.
-        </p>
-      </div>
-      <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="mt-4 inline-block text-sm font-semibold text-brandink">
-        Tilbake til annonsen
-      </Link>
-    </main>
-  );
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+import { useStore } from '@/lib/store';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { createArtCheckout } from '@/lib/payments.functions';
+import { getStripe, getStripeEnvironment } from '@/lib/stripe';
+import { formatPrice } from '@/data/demo';
+export const Route=createFileRoute('/kjop/$slug')({
+ validateSearch:(s:Record<string,unknown>)=>({bid:typeof s['bid']==='string'?s['bid']:undefined}),
+ head:()=>({meta:[{title:'Kjøp kunst | Diargio'},{name:'description',content:'Kjøp kunst med én totalpris og frakt separat.'},{property:'og:title',content:'Kjøp kunst | Diargio'},{property:'og:description',content:'Sikker kortbetaling og oversikt over kunstkjøpet.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'},{name:'robots',content:'noindex'}]}),component:CheckoutPage});
+function CheckoutPage(){
+ const {slug}=Route.useParams();const {bid}=Route.useSearch();const {allArtworks,bids}=useStore();const {user,loading}=useAuth();
+ const [secret,setSecret]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+ const art=allArtworks.find(a=>a.slug===slug);const accepted=bids.find(b=>b.id===bid&&b.status==='Godtatt');
+ const token=import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
+ if(!art)return <main className="mx-auto max-w-3xl px-5 py-10"><p>Henter verket, eller annonsen er utilgjengelig.</p><Button asChild variant="link"><Link to="/kunst">Til kunsten</Link></Button></main>;
+ const shipping=(art as typeof art & {shippingPrice?:number}).shippingPrice;
+ return <main className="mx-auto max-w-3xl px-5 py-6">
+ <p role="status" className="mb-5 border-b border-border bg-muted p-3 text-sm">{token?.startsWith('pk_test_')?'Testbetaling · Ingen ekte penger eller utbetaling til selger.':'Ekte betaling er foreløpig stengt. Fullfør aktivering og avgiftsavklaring.'}</p>
+ <h1 className="font-display text-2xl">Kjøp {art.title}</h1>
+ <img src={art.image} alt={art.title} className="my-5 max-h-72 w-full object-contain" />
+ <dl className="space-y-3 border-y border-border py-4"><div className="flex justify-between"><dt>Verk · gebyrer inkludert</dt><dd>{formatPrice(accepted?.amount??art.price)}</dd></div><div className="flex justify-between"><dt>Frakt</dt><dd>{art.delivery==='Må hentes'?'Henting · 0 kr':shipping==null?'Selger må oppgi frakt':formatPrice(shipping)}</dd></div></dl>
+ <p className="my-4 text-sm text-muted-foreground">Selgeroppgjør avventer mottaksbekreftelse. Tvister behandles av admin. Testkjøp endrer ikke ekte salgsstatus.</p>
+ {!user&&!loading?<Button asChild><Link to="/auth" search={{next:`/kjop/${slug}`}}>Logg inn for å kjøpe</Link></Button>:secret?<EmbeddedCheckoutProvider stripe={getStripe()} options={{clientSecret:secret}}><EmbeddedCheckout /></EmbeddedCheckoutProvider>:<Button disabled={busy||loading||!user} onClick={async()=>{setBusy(true);setError('');try{const r=await createArtCheckout({data:{listingId:art.id,environment:getStripeEnvironment(),...(bid?{bidId:bid}:{})}});if('error'in r)throw new Error(r.error);setSecret(r.clientSecret);}catch(e){setError(e instanceof Error?e.message:'Kunne ikke åpne betaling');}finally{setBusy(false);}}}>{busy?'Åpner betaling …':'Åpne sikker kortbetaling'}</Button>}
+ {error&&<p role="alert" className="mt-3 text-destructive">{error}</p>}
+ <Button asChild variant="link" className="mt-4"><Link to="/ordre">Mine ordre</Link></Button>
+ </main>;
 }

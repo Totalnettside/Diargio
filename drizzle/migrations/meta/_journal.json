@@ -92,6 +92,13 @@
       "when": 1791397669422,
       "tag": "0012_guard_art_wall_room_ownership",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792243619275,
+      "tag": "0013_secure_commerce_accounts_and_orders",
+      "breakpoints": true
     }
   ]
 }

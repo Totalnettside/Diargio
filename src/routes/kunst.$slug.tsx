@@ -90,8 +90,8 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
     void (async () => {
       const { data: l } = await supabase.from("listings").select("user_id").eq("id", artwork.id).maybeSingle();
       if (!l) return;
-      const { data: p } = await supabase.from("profiles").select("display_name, first_name, last_name, avatar_url").eq("id", l.user_id).maybeSingle();
-      if (alive && p) setOwner({ id: l.user_id, name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Selger", avatar: p.avatar_url });
+      const { data: p } = await supabase.from("profiles").select("display_name, avatar_url").eq("id", l.user_id).maybeSingle();
+      if (alive && p) setOwner({ id: l.user_id, name: p.display_name || "Selger", avatar: p.avatar_url });
     })();
     return () => {
       alive = false;
