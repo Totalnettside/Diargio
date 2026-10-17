@@ -113,6 +113,13 @@
       "when": 1792244667978,
       "tag": "0015_serialize_order_lifecycle_and_payment_reconciliation",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792245057053,
+      "tag": "0016_claim_payment_events_with_retry_leases",
+      "breakpoints": true
     }
   ]
 }

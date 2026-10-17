@@ -2,7 +2,9 @@
 - [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
 - [x] Avklare betalingsomfang, frakt og mottak/oppgjør: kunst først, selger oppgir frakt, admin avgjør uavklarte saker.
 - [ ] Avklare moms og kunstavgiftsmottaker — ingen avklaring oppgitt; blokkerer ekte betalinger.
-- [ ] Gjennomføre godkjent rettingsplan med tester og testveiledning for forhåndsvisningen.
+- [x] Gjennomføre testkasse, kontosikkerhet, ordrestatus, refusjon, 15 tester og testveiledning.
+- [ ] Ekte oppgjør og operativ sluttkontroll — blokkert av Stripe claim/Connect, avgiftsavklaring og godkjent likviditets-/oppgjørspolicy.
+- [ ] Bekrefte e-postgjenoppretting og varslingslevering — avventer godkjente offentlige returadresser og testlenker fra e-post.
 - [x] Legg til ti merkede investorverk på forsiden og i utstillingene, og kontroller visningen.
 - [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
 - [x] Digital utstilling: galleri/liste, rom, kunstinfo og admin-redigering.
@@ -26,6 +28,6 @@
 - [x] Forny innloggingsområdet med galleri, ryddig skjema og grønne knapper; begge kontovalg, passordvisning og mobilvisning kontrollert.
 - [x] Fjern «Diargio» og slagordet fra gallerifeltet på innloggingssiden; innlogging med e-post kontrollert på mobil.
 - [x] Koble til betalingsløsning i testmiljø.
-- [ ] Kasse som belaster kjøper én gang for totalprisen (gebyrer allerede inkludert) med frakt som egen linje.
-- [ ] Utbetaling til selger og Diargios 25 % etter at kjøper godkjenner varen — krever egne betalingskontoer for kunstnerne.
+- [x] Testkasse med én belastning, gebyrer inkludert og frakt separat; 7 000 kr testbetaling godkjent og fullt refundert.
+- [ ] Utbetaling til selger og avklart Diargio-provisjon etter at kjøper godkjenner varen — krever egne betalingskontoer for kunstnerne.
 - [ ] Ekte betalinger: eierne må fullføre oppfølgingen i Betalinger-fanen (claim, aktivisering, installasjon).

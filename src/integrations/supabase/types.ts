@@ -354,16 +354,22 @@ export type Database = {
           created_at: string
           environment: string
           event_id: string
+          processed_at: string | null
+          processing_until: string | null
         }
         Insert: {
           created_at?: string
           environment: string
           event_id: string
+          processed_at?: string | null
+          processing_until?: string | null
         }
         Update: {
           created_at?: string
           environment?: string
           event_id?: string
+          processed_at?: string | null
+          processing_until?: string | null
         }
         Relationships: []
       }
@@ -502,6 +508,10 @@ export type Database = {
     }
     Functions: {
       artist_follower_count: { Args: { _artist: string }; Returns: number }
+      claim_payment_event: {
+        Args: { _environment: string; _event: string }
+        Returns: boolean
+      }
       confirm_art_payment: {
         Args: {
           _amount: number

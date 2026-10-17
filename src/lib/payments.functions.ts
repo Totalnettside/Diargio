@@ -62,6 +62,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
    if(s.status==='open'&&s.client_secret)return {clientSecret:s.client_secret,orderId:order.id};
    throw new Error('Denne ordren er allerede behandlet. Åpne ordreoversikten.');
   }
+  if(new Date(order.expires_at).getTime()-Date.now()<1800000)throw new Error('Reservasjonen nærmer seg utløp. Avbryt den i ordreoversikten og prøv igjen.');
   const {data:auth}=await context.supabase.auth.getUser();
   const customer=await resolveOrCreateCustomer(stripe,{userId:context.userId,...(auth.user?.email?{email:auth.user.email}:{})});
   const {getRequest}=await import('@tanstack/react-start/server');
@@ -69,10 +70,10 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
   const session=await stripe.checkout.sessions.create({
    customer,mode:'payment',ui_mode:'embedded_page',payment_method_types:['card'],
    line_items:[{price_data:{currency:'nok',unit_amount:order.artwork_amount,product_data:{name:String((order.snapshot as {title?:string}).title??a.title)}},quantity:1},...(order.shipping_amount?[{price_data:{currency:'nok',unit_amount:order.shipping_amount,product_data:{name:'Frakt'}},quantity:1}]:[])],
-   payment_intent_data:{description:a.title,metadata:{orderId:order.id,userId:context.userId}},
+   payment_intent_data:{description:String((order.snapshot as {title?:string}).title??a.title),metadata:{orderId:order.id,userId:context.userId}},
    metadata:{orderId:order.id,userId:context.userId,environment:data.environment},
    return_url:`${origin}/ordre?order=${order.id}`,
-   expires_at:Math.max(Math.floor(Date.now()/1000)+1801,Math.floor(new Date(order.expires_at).getTime()/1000)),
+   expires_at:Math.floor(new Date(order.expires_at).getTime()/1000),
   },{idempotencyKey:`art-order-${order.id}`});
   const {error:saveError}=await admin.from('art_orders').update({stripe_session_id:session.id}).eq('id',order.id);
   if(saveError)throw new Error('Betalingsøkten kunne ikke lagres. Prøv igjen.');
