@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import {verifySignedPayment} from './payment-webhook-signature';
 const getEnv = (key: string): string => {
   const value = process.env[key];
   if (!value) throw new Error(`${key} is not configured`);
@@ -43,6 +44,6 @@ export async function verifyPaymentWebhook(request: Request, env: StripeEnv) {
   const signature = request.headers.get('stripe-signature');
   if (!signature) throw new Error('Missing signature');
   const body = await request.text();
-  const stripe = createStripeClient(env);
-  return stripe.webhooks.constructEventAsync(body, signature, getEnv(env === 'sandbox' ? 'PAYMENTS_SANDBOX_WEBHOOK_SECRET' : 'PAYMENTS_LIVE_WEBHOOK_SECRET'), 300, Stripe.createSubtleCryptoProvider());
+  await verifySignedPayment(body,signature,getEnv(env === 'sandbox' ? 'PAYMENTS_SANDBOX_WEBHOOK_SECRET' : 'PAYMENTS_LIVE_WEBHOOK_SECRET'));
+  return JSON.parse(body) as Stripe.Event;
 }

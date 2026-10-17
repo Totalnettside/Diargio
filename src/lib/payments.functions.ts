@@ -83,7 +83,8 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
 export const listArtOrders=createServerFn({method:'GET'}).middleware([requireSupabaseAuth]).handler(async({context})=>{
  const {data,error}=await context.supabase.from('art_orders').select('*').order('created_at',{ascending:false});
  if(error)throw new Error('Kunne ikke hente ordreoversikten');
- return {orders:data,userId:context.userId};
+ const {data:isAdmin}=await context.supabase.rpc('has_role',{_user_id:context.userId,_role:'admin'});
+ return {orders:data.map(o=>({...o,admin_note:isAdmin?o.admin_note:null})),userId:context.userId};
 });
 export const refreshArtOrder=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>z.object({orderId:z.string().uuid()}).parse(d)).handler(async({data,context})=>{
  try{
@@ -150,7 +151,7 @@ export const startArtistOnboarding=createServerFn({method:'POST'}).middleware([r
  const {getRequest}=await import('@tanstack/react-start/server');const origin=new URL(getRequest().url).origin;
  const link=await stripe.accountLinks.create({account:accountId,type:'account_onboarding',return_url:`${origin}/kunstneroppgjor`,refresh_url:`${origin}/kunstneroppgjor`});
  return {url:link.url};
- }catch(e){return {error:getStripeErrorMessage(e)};}
+ }catch(e){const message=getStripeErrorMessage(e);return {error:message.includes('signed up for Connect')?'Kunstnerkontoer er ikke aktivert ennå. Eier må først fullføre aktiveringen i Betalinger; deretter kan Stripe Connect klargjøres.':message};}
 });
 export const getArtistPaymentStatus=createServerFn({method:'GET'}).middleware([requireSupabaseAuth]).inputValidator(d=>z.object({environment:environmentSchema}).parse(d)).handler(async({data,context})=>{
  try{
