@@ -44,7 +44,8 @@ function Index() {
 
 
   const heroRef = useRef<HTMLElement>(null);
-  const heroFrames = featuredArtworks.slice(0, 3);
+  // Heroen skal alltid vise tre fremhevede bilder – fyll opp med demoverk om det trengs.
+  const heroFrames = [...featuredArtworks, ...investorArtworks].slice(0, 3);
 
   const onHeroMove = (e: React.MouseEvent) => {
     const el = heroRef.current;
