@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { createStripeClient, getStripeErrorMessage } from '@/lib/stripe.server';
 import { checkoutAmounts, environmentSchema } from './commerce';
+import {breakdownFromTotal,priceFromPayout} from './fees';
 import type { Artwork } from '@/data/demo';
 
 async function resolveOrCreateCustomer(
@@ -44,7 +45,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
   if(a.delivery!=='Må hentes' && typeof a.shippingPrice!=='number') throw new Error('Selger må oppgi fraktpris eller henting før betaling.');
   const amounts=checkoutAmounts(total,a.delivery==='Må hentes'?0:a.shippingPrice??0);
   const {supabaseAdmin:admin}=await import('@/integrations/supabase/client.server');
-  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,id:l.id,sellerId:l.user_id,price:total,bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
+  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
   if(reserveError||!order)throw new Error(reserveError?.message??'Kunne ikke reservere verket.');
   const stripe=createStripeClient(data.environment);
   if(order.stripe_session_id){
