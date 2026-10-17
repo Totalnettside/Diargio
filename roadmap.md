@@ -19,3 +19,4 @@
 - [x] Lysere hero-vegg; «Utforsk kunst» grønn uten lilla skygge.
 - [x] Grønn hover-farge på knappene under «Utforsk kunst».
 - [x] «Opprett bruker»-knappen grønn i samme farge.
+- [x] Forny innloggingsområdet med galleri, ryddig skjema og grønne knapper; begge kontovalg, passordvisning og mobilvisning kontrollert.
