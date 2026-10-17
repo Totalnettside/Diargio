@@ -188,13 +188,13 @@ function Index() {
       </section>
 
       <p className="mb-3 mt-6 text-sm font-bold">Utforsk kunst</p>
-      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar md:flex-nowrap">
         {categories.map((c) => (
           <Link
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className="shrink-0 rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-sage hover:text-white hover:shadow-md active:scale-100"
+            className="shrink-0 whitespace-nowrap rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-sage hover:text-white hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
           >
             {c}
           </Link>
