@@ -22,6 +22,9 @@ import { Route as AuthenticatedMeldingerRouteImport } from './routes/_authentica
 import { Route as AuthenticatedMinSideRouteImport } from './routes/_authenticated/min-side'
 import { Route as AuthenticatedVarslerRouteImport } from './routes/_authenticated/varsler'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthRecoveryRouteImport } from './routes/auth.recovery'
+import { Route as AuthResetRouteImport } from './routes/auth.reset'
 import { Route as AuthVippsRouteImport } from './routes/auth.vipps'
 import { Route as DealroomSlugRouteImport } from './routes/dealroom.$slug'
 import { Route as InfoPageRouteImport } from './routes/info.$page'
@@ -100,6 +103,21 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
+  id: '/auth/recovery',
+  path: '/auth/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetRoute = AuthResetRouteImport.update({
+  id: '/auth/reset',
+  path: '/auth/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthVippsRoute = AuthVippsRouteImport.update({
   id: '/auth/vipps',
   path: '/auth/vipps',
@@ -176,6 +194,9 @@ export interface FileRoutesByFullPath {
   '/meldinger': typeof AuthenticatedMeldingerRoute
   '/min-side': typeof AuthenticatedMinSideRoute
   '/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -202,6 +223,9 @@ export interface FileRoutesByTo {
   '/meldinger': typeof AuthenticatedMeldingerRoute
   '/min-side': typeof AuthenticatedMinSideRoute
   '/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -230,6 +254,9 @@ export interface FileRoutesById {
   '/_authenticated/meldinger': typeof AuthenticatedMeldingerRoute
   '/_authenticated/min-side': typeof AuthenticatedMinSideRoute
   '/_authenticated/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -258,6 +285,9 @@ export interface FileRouteTypes {
     | '/meldinger'
     | '/min-side'
     | '/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -284,6 +314,9 @@ export interface FileRouteTypes {
     | '/meldinger'
     | '/min-side'
     | '/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -311,6 +344,9 @@ export interface FileRouteTypes {
     | '/_authenticated/meldinger'
     | '/_authenticated/min-side'
     | '/_authenticated/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -335,6 +371,9 @@ export interface RootRouteChildren {
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
   UtstillingerRoute: typeof UtstillingerRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthRecoveryRoute: typeof AuthRecoveryRoute
+  AuthResetRoute: typeof AuthResetRoute
   AuthVippsRoute: typeof AuthVippsRoute
   DealroomSlugRoute: typeof DealroomSlugRoute
   InfoPageRoute: typeof InfoPageRoute
@@ -440,6 +479,27 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/recovery': {
+      id: '/auth/recovery'
+      path: '/auth/recovery'
+      fullPath: '/auth/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/auth/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/vipps': {
@@ -557,6 +617,9 @@ const rootRouteChildren: RootRouteChildren = {
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
   UtstillingerRoute: UtstillingerRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthRecoveryRoute: AuthRecoveryRoute,
+  AuthResetRoute: AuthResetRoute,
   AuthVippsRoute: AuthVippsRoute,
   DealroomSlugRoute: DealroomSlugRoute,
   InfoPageRoute: InfoPageRoute,
