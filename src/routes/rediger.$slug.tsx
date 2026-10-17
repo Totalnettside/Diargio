@@ -1,7 +1,7 @@
 import { PriceCalculator } from "@/components/PriceCalculator";
 import { breakdownFromTotal, priceFromPayout } from "@/lib/fees";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   artTypes,
   categories,
@@ -46,17 +46,21 @@ function EditListingPage() {
   const navigate = useNavigate();
   const listing = myListings.find((l) => l.slug === slug);
 
+  const [shippingPrice,setShippingPrice]=useState(String(listing?.shippingPrice??0));
+  const [saveError,setSaveError]=useState("");
   const [title, setTitle] = useState(listing?.title ?? "");
   const [price, setPrice] = useState(String(listing ? (listing.sellerPayout ?? breakdownFromTotal(listing.price, listing.artFeeApplies ?? true).payout) : ""));
   const [artFeeApplies, setArtFeeApplies] = useState(listing?.artFeeApplies ?? true);
-  const [category, setCategory] = useState(listing?.category ?? categories[0]!);
-  const [style, setStyle] = useState(listing?.style ?? styles[0]!);
-  const [technique, setTechnique] = useState(listing?.technique ?? techniques[0]!);
-  const [type, setType] = useState(listing?.type ?? artTypes[0]!);
-  const [condition, setCondition] = useState(listing?.condition ?? conditions[0]!);
+  const [category, setCategory] = useState(listing?.category ?? categories[0] ?? "Malerier");
+  const [style, setStyle] = useState(listing?.style ?? styles[0] ?? "Abstrakt");
+  const [technique, setTechnique] = useState(listing?.technique ?? techniques[0] ?? "Olje");
+  const [type, setType] = useState(listing?.type ?? artTypes[0] ?? "Original");
+  const [condition, setCondition] = useState(listing?.condition ?? conditions[0] ?? "Ny");
   const [saleType, setSaleType] = useState<SaleType>(listing?.saleType ?? "Fastpris");
-  const [county, setCounty] = useState(listing?.county ?? counties[0]!);
+  const [county, setCounty] = useState(listing?.county ?? counties[0] ?? "Oslo");
   const [description, setDescription] = useState(listing?.description ?? "");
+
+  useEffect(()=>{if(listing){setTitle(listing.title);setPrice(String(listing.sellerPayout??breakdownFromTotal(listing.price,listing.artFeeApplies??true).payout));setShippingPrice(String(listing.shippingPrice??0));}},[listing?.id]);
 
   if (!listing) {
     return (
@@ -75,10 +79,11 @@ function EditListingPage() {
     );
   }
 
-  function save() {
-    updateListing({
-      ...listing!,
-      title: title || listing!.title,
+  async function save() {
+    if(!listing)return;
+    try {await updateListing({
+      ...listing,
+      title: title || listing.title,
       ...(Number(price) ? { price: priceFromPayout(Number(price), artFeeApplies).total, sellerPayout: Number(price), artFeeApplies } : {}),
       category,
       style,
@@ -87,15 +92,17 @@ function EditListingPage() {
       condition,
       saleType,
       county,
-      description: description || listing!.description,
+      shippingPrice:Number(shippingPrice),
+      description: description || listing.description,
     });
-    void navigate({ to: "/kunst/$slug", params: { slug: listing!.slug } });
+    await navigate({ to: "/kunst/$slug", params: { slug: listing.slug } });
+    }catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke lagre");}
   }
 
-  function remove() {
-    if (window.confirm(`Slette «${listing!.title}»? Dette kan ikke angres.`)) {
-      deleteListing(listing!.id);
-      void navigate({ to: "/min-side" });
+  async function remove() {
+    if(!listing)return;
+    if (window.confirm(`Slette «${listing.title}»? Dette kan ikke angres.`)) {
+      try{await deleteListing(listing.id);await navigate({ to: "/min-side" });}catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke slette");}
     }
   }
 
@@ -104,6 +111,7 @@ function EditListingPage() {
       <h1 className="font-display text-2xl font-semibold">Endre annonse</h1>
       <p className="mt-1 text-sm text-ink/60">«{listing.title}» · {formatPrice(listing.price)}</p>
 
+      {saveError&&<p role="alert" className="text-destructive">{saveError}</p>}
       <section className="mt-4 space-y-4 rounded-3xl p-5 glass">
         <Field label="Tittel">
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
@@ -125,6 +133,7 @@ function EditListingPage() {
             </select>
           </Field>
         </div>
+        <Field label="Fraktpris (kr)"><input type="number" min="0" className={inputClass} value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} /></Field>
         <PriceCalculator payout={Number(price) || 0} artFeeApplies={artFeeApplies} onArtFeeChange={setArtFeeApplies} />
         <div className="grid grid-cols-2 gap-3">
           <Field label="Kategori">

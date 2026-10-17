@@ -2,6 +2,7 @@ import { notifySeller } from "@/lib/seller-notice.functions";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
+import { priceFromPayout } from "@/lib/fees";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Bid = {
@@ -81,15 +82,15 @@ type Store = State & {
   sendMessage: (artworkId: string, text: string) => void;
   saveSearch: (query: string, label: string) => void;
   markAllRead: () => void;
-  addListing: (a: Artwork) => void;
-  updateListing: (a: Artwork) => void;
-  deleteListing: (id: string) => void;
+  addListing: (a: Artwork) => Promise<void>;
+  updateListing: (a: Artwork) => Promise<void>;
+  deleteListing: (id: string) => Promise<void>;
   allArtworks: Artwork[];
 };
 
 const g = globalThis as unknown as { __diargioStoreCtx?: Context<Store | null> };
 const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext<Store | null>(null));
-const KEY = "diargio-state-v2";
+
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
@@ -133,34 +134,38 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .select("id,user_id,data,created_at")
       .order("created_at", { ascending: false });
     if (error) console.error("listings", error);
-    else setDbListings((data ?? []) as unknown as { id: string; user_id: string; data: Artwork; created_at?: string }[]);
+    else {
+      const {data:sold}=await supabase.rpc('unavailable_artwork_ids');
+      const unavailable=new Set(sold??[]);
+      setDbListings((data??[]).filter(l=>!unavailable.has(l.id)).map(l=>({...l,data:{...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id}})));
+    }
   }, []);
 
   useEffect(() => {
     void loadListings();
+    const timer=setInterval(()=>void loadListings(),15000);
     void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUserId(session?.user.id ?? null);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => { clearInterval(timer); sub.subscription.unsubscribe(); };
   }, [loadListings]);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) setState({ ...initialState, ...(JSON.parse(raw) as State) });
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-    } catch {
-      /* ignore */
-    }
-  }, [state]);
+  const [libraryLoaded,setLibraryLoaded]=useState(false);
+  useEffect(()=>{
+    let alive=true;setState(initialState);setLibraryLoaded(false);
+    if(!userId)return;
+    void supabase.from('account_library').select('data').eq('user_id',userId).maybeSingle().then(({data,error})=>{
+      if(!alive||error)return;
+      const d=(data?.data??{}) as Partial<State>;
+      setState({...initialState,favorites:d.favorites??[],collections:d.collections??{},savedSearches:d.savedSearches??[],followedArtists:d.followedArtists??[],followedSellers:d.followedSellers??[]});setLibraryLoaded(true);
+    });return()=>{alive=false;};
+  },[userId]);
+  useEffect(()=>{
+    if(!userId||!libraryLoaded)return;
+    const t=setTimeout(()=>{void supabase.from('account_library').upsert({user_id:userId,data:{favorites:state.favorites,collections:state.collections,savedSearches:state.savedSearches,followedArtists:state.followedArtists,followedSellers:state.followedSellers},updated_at:new Date().toISOString()}).then(({error})=>{if(error)console.error('Library save failed',error);});},400);
+    return()=>clearTimeout(t);
+  },[userId,libraryLoaded,state.favorites,state.collections,state.savedSearches,state.followedArtists,state.followedSellers]);
 
   const notify = useCallback((title: string, body: string) => {
     setState((s) => ({
@@ -176,6 +181,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     () => ({
       ...state,
       bids: dbBids,
+      followedSellers: follows.map(f=>f.artist_id),
       notifications: [...dbBids.filter((b) => b.sellerId === userId).map((b) => ({
         id: b.id, title: "Nytt bud mottatt", body: `${Number(b.amount).toLocaleString("nb-NO")} kr på «${dbListings.find((l) => l.id === b.artworkId)?.data.title ?? "kunstverk"}»`,
         read: b.read ?? false, createdAt: b.createdAt, conversationId: b.conversationId,
@@ -187,13 +193,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       myListings: dbListings.filter((l) => l.user_id === userId).map((l) => l.data),
       allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
       isFavorite: (id) => state.favorites.includes(id),
-      toggleFavorite: (id) =>
+      toggleFavorite: (id) => {
+        if(!userId)return notify("Innlogging kreves","Logg inn for å lagre favoritter.");
         setState((s) => ({
           ...s,
           favorites: s.favorites.includes(id)
             ? s.favorites.filter((f) => f !== id)
             : [...s.favorites, id],
-        })),
+        }));
+      },
       createCollection: (name) =>
         setState((s) => ({ ...s, collections: { ...s.collections, [name]: s.collections[name] ?? [] } })),
       addToCollection: (name, id) =>
@@ -215,13 +223,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             ? s.followedArtists.filter((f) => f !== id)
             : [...s.followedArtists, id],
         })),
-      toggleFollowSeller: (id) =>
-        setState((s) => ({
-          ...s,
-          followedSellers: s.followedSellers.includes(id)
-            ? s.followedSellers.filter((f) => f !== id)
-            : [...s.followedSellers, id],
-        })),
+      toggleFollowSeller: (id) => {
+        if(!userId)return notify('Innlogging kreves','Logg inn for å følge kunstnere.');
+        void (async()=>{const result=follows.some(f=>f.artist_id===id)?await supabase.from('artist_follows').delete().eq('follower_id',userId).eq('artist_id',id):await supabase.from('artist_follows').insert({artist_id:id});if(result.error)return notify('Kunne ikke følge','Prøv igjen.');await loadFollows();})();
+      },
       placeBid: async (artworkId, amount, message) => {
         if (!userId) throw new Error("Logg inn for å gi bud.");
         if (!Number.isFinite(amount) || amount <= 0 || amount > 1000000000) throw new Error("Skriv inn et gyldig beløp.");
@@ -257,42 +262,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s,
           savedSearches: [{ id: `ss${Date.now()}`, query, label }, ...s.savedSearches],
         }));
-        notify("Søk lagret", `Du får varsel når nye verk matcher «${label}».`);
+        notify("Søk lagret", `Du finner «${label}» under lagrede søk.`);
       },
       markAllRead: () => {
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
         if (userId) void supabase.from("artist_follows").update({ last_seen_at: new Date().toISOString() }).eq("follower_id", userId).then(() => loadFollows());
         if (userId) void supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("seller_id", userId).is("read_at", null).then(() => loadBids());
       },
-      addListing: (a) => {
-        void (async () => {
-          const { error } = await supabase.from("listings").insert({ id: a.id, data: a as never });
-          if (error) {
-            notify("Kunne ikke publisere", error.message);
-            return;
-          }
-          await loadListings();
-          notify("Annonse publisert", `«${a.title}» er nå synlig på markedsplassen.`);
-        })();
+      addListing: async (a) => {
+        if(!userId)throw new Error('Logg inn for å publisere.');
+        const fees=priceFromPayout(a.sellerPayout??0,a.artFeeApplies??true);
+        if(!a.title.trim()||!a.image||(!fees.total&&a.saleType!=='Pris på forespørsel'))throw new Error('Sjekk bilde, tittel og pris.');
+        const {error}=await supabase.from('listings').insert({id:a.id,data:{...a,sellerId:userId,price:fees.total} as never});
+        if(error)throw new Error('Annonsen kunne ikke publiseres.');
+        await loadListings();
       },
-      updateListing: (a) => {
-        void (async () => {
-          const { error } = await supabase
-            .from("listings")
-            .update({ data: a as never, updated_at: new Date().toISOString() })
-            .eq("id", a.id);
-          if (error) return notify("Kunne ikke lagre", error.message);
-          await loadListings();
-          notify("Annonse oppdatert", `«${a.title}» er lagret.`);
-        })();
+      updateListing: async (a) => {
+        const {error}=await supabase.from('listings').update({data:{...a,sellerId:userId} as never,updated_at:new Date().toISOString()}).eq('id',a.id).select('id').single();
+        if(error)throw new Error('Annonsen kunne ikke lagres.');await loadListings();
       },
-      deleteListing: (id) => {
-        void (async () => {
-          const { error } = await supabase.from("listings").delete().eq("id", id);
-          if (error) return notify("Kunne ikke slette", error.message);
-          await loadListings();
-          notify("Annonse slettet", "Annonsen er fjernet fra markedsplassen.");
-        })();
+      deleteListing: async (id) => {
+        const {error}=await supabase.from('listings').delete().eq('id',id).select('id').single();
+        if(error)throw new Error('Annonsen kunne ikke slettes.');await loadListings();
       },
     }),
     [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows],

@@ -78,13 +78,6 @@ function SellPage() {
     }
   }, [loading, user, navigate]);
 
-  if (loading || !user) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-24 text-center text-ink/70">
-        Sender deg til innlogging …
-      </div>
-    );
-  }
   const [step, setStep] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [originalImages, setOriginalImages] = useState<string[]>([]);
@@ -128,10 +121,10 @@ function SellPage() {
     return () => { clearTimeout(t); ctrl.abort(); };
   }, [artistName]);
   const [year, setYear] = useState("2026");
-  const [category, setCategory] = useState(categories[0]!);
-  const [technique, setTechnique] = useState(techniques[0]!);
-  const [style, setStyle] = useState(styles[0]!);
-  const [type, setType] = useState(artTypes[0]!);
+  const [category, setCategory] = useState(categories[0] ?? "Malerier");
+  const [technique, setTechnique] = useState(techniques[0] ?? "Olje");
+  const [style, setStyle] = useState(styles[0] ?? "Abstrakt");
+  const [type, setType] = useState(artTypes[0] ?? "Original");
   const [width, setWidth] = useState("60");
   const [height, setHeight] = useState("80");
   const [edition, setEdition] = useState("");
@@ -139,13 +132,15 @@ function SellPage() {
   const [framed, setFramed] = useState(false);
   const [coa, setCoa] = useState(false);
   const [provenance, setProvenance] = useState("");
-  const [condition, setCondition] = useState(conditions[0]!);
+  const [condition, setCondition] = useState(conditions[0] ?? "Ny");
   const [description, setDescription] = useState("");
   const [saleType, setSaleType] = useState<SaleType>("Fastpris");
   const [price, setPrice] = useState("15000");
   const [artFeeApplies, setArtFeeApplies] = useState(true);
+  const [shippingPrice,setShippingPrice]=useState("0");
+  const [publishing,setPublishing]=useState(false);
   const [delivery, setDelivery] = useState("Begge deler");
-  const [county, setCounty] = useState(counties[0]!);
+  const [county, setCounty] = useState(counties[0] ?? "Oslo");
 
   const suggestions = useMemo(
     () =>
@@ -157,7 +152,7 @@ function SellPage() {
 
   const priceHint = useMemo(() => {
     const p = Number(price || 0);
-    return `Lignende verk har blitt annonsert mellom ${formatPrice(Math.round(p * 0.75))} og ${formatPrice(Math.round(p * 1.3))}. Dette er ikke en profesjonell kunsttakst.`;
+    return `Ønsket utbetaling: ${formatPrice(p)}. Sett pris ut fra verket, teknikken og størrelsen.`;
   }, [price]);
 
   function writeWithAi() {
@@ -170,7 +165,14 @@ function SellPage() {
     );
   }
 
-  function publish() {
+  if (loading || !user) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-24 text-center text-ink/70">
+        Sender deg til innlogging …
+      </div>
+    );
+  }
+  async function publish() {
     if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
     if (!toCm(width) || !toCm(height)) {
       alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
@@ -187,7 +189,7 @@ function SellPage() {
       title: title || "Nytt verk",
       artistId: artists.find((a) => a.name === artistName)?.id ?? "self",
       ...(artistName.trim() ? { artistName: artistName.trim() } : {}),
-      sellerId: "s1",
+      sellerId: user.id,
       category,
       style,
       technique,
@@ -207,16 +209,17 @@ function SellPage() {
       price: priceFromPayout(Number(price) || 0, artFeeApplies).total,
       sellerPayout: Number(price) || 0,
       artFeeApplies,
-      image: images[0] ?? artImages[0]!,
+      image: images[0] ?? "",
       views: 0,
       favorites: 0,
       verified: false,
       createdDaysAgo: 0,
       description: description || "Ingen beskrivelse.",
       delivery,
+      shippingPrice: delivery === "Må hentes" ? 0 : Number(shippingPrice),
     };
-    addListing(listing);
-    void navigate({ to: "/min-side" });
+    setPublishing(true);
+    try { await addListing(listing); await navigate({ to: "/min-side" }); } catch(e) {setImageError(e instanceof Error?e.message:"Kunne ikke publisere");} finally {setPublishing(false); }
   }
 
   const maxStep = images.length === 0 ? 0 : !title.trim() ? 2 : stepTitles.length - 1;
@@ -505,7 +508,7 @@ function SellPage() {
             )}
             <p className="rounded-2xl bg-white/70 p-3 text-xs text-ink/60 glass">
               <Sparkles className="mr-1 inline size-3.5 text-brandink" />
-              AI prisassistent: {priceHint}
+              {priceHint}
             </p>
           </>
         )}
@@ -513,6 +516,7 @@ function SellPage() {
         {step === 5 && (
           <>
             <p className="font-display text-lg font-semibold">Levering</p>
+            {delivery !== "Må hentes" && <Field label="Fraktpris (kr)"><input type="number" min="0" value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} className={inputClass}/></Field>}
             <div className="flex flex-wrap gap-2">
               {["Kan sendes", "Må hentes", "Begge deler"].map((d) => (
                 <button
@@ -550,7 +554,7 @@ function SellPage() {
               </div>
             </div>
             <button
-              onClick={publish}
+              disabled={publishing} onClick={()=>void publish()}
               className="w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
             >
               Publiser annonse
