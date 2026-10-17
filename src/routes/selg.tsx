@@ -20,6 +20,7 @@ import {
   type SaleType,
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/selg")({
   head: () => ({
@@ -69,6 +70,21 @@ const inputClass = "w-full rounded-2xl bg-white/70 px-3 py-2.5 text-sm outline-n
 function SellPage() {
   const { addListing } = useStore();
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      void navigate({ to: "/auth" });
+    }
+  }, [loading, user, navigate]);
+
+  if (loading || !user) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-24 text-center text-ink/70">
+        Sender deg til innlogging …
+      </div>
+    );
+  }
   const [step, setStep] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [originalImages, setOriginalImages] = useState<string[]>([]);
