@@ -137,23 +137,41 @@ function Index() {
                     className="hero-float"
                     style={{ animationDelay: `${i * 1.2}s`, ["--r" as string]: `${[-1.5, -6, 3][i]}deg` }}
                   >
-                    <Link
-                      to={a.id.startsWith("investor-demo") ? "/utstillinger" : "/kunst/$slug"}
-                      params={a.id.startsWith("investor-demo") ? undefined : { slug: a.slug }}
-                      search={a.id.startsWith("investor-demo") ? { investor: true } : undefined}
-                      className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
-                    >
-                      <img
-                        src={a.image}
-                        alt={a.title}
-                        loading={i === 0 ? "eager" : "lazy"}
-                        className="aspect-[3/4] w-full object-cover"
-                      />
-                      <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
-                        <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
-                        <p className="shrink-0 text-[10px] font-bold text-brand">{formatPrice(a.price)}</p>
-                      </div>
-                    </Link>
+                    {a.id.startsWith("investor-demo") ? (
+                      <Link
+                        to="/utstillinger"
+                        search={{ investor: true }}
+                        className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
+                      >
+                        <img
+                          src={a.image}
+                          alt={a.title}
+                          loading={i === 0 ? "eager" : "lazy"}
+                          className="aspect-[3/4] w-full object-cover"
+                        />
+                        <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
+                          <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
+                          <p className="shrink-0 text-[10px] font-bold text-brand">{formatPrice(a.price)}</p>
+                        </div>
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/kunst/$slug"
+                        params={{ slug: a.slug }}
+                        className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
+                      >
+                        <img
+                          src={a.image}
+                          alt={a.title}
+                          loading={i === 0 ? "eager" : "lazy"}
+                          className="aspect-[3/4] w-full object-cover"
+                        />
+                        <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
+                          <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
+                          <p className="shrink-0 text-[10px] font-bold text-brand">{formatPrice(a.price)}</p>
+                        </div>
+                      </Link>
+                    )}
                   </div>
                 </div>
               );
