@@ -120,7 +120,7 @@ export function TopBar() {
               </Link>
               <Link
                 to="/auth"
-                className="rounded-2xl bg-sage px-5 py-2.5 text-sm font-bold text-white shadow-md ring-2 ring-sage/30 transition hover:bg-sagelight hover:shadow-lg"
+                className="rounded-2xl bg-gronn px-5 py-2.5 text-sm font-bold text-white shadow-md ring-2 ring-gronn/30 transition hover:bg-gronnmork hover:shadow-lg"
               >
                 Opprett bruker
               </Link>

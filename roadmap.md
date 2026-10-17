@@ -18,3 +18,4 @@
 - [ ] Adminstyring av lagrede priser/plasser, kalender, refusjoner og faktiske tall — avventer betaling/booking.
 - [x] Lysere hero-vegg; «Utforsk kunst» grønn uten lilla skygge.
 - [x] Grønn hover-farge på knappene under «Utforsk kunst».
+- [x] «Opprett bruker»-knappen grønn i samme farge.
