@@ -21,3 +21,7 @@
 - [x] «Opprett bruker»-knappen grønn i samme farge.
 - [x] Forny innloggingsområdet med galleri, ryddig skjema og grønne knapper; begge kontovalg, passordvisning og mobilvisning kontrollert.
 - [x] Fjern «Diargio» og slagordet fra gallerifeltet på innloggingssiden; innlogging med e-post kontrollert på mobil.
+- [x] Koble til betalingsløsning i testmiljø.
+- [ ] Kasse som belaster kjøper én gang for totalprisen (gebyrer allerede inkludert) med frakt som egen linje.
+- [ ] Utbetaling til selger og Diargios 25 % etter at kjøper godkjenner varen — krever egne betalingskontoer for kunstnerne.
+- [ ] Ekte betalinger: eierne må fullføre oppfølgingen i Betalinger-fanen (claim, aktivisering, installasjon).

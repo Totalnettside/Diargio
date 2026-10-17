@@ -20,3 +20,4 @@
 - Use react-image-crop with browser canvas for seller-selected photo crops, retaining the source photo during listing creation so crops can be reset without altering the artwork.
 - Keep investor artwork in a separate presentation-only catalog and explicit exhibition search mode; never merge it into listings, commerce, favorites, or user records, so demo content cannot be mistaken for available inventory.
 - Scope authentication presentation to `.auth-page` and preserve existing sign-in and signup calls so visual changes cannot alter account access.
+- Payments go through Lovable's built-in payments using the shared gateway utility; checkout charges the listing total the buyer already sees (fees included) plus shipping as its own line, and never recomputes commission or the art fee in the cart — seller payouts wait for connected artist accounts.
