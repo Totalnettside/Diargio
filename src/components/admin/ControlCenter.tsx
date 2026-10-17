@@ -231,7 +231,7 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
             <div className="flex flex-wrap gap-1.5">
               <Link to="/selger/$id" params={{ id: u.id }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Profil</Link>
               {u.email && <a href={`mailto:${u.email}`} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">E-post</a>}
-              <button onClick={() => run(() => verify({ data: { userId: u.id, verified: !u.bankid_verified } }))} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">{u.bankid_verified ? "Fjern verifisering" : "Verifiser"}</button>
+              <button disabled={!u.bankid_verified} onClick={() => run(() => verify({ data: { userId: u.id, verified: false } }))} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">{u.bankid_verified ? "Fjern verifisering" : "BankID kommer senere"}</button>
               <button onClick={() => confirm(isAdmin ? "Fjerne admin-tilgang?" : "Gi admin-tilgang?") && run(() => role({ data: { userId: u.id, admin: !isAdmin } }))} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">{isAdmin ? "Fjern admin" : "Gjør til admin"}</button>
               <button onClick={() => confirm("Slette brukeren og alt innholdet? Kan ikke angres.") && run(() => del({ data: { userId: u.id } }))} className="rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground">Slett</button>
             </div>

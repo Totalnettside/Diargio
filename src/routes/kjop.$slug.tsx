@@ -14,7 +14,7 @@ function CheckoutPage(){
  const {slug}=Route.useParams();const {bid}=Route.useSearch();const {allArtworks,bids}=useStore();const {user,loading}=useAuth();
  const [secret,setSecret]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const art=allArtworks.find(a=>a.slug===slug);const accepted=bids.find(b=>b.id===bid&&b.status==='Godtatt');
- const token=import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+ const token=import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
  if(!art)return <main className="mx-auto max-w-3xl px-5 py-10"><p>Henter verket, eller annonsen er utilgjengelig.</p><Button asChild variant="link"><Link to="/kunst">Til kunsten</Link></Button></main>;
  const shipping=(art as typeof art & {shippingPrice?:number}).shippingPrice;
  return <main className="mx-auto max-w-3xl px-5 py-6">

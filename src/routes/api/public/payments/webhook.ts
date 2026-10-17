@@ -10,13 +10,13 @@ export const Route=createFileRoute('/api/public/payments/webhook')({server:{hand
   if(seen)return Response.json({received:true});
   if(['checkout.session.completed','checkout.session.async_payment_succeeded','checkout.session.expired'].includes(event.type)){
    const {createStripeClient}=await import('@/lib/stripe.server');
-   const session=await createStripeClient(env).checkout.sessions.retrieve(event.data.object.id);
+   const session=await createStripeClient(env).checkout.sessions.retrieve((event.data.object as {id:string}).id);
    const {applyCheckoutSession}=await import('@/lib/payment-fulfillment.server');await applyCheckoutSession(session,env);
   }
   if(event.type==='checkout.session.async_payment_failed'){
-   const {error}=await a.from('art_orders').update({status:'failed'}).eq('stripe_session_id',event.data.object.id).eq('environment',env).in('status',['reserved','pending']);if(error)throw error;
+   const {error}=await a.from('art_orders').update({status:'failed'}).eq('stripe_session_id',(event.data.object as {id:string}).id).eq('environment',env).in('status',['reserved','pending']);if(error)throw error;
   }
   const {error}=await a.from('payment_events').upsert({event_id:event.id,environment:env});if(error)throw error;
   return Response.json({received:true});
  }catch(e){console.error('Payment reconciliation failed',e);return new Response('Retry required',{status:500});}
-}}});
+}}}});

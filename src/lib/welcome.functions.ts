@@ -7,11 +7,11 @@ export const sendWelcomeEmail = createServerFn({ method: "POST" })
     const { supabase, userId, claims } = context;
     const email = (claims as { email?: string }).email;
     if (!email) return { sent: false };
-    const { data } = await supabase.from("profiles").select("first_name").eq("id", userId).maybeSingle();
+    const { data } = await supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle();
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
     try {
       const r = await sendTemplateEmail("welcome", email, {
-        templateData: { name: data?.first_name ?? undefined },
+        templateData: { name: data?.display_name ?? undefined },
         idempotencyKey: `welcome-${userId}`,
       });
       return { sent: r.sent };

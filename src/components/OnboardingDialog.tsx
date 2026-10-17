@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
+import { getOwnProfile } from "@/lib/private-profile.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useServerFn } from "@tanstack/react-start";
 import { sendWelcomeEmail } from "@/lib/welcome.functions";
@@ -13,12 +13,7 @@ export function OnboardingDialog() {
 
   useEffect(() => {
     if (!user) return setOpen(false);
-    void supabase
-      .from("profiles")
-      .select("onboarded")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => setOpen(data ? !data.onboarded : false));
+    void getOwnProfile().then((data) => setOpen(data ? !data.onboarded : false)).catch(() => setOpen(false));
   }, [user]);
 
   return (

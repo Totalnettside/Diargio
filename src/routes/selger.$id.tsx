@@ -23,8 +23,6 @@ export const Route = createFileRoute("/selger/$id")({
 type Profile = {
   id: string;
   display_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
   avatar_url: string | null;
   bio: string | null;
   location: string | null;
@@ -37,8 +35,8 @@ type Profile = {
 };
 type Review = { id: string; reviewer_id: string; rating: number; comment: string | null; created_at: string };
 
-const nameOf = (p?: { display_name: string | null; first_name: string | null; last_name: string | null } | null) =>
-  p ? [p.first_name, p.last_name].filter(Boolean).join(" ") || p.display_name || "Bruker" : "Bruker";
+const nameOf = (p?: { display_name: string | null } | null) =>
+  p ? p.display_name || "Bruker" : "Bruker";
 
 function Stars({ value, size = "size-4" }: { value: number; size?: string }) {
   return (
@@ -77,7 +75,7 @@ function SellerPage() {
 
   const load = useCallback(async () => {
     const [{ data: p }, { data: l }, { data: r }] = await Promise.all([
-      supabase.from("profiles").select("id, display_name, first_name, last_name, avatar_url, bio, location, website, bankid_verified, created_at, story, techniques, studio_images").eq("id", id).maybeSingle(),
+      supabase.from("profiles").select("id, display_name, avatar_url, bio, location, website, bankid_verified, created_at, story, techniques, studio_images").eq("id", id).maybeSingle(),
       supabase.from("listings").select("id, data").eq("user_id", id).order("created_at", { ascending: false }),
       supabase.from("reviews").select("id, reviewer_id, rating, comment, created_at").eq("seller_id", id).order("created_at", { ascending: false }),
     ]);
@@ -92,7 +90,7 @@ function SellerPage() {
     setReviews(r ?? []);
     const ids = [...new Set((r ?? []).map((x) => x.reviewer_id))];
     if (ids.length) {
-      const { data: ps } = await supabase.from("profiles").select("id, display_name, first_name, last_name").in("id", ids);
+      const { data: ps } = await supabase.from("profiles").select("id, display_name").in("id", ids);
       setReviewers(Object.fromEntries((ps ?? []).map((x) => [x.id, nameOf(x)])));
     }
   }, [id]);
@@ -146,7 +144,7 @@ function SellerPage() {
           <h1 className="font-display text-3xl font-semibold">{name}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink/60">
             {reviews.length ? (<><Stars value={avg} /><span>{avg.toFixed(1)} · {reviews.length} omtaler</span></>) : <span>Ny selger · Ingen vurderinger ennå</span>}
-            {profile.bankid_verified && <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-brandink">✓ BankID</span>}
+            
           </div>
           <p className="mt-1 text-sm text-ink/55">
             {profile.location ? `${profile.location} · ` : ""}Medlem siden {new Date(profile.created_at).getFullYear()} · {followers} følgere

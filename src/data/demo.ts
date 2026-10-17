@@ -71,6 +71,7 @@ export type Artwork = {
   saleType: SaleType;
   price: number;
   sellerPayout?: number;
+  shippingPrice?: number;
   artFeeApplies?: boolean;
   currentBid?: number;
   bidCount?: number;

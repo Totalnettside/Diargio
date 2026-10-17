@@ -60,8 +60,8 @@ export const setAdminRole = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const a = await assertAdmin(context);
     if (data.userId === context.userId && !data.admin) throw new Error("Du kan ikke fjerne din egen admin-tilgang");
-    if (data.admin) await a.from("user_roles").upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role" });
-    else await a.from("user_roles").delete().eq("user_id", data.userId).eq("role", "admin");
+    const result = data.admin ? await a.from("user_roles").upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role" }) : await a.from("user_roles").delete().eq("user_id", data.userId).eq("role", "admin");
+    if(result.error) throw new Error("Admin-tilgang kunne ikke lagres");
     return { ok: true };
   });
 
@@ -70,6 +70,8 @@ export const setVerified = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ userId: z.string().uuid(), verified: z.boolean() }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await assertAdmin(context);
-    await a.from("profiles").update({ bankid_verified: data.verified }).eq("id", data.userId);
+    if(data.verified) throw new Error("BankID-verifisering er ikke integrert ennå.");
+    const {error}=await a.from("profiles").update({ bankid_verified: false }).eq("id", data.userId);
+    if(error)throw new Error("Kunne ikke lagre endringen");
     return { ok: true };
   });
