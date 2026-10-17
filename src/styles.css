@@ -149,7 +149,27 @@
 
 @utility home-hero {
   background-color: var(--hero);
+  background-image:
+    radial-gradient(58% 78% at 14% 16%, color-mix(in oklab, var(--lav) 62%, transparent), transparent 62%),
+    radial-gradient(52% 72% at 86% 10%, color-mix(in oklab, var(--mint) 68%, transparent), transparent 64%),
+    radial-gradient(66% 86% at 82% 92%, color-mix(in oklab, var(--peach) 52%, transparent), transparent 66%),
+    radial-gradient(60% 80% at 18% 90%, color-mix(in oklab, var(--sage) 42%, transparent), transparent 62%);
+  background-size: 210% 210%, 190% 190%, 230% 230%, 200% 200%;
+  background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+  animation: hero-drift 26s ease-in-out infinite alternate;
   box-shadow: var(--shadow-glass), 0 22px 44px -30px oklch(0.25 0.018 155 / 0.55);
+}
+
+@keyframes hero-drift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+  }
+  50% {
+    background-position: 45% 55%, 62% 28%, 28% 72%, 68% 38%;
+  }
+  100% {
+    background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
+  }
 }
 
 @utility sell-surface {
@@ -208,6 +228,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-rise, .hero-float, .hero-ring { animation: none; opacity: 1; }
+  .home-hero { animation: none; }
 }
 
 /* ============ Se den på veggen ============ */
