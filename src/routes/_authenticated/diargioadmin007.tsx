@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/diargioadmin007")({
+export const Route = createFileRoute("/_authenticated/diargioadmin007")({
   head: () => ({
     meta: [
       { title: "Kontrollsenter | Diargio" },

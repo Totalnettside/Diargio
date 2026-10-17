@@ -173,6 +173,7 @@ function SellPage() {
     );
   }
   async function publish() {
+    if(!user)return;
     if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
     if (!toCm(width) || !toCm(height)) {
       alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");

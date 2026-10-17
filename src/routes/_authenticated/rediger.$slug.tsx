@@ -15,7 +15,7 @@ import {
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
 
-export const Route = createFileRoute("/rediger/$slug")({
+export const Route = createFileRoute("/_authenticated/rediger/$slug")({
   head: () => ({
     meta: [
       { title: "Endre annonse | Diargio" },

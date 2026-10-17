@@ -8,7 +8,7 @@ import { createArtCheckout } from '@/lib/payments.functions';
 import { getStripe, getStripeEnvironment } from '@/lib/stripe';
 import { formatPrice } from '@/data/demo';
 export const Route=createFileRoute('/kjop/$slug')({
- validateSearch:(s:Record<string,unknown>)=>({bid:typeof s['bid']==='string'?s['bid']:undefined}),
+ validateSearch:(s:Record<string,unknown>):{bid?:string|undefined}=>({bid:typeof s['bid']==='string'?s['bid']:undefined}),
  head:()=>({meta:[{title:'Kjøp kunst | Diargio'},{name:'description',content:'Kjøp kunst med én totalpris og frakt separat.'},{property:'og:title',content:'Kjøp kunst | Diargio'},{property:'og:description',content:'Sikker kortbetaling og oversikt over kunstkjøpet.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'},{name:'robots',content:'noindex'}]}),component:CheckoutPage});
 function CheckoutPage(){
  const {slug}=Route.useParams();const {bid}=Route.useSearch();const {allArtworks,bids}=useStore();const {user,loading}=useAuth();
