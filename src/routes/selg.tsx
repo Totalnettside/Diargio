@@ -20,6 +20,7 @@ import {
   type SaleType,
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/selg")({
   head: () => ({
