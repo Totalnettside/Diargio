@@ -228,6 +228,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-rise, .hero-float, .hero-ring { animation: none; opacity: 1; }
+  .home-hero { animation: none; }
 }
 
 /* ============ Se den på veggen ============ */
