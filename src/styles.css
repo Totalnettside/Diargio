@@ -47,6 +47,12 @@
   --color-mist: var(--mist);
   --color-topbar: var(--topbar);
   --color-hero: var(--hero);
+  --color-lilac: var(--lilac);
+  --color-sea: var(--sea);
+  --color-butter: var(--butter);
+  --color-coral: var(--coral);
+  --color-blush: var(--blush);
+
   --font-display: var(--font-display-family);
   --font-body: var(--font-body-family);
 }
@@ -65,6 +71,18 @@
   --mist: oklch(0.965 0.01 115);
   --topbar: oklch(0.895 0.014 118);
   --hero: oklch(0.77 0.022 122);
+
+  /* Levende fargepalett — brukes i hero-vaske og på forsidens knapper */
+  --lilac: oklch(0.86 0.08 305);
+  --sea: oklch(0.85 0.08 225);
+  --butter: oklch(0.9 0.09 95);
+  --coral: oklch(0.83 0.11 35);
+  --blush: oklch(0.87 0.075 15);
+  --cta-a: oklch(0.47 0.13 305);
+  --cta-b: oklch(0.45 0.11 230);
+  --cta-c: oklch(0.5 0.14 35);
+  --cta-ink: oklch(0.99 0.005 115);
+
 
   --background: var(--mist);
   --foreground: var(--ink);
@@ -150,37 +168,57 @@
 @utility home-hero {
   background-color: var(--hero);
   background-image:
-    radial-gradient(58% 78% at 14% 16%, color-mix(in oklab, var(--lav) 62%, transparent), transparent 62%),
-    radial-gradient(52% 72% at 86% 10%, color-mix(in oklab, var(--mint) 68%, transparent), transparent 64%),
-    radial-gradient(66% 86% at 82% 92%, color-mix(in oklab, var(--peach) 52%, transparent), transparent 66%),
-    radial-gradient(60% 80% at 18% 90%, color-mix(in oklab, var(--sage) 42%, transparent), transparent 62%);
-  background-size: 210% 210%, 190% 190%, 230% 230%, 200% 200%;
-  background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+    radial-gradient(52% 72% at 12% 12%, color-mix(in oklab, var(--lilac) 74%, transparent), transparent 64%),
+    radial-gradient(46% 64% at 84% 6%, color-mix(in oklab, var(--sea) 70%, transparent), transparent 66%),
+    radial-gradient(56% 74% at 96% 58%, color-mix(in oklab, var(--butter) 64%, transparent), transparent 68%),
+    radial-gradient(62% 80% at 74% 98%, color-mix(in oklab, var(--coral) 58%, transparent), transparent 66%),
+    radial-gradient(54% 72% at 14% 94%, color-mix(in oklab, var(--mint) 68%, transparent), transparent 64%),
+    radial-gradient(44% 60% at 48% 44%, color-mix(in oklab, var(--blush) 44%, transparent), transparent 62%);
+  background-size: 210% 210%, 190% 190%, 230% 230%, 200% 200%, 220% 220%, 180% 180%;
+  background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 50% 100%, 50% 0%;
   animation: hero-drift 26s ease-in-out infinite alternate;
   box-shadow: var(--shadow-glass), 0 22px 44px -30px oklch(0.25 0.018 155 / 0.55);
 }
 
 @keyframes hero-drift {
   0% {
-    background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+    background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 50% 100%, 50% 0%;
   }
   50% {
-    background-position: 45% 55%, 62% 28%, 28% 72%, 68% 38%;
+    background-position: 45% 55%, 62% 28%, 28% 72%, 68% 38%, 12% 42%, 88% 66%;
   }
   100% {
-    background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
+    background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%, 88% 12%, 10% 78%;
   }
 }
 
+/* Knappene på forsiden tar fargene fra hero-veggen */
+@utility hero-cta {
+  background-image: linear-gradient(115deg, var(--cta-a) 0%, var(--cta-b) 52%, var(--cta-c) 100%);
+  color: var(--cta-ink);
+  box-shadow:
+    0 14px 28px -16px color-mix(in oklab, var(--cta-b) 75%, transparent),
+    inset 0 0 0 1px oklch(1 0 0 / 0.18);
+}
+
+@utility hero-cta-ghost {
+  background-color: oklch(1 0 0 / 0.68);
+  color: var(--brandink);
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in oklab, var(--lilac) 60%, oklch(1 0 0)),
+    var(--shadow-glass);
+}
+
+
 @utility sell-surface {
-  background-image: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--peach) 85%, transparent),
-    oklch(1 0 0),
-    color-mix(in oklab, var(--lav) 75%, transparent)
-  );
+  background-image:
+    radial-gradient(58% 88% at 6% 0%, color-mix(in oklab, var(--butter) 62%, transparent), transparent 62%),
+    radial-gradient(52% 82% at 94% 6%, color-mix(in oklab, var(--coral) 50%, transparent), transparent 64%),
+    radial-gradient(66% 96% at 58% 100%, color-mix(in oklab, var(--sea) 44%, transparent), transparent 66%),
+    linear-gradient(135deg, color-mix(in oklab, var(--peach) 85%, transparent), oklch(1 0 0), color-mix(in oklab, var(--lilac) 60%, transparent));
   box-shadow: var(--shadow-glass);
 }
+
 
 @utility no-scrollbar {
   scrollbar-width: none;
