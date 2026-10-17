@@ -29,11 +29,11 @@ async function resolveOrCreateCustomer(
   const created = await stripe.customers.create({ ...(options.email && { email: options.email }), ...(options.userId && { metadata: { userId: options.userId } }) });
   return created.id;
 }
-const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:environmentSchema,bidId:z.string().uuid().optional()});
+const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:environmentSchema,bidId:z.string().uuid().optional(),pickup:z.boolean().optional()});
 export const createArtCheckout=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>checkoutInput.parse(d)).handler(async({data,context}):Promise<{clientSecret:string;orderId:string}|{error:string}>=>{
  try {
   if(data.environment==='live') throw new Error('Ekte betaling er stengt til moms, kunstavgift og utsatt kunstneroppgjør er avklart.');
-  const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data').eq('id',data.listingId).single();
+  const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data,updated_at').eq('id',data.listingId).single();
   if(error||!l||l.user_id===context.userId) throw new Error('Verket er utilgjengelig eller tilhører deg.');
   if(l.id.startsWith('demo'))throw new Error('Presentasjonsverk kan ikke kjøpes.');
   const a=l.data as unknown as Artwork & {shippingPrice?:number};
@@ -44,10 +44,17 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
    total=Number(b.amount);
   } else if(a.saleType!=='Fastpris') throw new Error('Dette verket krever et godkjent bud før betaling. Auksjonsoppgjør er ikke åpnet.');
   if(a.saleType==='Auksjon')throw new Error('Auksjonsoppgjør er ikke åpnet.');
-  if(a.delivery!=='Må hentes' && typeof a.shippingPrice!=='number') throw new Error('Selger må oppgi fraktpris eller henting før betaling.');
-  const amounts=checkoutAmounts(total,a.delivery==='Må hentes'?0:a.shippingPrice??0);
+  const pickup=a.delivery==='Må hentes'||(a.delivery==='Begge deler'&&data.pickup===true);
+  if(!pickup && typeof a.shippingPrice!=='number') throw new Error('Selger må oppgi fraktpris eller henting før betaling.');
+  const amounts=checkoutAmounts(total,pickup?0:a.shippingPrice??0);
   const {supabaseAdmin:admin}=await import('@/integrations/supabase/client.server');
-  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
+  const {data:held}=await admin.from('art_orders').select('*').eq('listing_id',l.id).eq('environment',data.environment).eq('status','reserved').maybeSingle();
+  if(held?.stripe_session_id&&new Date(held.expires_at).getTime()<Date.now()){
+    const prior=await createStripeClient(data.environment).checkout.sessions.retrieve(held.stripe_session_id);
+    const {applyCheckoutSession}=await import('./payment-fulfillment.server');await applyCheckoutSession(prior,data.environment);
+  }
+  if(held&&!held.stripe_session_id&&new Date(held.expires_at).getTime()<Date.now())throw new Error('Betalingsoppretting må avstemmes av admin før reservasjonen kan frigjøres.');
+  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,listingVersion:l.updated_at,deliveryMode:pickup?'pickup':'shipping',id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
   if(reserveError||!order)throw new Error(reserveError?.message??'Kunne ikke reservere verket.');
   const stripe=createStripeClient(data.environment);
   if(order.stripe_session_id){
@@ -109,8 +116,9 @@ export const adminRefundArt=createServerFn({method:'POST'}).middleware([requireS
  const {data:o}=await a.from('art_orders').select('*').eq('id',data.orderId).single();
  if(!o?.stripe_payment_id||!['paid','shipped','approved','disputed','refund_pending'].includes(o.status))throw new Error('Ordren kan ikke refunderes');
  if(o.environment!=='sandbox'&&o.environment!=='live')throw new Error('Invalid environment');
+ if(o.status!=='refund_pending'){const {error:claimError}=await a.from('art_orders').update({status:'refund_pending',admin_note:data.note}).eq('id',o.id).eq('status',o.status).select('id').single();if(claimError)throw new Error('Ordren ble endret. Prøv igjen.');}
  const r=await createStripeClient(o.environment).refunds.create({payment_intent:o.stripe_payment_id},{idempotencyKey:`refund-${o.id}`});
- const {error}=await a.from('art_orders').update({status:r.status==='succeeded'?'refunded':'refund_pending',stripe_refund_id:r.id,admin_note:data.note}).eq('id',o.id);
+ const {error}=await a.from('art_orders').update({status:r.status==='succeeded'?'refunded':'refund_pending',stripe_refund_id:r.id,admin_note:data.note}).eq('id',o.id).eq('status','refund_pending');
  if(error)throw new Error('Refusjon sendt, men oppfølging må avstemmes.');
  return {ok:true};
  }catch(e){return {error:getStripeErrorMessage(e)};}

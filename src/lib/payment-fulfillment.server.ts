@@ -2,6 +2,7 @@ import {isPaymentMatch} from './payment-state';
 import type Stripe from 'stripe';
 export async function applyCheckoutSession(s:Stripe.Checkout.Session,environment:'sandbox'|'live') {
  const {supabaseAdmin:a}=await import('@/integrations/supabase/client.server');
+ if(s.livemode!==(environment==='live'))throw new Error('Environment mismatch');
  const orderId=s.metadata?.['orderId'];
  if(!orderId)return;
  const {data:o,error}=await a.from('art_orders').select('*').eq('id',orderId).eq('environment',environment).single();
