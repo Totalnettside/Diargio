@@ -15,6 +15,7 @@ import { Route as GalleriplassRouteImport } from './routes/galleriplass'
 import { Route as KunstveggRouteImport } from './routes/kunstvegg'
 import { Route as MeldingerRouteImport } from './routes/meldinger'
 import { Route as MinSideRouteImport } from './routes/min-side'
+import { Route as OrdreRouteImport } from './routes/ordre'
 import { Route as SelgRouteImport } from './routes/selg'
 import { Route as SokRouteImport } from './routes/sok'
 import { Route as UtstillingerRouteImport } from './routes/utstillinger'
@@ -30,6 +31,7 @@ import { Route as KunstnerSlugRouteImport } from './routes/kunstner.$slug'
 import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
 import { Route as RedigerSlugRouteImport } from './routes/rediger.$slug'
 import { Route as SelgerIdRouteImport } from './routes/selger.$id'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -60,6 +62,11 @@ const MeldingerRoute = MeldingerRouteImport.update({
 const MinSideRoute = MinSideRouteImport.update({
   id: '/min-side',
   path: '/min-side',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdreRoute = OrdreRouteImport.update({
+  id: '/ordre',
+  path: '/ordre',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SelgRoute = SelgRouteImport.update({
@@ -137,6 +144,12 @@ const SelgerIdRoute = SelgerIdRouteImport.update({
   path: '/selger/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -151,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
+  '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
@@ -166,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -175,6 +190,7 @@ export interface FileRoutesByTo {
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
+  '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
@@ -190,6 +206,7 @@ export interface FileRoutesByTo {
   '/selger/$id': typeof SelgerIdRoute
   '/auth': typeof AuthIndexRoute
   '/kunst': typeof KunstIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -200,6 +217,7 @@ export interface FileRoutesById {
   '/kunstvegg': typeof KunstveggRoute
   '/meldinger': typeof MeldingerRoute
   '/min-side': typeof MinSideRoute
+  '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
@@ -215,6 +233,7 @@ export interface FileRoutesById {
   '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -226,6 +245,7 @@ export interface FileRouteTypes {
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
+    | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
@@ -241,6 +261,7 @@ export interface FileRouteTypes {
     | '/selger/$id'
     | '/auth/'
     | '/kunst/'
+    | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -250,6 +271,7 @@ export interface FileRouteTypes {
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
+    | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
@@ -265,6 +287,7 @@ export interface FileRouteTypes {
     | '/selger/$id'
     | '/auth'
     | '/kunst'
+    | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -274,6 +297,7 @@ export interface FileRouteTypes {
     | '/kunstvegg'
     | '/meldinger'
     | '/min-side'
+    | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
@@ -289,6 +313,7 @@ export interface FileRouteTypes {
     | '/selger/$id'
     | '/auth/'
     | '/kunst/'
+    | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -299,6 +324,7 @@ export interface RootRouteChildren {
   KunstveggRoute: typeof KunstveggRoute
   MeldingerRoute: typeof MeldingerRoute
   MinSideRoute: typeof MinSideRoute
+  OrdreRoute: typeof OrdreRoute
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
   UtstillingerRoute: typeof UtstillingerRoute
@@ -314,6 +340,7 @@ export interface RootRouteChildren {
   SelgerIdRoute: typeof SelgerIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -359,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/min-side'
       fullPath: '/min-side'
       preLoaderRoute: typeof MinSideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ordre': {
+      id: '/ordre'
+      path: '/ordre'
+      fullPath: '/ordre'
+      preLoaderRoute: typeof OrdreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/selg': {
@@ -466,6 +500,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SelgerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -483,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   KunstveggRoute: KunstveggRoute,
   MeldingerRoute: MeldingerRoute,
   MinSideRoute: MinSideRoute,
+  OrdreRoute: OrdreRoute,
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
   UtstillingerRoute: UtstillingerRoute,
@@ -498,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   SelgerIdRoute: SelgerIdRoute,
   AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
