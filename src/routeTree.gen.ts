@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as GalleriplassRouteImport } from './routes/galleriplass'
+import { Route as KunstneroppgjorRouteImport } from './routes/kunstneroppgjor'
 import { Route as KunstveggRouteImport } from './routes/kunstvegg'
 import { Route as OrdreRouteImport } from './routes/ordre'
 import { Route as SelgRouteImport } from './routes/selg'
@@ -50,6 +51,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const GalleriplassRoute = GalleriplassRouteImport.update({
   id: '/galleriplass',
   path: '/galleriplass',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KunstneroppgjorRoute = KunstneroppgjorRouteImport.update({
+  id: '/kunstneroppgjor',
+  path: '/kunstneroppgjor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KunstveggRoute = KunstveggRouteImport.update({
@@ -185,6 +191,7 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/galleriplass': typeof GalleriplassRoute
+  '/kunstneroppgjor': typeof KunstneroppgjorRoute
   '/kunstvegg': typeof KunstveggRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/galleriplass': typeof GalleriplassRoute
+  '/kunstneroppgjor': typeof KunstneroppgjorRoute
   '/kunstvegg': typeof KunstveggRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/galleriplass': typeof GalleriplassRoute
+  '/kunstneroppgjor': typeof KunstneroppgjorRoute
   '/kunstvegg': typeof KunstveggRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/galleriplass'
+    | '/kunstneroppgjor'
     | '/kunstvegg'
     | '/ordre'
     | '/selg'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/galleriplass'
+    | '/kunstneroppgjor'
     | '/kunstvegg'
     | '/ordre'
     | '/selg'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/galleriplass'
+    | '/kunstneroppgjor'
     | '/kunstvegg'
     | '/ordre'
     | '/selg'
@@ -366,6 +378,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   GalleriplassRoute: typeof GalleriplassRoute
+  KunstneroppgjorRoute: typeof KunstneroppgjorRoute
   KunstveggRoute: typeof KunstveggRoute
   OrdreRoute: typeof OrdreRoute
   SelgRoute: typeof SelgRoute
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/galleriplass'
       fullPath: '/galleriplass'
       preLoaderRoute: typeof GalleriplassRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kunstneroppgjor': {
+      id: '/kunstneroppgjor'
+      path: '/kunstneroppgjor'
+      fullPath: '/kunstneroppgjor'
+      preLoaderRoute: typeof KunstneroppgjorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kunstvegg': {
@@ -612,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   GalleriplassRoute: GalleriplassRoute,
+  KunstneroppgjorRoute: KunstneroppgjorRoute,
   KunstveggRoute: KunstveggRoute,
   OrdreRoute: OrdreRoute,
   SelgRoute: SelgRoute,

@@ -60,14 +60,14 @@ function EditListingPage() {
   const [county, setCounty] = useState(listing?.county ?? counties[0] ?? "Oslo");
   const [description, setDescription] = useState(listing?.description ?? "");
 
-  useEffect(()=>{if(listing){setTitle(listing.title);setPrice(String(listing.sellerPayout??breakdownFromTotal(listing.price,listing.artFeeApplies??true).payout));setShippingPrice(String(listing.shippingPrice??0));}},[listing?.id]);
+  useEffect(()=>{if(listing){setTitle(listing.title);setPrice(String(listing.sellerPayout??breakdownFromTotal(listing.price,listing.artFeeApplies??true).payout));setShippingPrice(String(listing.shippingPrice??0));setCategory(listing.category);setTechnique(listing.technique);setStyle(listing.style);setType(listing.type);setCondition(listing.condition);setSaleType(listing.saleType);setCounty(listing.county);setDescription(listing.description);setArtFeeApplies(listing.artFeeApplies??true);}},[listing?.id]);
 
   if (!listing) {
     return (
       <main className="mx-auto w-full max-w-2xl px-5 py-10 text-center">
         <h1 className="font-display text-2xl font-semibold">Fant ikke annonsen</h1>
         <p className="mt-2 text-sm text-ink/60">
-          Denne annonsen finnes ikke, eller den er ikke lagt ut fra denne nettleseren.
+          Denne annonsen finnes ikke, eller du ikke er eier av annonsen.
         </p>
         <Link
           to="/min-side"

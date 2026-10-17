@@ -227,6 +227,7 @@ function SellPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-5">
       <h1 className="font-display text-2xl font-semibold">Legg ut kunst</h1>
+      {imageError&&<p role="alert" className="mt-3 text-destructive">{imageError}</p>}
       <div className="mt-3 flex gap-1 overflow-x-auto pb-1 no-scrollbar">
         {stepTitles.map((t, i) => (
           <button
