@@ -4,11 +4,42 @@ export type InfoPage = { title: string; lead: string; sections: InfoSection[]; c
 export const infoPages: Record<string, InfoPage> = {
   "om-oss": {
     title: "Om oss",
-    lead: "Diargio er en norsk markedsplass for kjøp og salg av kunst fra kunstnere, gallerier og private selgere.",
+    lead: "Velkommen til et kunstunivers hvor alle har sin plass.",
     sections: [
-      { h: "Hvorfor Diargio", p: ["Vi vil gjøre det enkelt å finne kunst du blir glad i, og enkelt for kunstnere å nå frem til kjøpere."] },
-      { h: "Kunstnerne først", p: ["Hver kunstner får egen profil med historie, atelierbilder og verk, slik at kjøperen forstår menneskene bak kunsten."] },
-      { h: "Kontakt", p: ["Spørsmål? Send oss en e-post på post@diargio.com."] },
+      {
+        h: "Vår visjon",
+        p: [
+          "Vi brenner for kunst, skulpturer og malerier – men mest av alt brenner vi for skapergleden og menneskene bak verkene.",
+          "Vi vet at det finnes uendelig mye talent der ute. Rundt om i de tusen hjem sitter det fantastiske skapere som tryller frem unike verk på kjøkkenbordet, i garasjen eller på et lite hobbyrom. Likevel er det altfor mange som aldri tar steget ut for å vise frem eller selge det de lager. Kanskje føles de tradisjonelle galleriene for dyre, for ekskluderende, eller kanskje føles terskelen ganske enkelt for høy og skummel.",
+          "Det ønsker vi å gjøre noe med. Denne markedsplassen ble til ut fra en klar visjon: Kunst skal ikke bare være for de få utvalgte eller de veletablerte proffene. Kunst handler om følelser, lidenskap og personlige uttrykk – og det tilhører oss alle.",
+          "Her bygger vi et levende fellesskap der etablerte kunstnere og uoppdagede talenter står side om side. Vi vil fjerne barrierene og gi alle muligheten til å skinne, uavhengig av bakgrunn eller CV.",
+        ],
+      },
+      {
+        h: "For deg som skaper",
+        p: ["Dette er ditt trygge rom. Ta steget ut av skyggen, vis frem det du er stolt av, og nå ut til folk som vil elske det du gjør."],
+      },
+      {
+        h: "For deg som elsker kunst",
+        p: ["Utforsk et unikt mangfold av malerier og skulpturer du ikke finner i de vanlige galleriene – laget av mennesker med ekte lidenskap."],
+      },
+      {
+        h: "Historien bak navnet",
+        p: [
+          "Navnet DIARGIO er et nyskapt ord bygget på en sammensmelting av to av naturens mest fascinerende skapninger. Det klinger som et prestisjetungt, internasjonalt galleri med hundre års historie.",
+          "DIA kommer fra Diaethria, slektsnavnet til «88-sommerfuglen». Sommerfuglen representerer ekstrem estetikk, transformasjon og frihet – den trekker publikum inn med sin luksuriøse skjønnhet.",
+          "ARGIO kommer fra Argiope, slektsnavnet til hjulspinner-edderkoppene. Edderkoppen representerer arkitektur, tålmodighet, struktur og det å bygge et massivt, uendelig nett – fundamentet som holder konseptet sammen.",
+          "Sammen skaper de den ultimate balansen mellom den frie, visuelle kunsten og det strukturerte, solide forretningsgrunnlaget.",
+        ],
+      },
+      {
+        h: "Energiene i merkevaren",
+        p: [
+          "Edderkoppens 8 bein og sommerfuglens 88-mønster danner selve uendelighetssymbolet – trygge, tidløse røtter. Sommerfuglens symmetri gir harmoni og kjærlighet til verket, og det nyskapende uttrykket formidler kunstens historie.",
+          "Kjernestikkordene våre er nyskapende, tidløst, og kjærlighet, energi og visdom – drivkraften bak hvert eneste kunstverk og møtet med publikum.",
+        ],
+      },
+      { h: "Kontakt", p: ["Spørsmål? Send oss en e-post på post@diargio.com, eller følg oss på LinkedIn."] },
     ],
   },
   "slik-fungerer-diargio": {
