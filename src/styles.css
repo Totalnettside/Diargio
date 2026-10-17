@@ -135,6 +135,39 @@
 .image-crop-dialog .ReactCrop__drag-handle::after { background:var(--primary); border-color:var(--primary-foreground); }
 .image-crop-dialog .ReactCrop__crop-selection:focus { outline-color:var(--ring); }
 
+/* Authentication is a quiet, unframed gallery layout; styles stay on this page. */
+.auth-page {
+  --background: var(--ivory);
+  --foreground: var(--sort);
+  --border: var(--taupelys);
+  --ring: var(--gronn);
+  --muted-foreground: oklch(0.49 0.014 78);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 700px;
+}
+.auth-gallery { position:relative; overflow:hidden; min-height:100%; background:var(--gallery-wall); }
+.auth-gallery-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:38% center; }
+.auth-gallery-heading { position:relative; padding:54px; color:var(--sort); }
+.auth-form-area { display:flex; justify-content:center; align-items:center; padding:42px 36px; }
+.auth-tab { flex:1; height:44px; border-radius:0; border-bottom:2px solid transparent; background:transparent; color:var(--muted-foreground); }
+.auth-tab:hover { background:transparent; color:var(--gronn); }
+.auth-tab.is-active { border-bottom-color:var(--gronn); color:var(--gronn); }
+.auth-input { width:100%; height:48px; border:1px solid var(--border); border-radius:6px; background:var(--card); padding:0 14px; font-size:14px; outline:none; transition:border-color .2s, box-shadow .2s; }
+.auth-input::placeholder { color:var(--muted-foreground); opacity:.7; }
+.auth-input:focus { border-color:var(--gronn); box-shadow:0 0 0 3px color-mix(in oklab,var(--gronn) 12%,transparent); }
+.auth-google:hover { background:var(--card); border-color:var(--gronn); color:var(--gronn); }
+@media(max-width:767px) {
+  .auth-page { grid-template-columns:minmax(0,1fr); min-height:0; }
+  .auth-gallery { min-height:180px; }
+  .auth-gallery-image { object-position:center 42%; }
+  .auth-gallery-heading { padding:28px; }
+  .auth-form-area { padding:30px 24px 40px; }
+}
+@media(prefers-reduced-motion:reduce) { .auth-input { transition:none; } }
+
 @layer base {
   * {
     border-color: var(--color-border);
