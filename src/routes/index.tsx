@@ -105,14 +105,14 @@ function Index() {
             <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
               <Link
                 to="/kunst"
-                className="flex-1 rounded-2xl bg-gronn py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 md:flex-none md:px-8"
+                className="flex-1 rounded-2xl bg-gronn py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronnmork md:flex-none md:px-8"
                 style={{ boxShadow: "0 12px 24px -14px oklch(0.25 0.018 155 / 0.55)" }}
               >
                 Utforsk kunst
               </Link>
               <Link
                 to="/selg"
-                className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-brandink glass transition-transform duration-200 hover:-translate-y-0.5"
+                className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-brandink glass transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronn hover:text-white"
 
 
               >
@@ -198,7 +198,7 @@ function Index() {
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className="shrink-0 whitespace-nowrap rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-sage hover:text-white hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
+            className="shrink-0 whitespace-nowrap rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-gronn hover:text-white hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
           >
 
 
