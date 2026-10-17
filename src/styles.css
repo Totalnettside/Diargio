@@ -46,6 +46,7 @@
   --color-ink: var(--ink);
   --color-mist: var(--mist);
   --color-topbar: var(--topbar);
+  --color-hero: var(--hero);
   --font-display: var(--font-display-family);
   --font-body: var(--font-body-family);
 }
@@ -63,6 +64,7 @@
   --ink: oklch(0.25 0.018 155);
   --mist: oklch(0.965 0.01 115);
   --topbar: oklch(0.895 0.014 118);
+  --hero: oklch(0.77 0.022 122);
 
   --background: var(--mist);
   --foreground: var(--ink);
