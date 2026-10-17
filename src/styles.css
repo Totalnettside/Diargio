@@ -73,11 +73,12 @@
   --hero: oklch(0.77 0.022 122);
 
   /* Levende fargepalett — brukes i hero-vaske og på forsidens knapper */
-  --lilac: oklch(0.86 0.08 305);
-  --sea: oklch(0.85 0.08 225);
-  --butter: oklch(0.9 0.09 95);
-  --coral: oklch(0.83 0.11 35);
-  --blush: oklch(0.87 0.075 15);
+  --lilac: oklch(0.86 0.11 305);
+  --sea: oklch(0.85 0.11 225);
+  --butter: oklch(0.9 0.13 95);
+  --coral: oklch(0.83 0.14 35);
+  --blush: oklch(0.87 0.1 15);
+
   --cta-a: oklch(0.47 0.13 305);
   --cta-b: oklch(0.45 0.11 230);
   --cta-c: oklch(0.5 0.14 35);
