@@ -97,7 +97,7 @@ function Index() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Søk etter kunstner, verk, stil eller kategori"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink/65"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-ink/80"
               />
             </form>
             <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
