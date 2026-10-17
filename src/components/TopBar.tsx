@@ -39,7 +39,7 @@ export function TopBar() {
 
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-border bg-topbar/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center" aria-label="Diargio">
           <img src={diargioLogo.url} alt="Diargio" className="h-14 w-auto" />
