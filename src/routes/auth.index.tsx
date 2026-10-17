@@ -73,10 +73,6 @@ function AuthPage() {
     <main className="auth-page">
       <section className="auth-gallery" aria-label="Diargios kunstrom">
         <img src={galleryRoom} alt="Et lyst gallerirom med store vinduer og sollys" className="auth-gallery-image" />
-        <div className="auth-gallery-heading">
-          <span className="font-display text-4xl font-semibold md:text-5xl">Diargio</span>
-          <p className="mt-3 text-sm">Et sted for kunsten du elsker.</p>
-        </div>
       </section>
       <section className="auth-form-area" aria-label="Innlogging">
         <div className="w-full max-w-[390px]">

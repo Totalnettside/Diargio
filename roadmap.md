@@ -20,3 +20,4 @@
 - [x] Grønn hover-farge på knappene under «Utforsk kunst».
 - [x] «Opprett bruker»-knappen grønn i samme farge.
 - [x] Forny innloggingsområdet med galleri, ryddig skjema og grønne knapper; begge kontovalg, passordvisning og mobilvisning kontrollert.
+- [x] Fjern «Diargio» og slagordet fra gallerifeltet på innloggingssiden; innlogging med e-post kontrollert på mobil.
