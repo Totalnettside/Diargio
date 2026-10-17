@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { createStripeClient, getStripeErrorMessage } from '@/lib/stripe.server';
 import { checkoutAmounts, environmentSchema } from './commerce';
+import {breakdownFromTotal,priceFromPayout} from './fees';
 import type { Artwork } from '@/data/demo';
 
 async function resolveOrCreateCustomer(
@@ -12,13 +13,13 @@ async function resolveOrCreateCustomer(
   if (options.userId && !/^[a-zA-Z0-9_-]+$/.test(options.userId)) throw new Error('Invalid userId');
   if (options.userId) {
     const found = await stripe.customers.search({ query: `metadata['userId']:'${options.userId}'`, limit: 1 });
-    if (found.data.length) return found.data[0].id;
+    const matched=found.data[0]; if (matched) return matched.id;
   }
   if (options.email) {
     const existing = await stripe.customers.list({ email: options.email, limit: 1 });
-    if (existing.data.length) {
-      const customer = existing.data[0];
-      if (options.userId && customer.metadata?.userId !== options.userId) {
+    const customer = existing.data[0];
+    if (customer) {
+      if (options.userId && customer.metadata?.['userId'] !== options.userId) {
         await stripe.customers.update(customer.id, { metadata: { ...customer.metadata, userId: options.userId } });
       }
       return customer.id;
@@ -44,7 +45,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
   if(a.delivery!=='Må hentes' && typeof a.shippingPrice!=='number') throw new Error('Selger må oppgi fraktpris eller henting før betaling.');
   const amounts=checkoutAmounts(total,a.delivery==='Må hentes'?0:a.shippingPrice??0);
   const {supabaseAdmin:admin}=await import('@/integrations/supabase/client.server');
-  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,id:l.id,sellerId:l.user_id,price:total,bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
+  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
   if(reserveError||!order)throw new Error(reserveError?.message??'Kunne ikke reservere verket.');
   const stripe=createStripeClient(data.environment);
   if(order.stripe_session_id){
@@ -53,7 +54,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
    throw new Error('Denne ordren er allerede behandlet. Åpne ordreoversikten.');
   }
   const {data:auth}=await context.supabase.auth.getUser();
-  const customer=await resolveOrCreateCustomer(stripe,{userId:context.userId,email:auth.user?.email});
+  const customer=await resolveOrCreateCustomer(stripe,{userId:context.userId,...(auth.user?.email?{email:auth.user.email}:{})});
   const {getRequest}=await import('@tanstack/react-start/server');
   const origin=new URL(getRequest().url).origin;
   const session=await stripe.checkout.sessions.create({

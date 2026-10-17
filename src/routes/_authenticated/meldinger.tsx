@@ -8,7 +8,7 @@ import { UnreadBadge } from "@/components/UnreadBadge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, MessageCircle, Send } from "lucide-react";
 
-export const Route = createFileRoute("/meldinger")({
+export const Route = createFileRoute("/_authenticated/meldinger")({
   validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search["c"] === "string" ? { c: search["c"] } : {},
   head: () => ({
     links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" }],

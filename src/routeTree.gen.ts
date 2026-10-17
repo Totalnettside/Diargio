@@ -10,17 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as Diargioadmin007RouteImport } from './routes/diargioadmin007'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as GalleriplassRouteImport } from './routes/galleriplass'
 import { Route as KunstveggRouteImport } from './routes/kunstvegg'
-import { Route as MeldingerRouteImport } from './routes/meldinger'
-import { Route as MinSideRouteImport } from './routes/min-side'
 import { Route as OrdreRouteImport } from './routes/ordre'
 import { Route as SelgRouteImport } from './routes/selg'
 import { Route as SokRouteImport } from './routes/sok'
 import { Route as UtstillingerRouteImport } from './routes/utstillinger'
-import { Route as VarslerRouteImport } from './routes/varsler'
+import { Route as AuthenticatedDiargioadmin007RouteImport } from './routes/_authenticated/diargioadmin007'
+import { Route as AuthenticatedMeldingerRouteImport } from './routes/_authenticated/meldinger'
+import { Route as AuthenticatedMinSideRouteImport } from './routes/_authenticated/min-side'
+import { Route as AuthenticatedVarslerRouteImport } from './routes/_authenticated/varsler'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthRecoveryRouteImport } from './routes/auth.recovery'
+import { Route as AuthResetRouteImport } from './routes/auth.reset'
 import { Route as AuthVippsRouteImport } from './routes/auth.vipps'
 import { Route as DealroomSlugRouteImport } from './routes/dealroom.$slug'
 import { Route as InfoPageRouteImport } from './routes/info.$page'
@@ -29,8 +33,8 @@ import { Route as KunstIndexRouteImport } from './routes/kunst.index'
 import { Route as KunstSlugRouteImport } from './routes/kunst.$slug'
 import { Route as KunstnerSlugRouteImport } from './routes/kunstner.$slug'
 import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
-import { Route as RedigerSlugRouteImport } from './routes/rediger.$slug'
 import { Route as SelgerIdRouteImport } from './routes/selger.$id'
+import { Route as AuthenticatedRedigerSlugRouteImport } from './routes/_authenticated/rediger.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
@@ -39,9 +43,8 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Diargioadmin007Route = Diargioadmin007RouteImport.update({
-  id: '/diargioadmin007',
-  path: '/diargioadmin007',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleriplassRoute = GalleriplassRouteImport.update({
@@ -52,16 +55,6 @@ const GalleriplassRoute = GalleriplassRouteImport.update({
 const KunstveggRoute = KunstveggRouteImport.update({
   id: '/kunstvegg',
   path: '/kunstvegg',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeldingerRoute = MeldingerRouteImport.update({
-  id: '/meldinger',
-  path: '/meldinger',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MinSideRoute = MinSideRouteImport.update({
-  id: '/min-side',
-  path: '/min-side',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdreRoute = OrdreRouteImport.update({
@@ -84,14 +77,45 @@ const UtstillingerRoute = UtstillingerRouteImport.update({
   path: '/utstillinger',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VarslerRoute = VarslerRouteImport.update({
+const AuthenticatedDiargioadmin007Route =
+  AuthenticatedDiargioadmin007RouteImport.update({
+    id: '/diargioadmin007',
+    path: '/diargioadmin007',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMeldingerRoute = AuthenticatedMeldingerRouteImport.update({
+  id: '/meldinger',
+  path: '/meldinger',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMinSideRoute = AuthenticatedMinSideRouteImport.update({
+  id: '/min-side',
+  path: '/min-side',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVarslerRoute = AuthenticatedVarslerRouteImport.update({
   id: '/varsler',
   path: '/varsler',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
+  id: '/auth/recovery',
+  path: '/auth/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetRoute = AuthResetRouteImport.update({
+  id: '/auth/reset',
+  path: '/auth/reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVippsRoute = AuthVippsRouteImport.update({
@@ -134,16 +158,17 @@ const ProfilSlugRoute = ProfilSlugRouteImport.update({
   path: '/profil/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RedigerSlugRoute = RedigerSlugRouteImport.update({
-  id: '/rediger/$slug',
-  path: '/rediger/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SelgerIdRoute = SelgerIdRouteImport.update({
   id: '/selger/$id',
   path: '/selger/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRedigerSlugRoute =
+  AuthenticatedRedigerSlugRouteImport.update({
+    id: '/rediger/$slug',
+    path: '/rediger/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -159,16 +184,19 @@ const LovableEmailTransactionalPreviewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/diargioadmin007': typeof Diargioadmin007Route
   '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
-  '/meldinger': typeof MeldingerRoute
-  '/min-side': typeof MinSideRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
-  '/varsler': typeof VarslerRoute
+  '/diargioadmin007': typeof AuthenticatedDiargioadmin007Route
+  '/meldinger': typeof AuthenticatedMeldingerRoute
+  '/min-side': typeof AuthenticatedMinSideRoute
+  '/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -176,25 +204,28 @@ export interface FileRoutesByFullPath {
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
-  '/rediger/$slug': typeof RedigerSlugRoute
   '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
+  '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/diargioadmin007': typeof Diargioadmin007Route
   '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
-  '/meldinger': typeof MeldingerRoute
-  '/min-side': typeof MinSideRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
-  '/varsler': typeof VarslerRoute
+  '/diargioadmin007': typeof AuthenticatedDiargioadmin007Route
+  '/meldinger': typeof AuthenticatedMeldingerRoute
+  '/min-side': typeof AuthenticatedMinSideRoute
+  '/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -202,26 +233,30 @@ export interface FileRoutesByTo {
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
-  '/rediger/$slug': typeof RedigerSlugRoute
   '/selger/$id': typeof SelgerIdRoute
   '/auth': typeof AuthIndexRoute
   '/kunst': typeof KunstIndexRoute
+  '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/diargioadmin007': typeof Diargioadmin007Route
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/galleriplass': typeof GalleriplassRoute
   '/kunstvegg': typeof KunstveggRoute
-  '/meldinger': typeof MeldingerRoute
-  '/min-side': typeof MinSideRoute
   '/ordre': typeof OrdreRoute
   '/selg': typeof SelgRoute
   '/sok': typeof SokRoute
   '/utstillinger': typeof UtstillingerRoute
-  '/varsler': typeof VarslerRoute
+  '/_authenticated/diargioadmin007': typeof AuthenticatedDiargioadmin007Route
+  '/_authenticated/meldinger': typeof AuthenticatedMeldingerRoute
+  '/_authenticated/min-side': typeof AuthenticatedMinSideRoute
+  '/_authenticated/varsler': typeof AuthenticatedVarslerRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/vipps': typeof AuthVippsRoute
   '/dealroom/$slug': typeof DealroomSlugRoute
   '/info/$page': typeof InfoPageRoute
@@ -229,10 +264,10 @@ export interface FileRoutesById {
   '/kunst/$slug': typeof KunstSlugRoute
   '/kunstner/$slug': typeof KunstnerSlugRoute
   '/profil/$slug': typeof ProfilSlugRoute
-  '/rediger/$slug': typeof RedigerSlugRoute
   '/selger/$id': typeof SelgerIdRoute
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
+  '/_authenticated/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -240,16 +275,19 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/diargioadmin007'
     | '/galleriplass'
     | '/kunstvegg'
-    | '/meldinger'
-    | '/min-side'
     | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
+    | '/diargioadmin007'
+    | '/meldinger'
+    | '/min-side'
     | '/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -257,25 +295,28 @@ export interface FileRouteTypes {
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
-    | '/rediger/$slug'
     | '/selger/$id'
     | '/auth/'
     | '/kunst/'
+    | '/rediger/$slug'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/diargioadmin007'
     | '/galleriplass'
     | '/kunstvegg'
-    | '/meldinger'
-    | '/min-side'
     | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
+    | '/diargioadmin007'
+    | '/meldinger'
+    | '/min-side'
     | '/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -283,25 +324,29 @@ export interface FileRouteTypes {
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
-    | '/rediger/$slug'
     | '/selger/$id'
     | '/auth'
     | '/kunst'
+    | '/rediger/$slug'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
     | '/'
-    | '/diargioadmin007'
+    | '/_authenticated'
     | '/galleriplass'
     | '/kunstvegg'
-    | '/meldinger'
-    | '/min-side'
     | '/ordre'
     | '/selg'
     | '/sok'
     | '/utstillinger'
-    | '/varsler'
+    | '/_authenticated/diargioadmin007'
+    | '/_authenticated/meldinger'
+    | '/_authenticated/min-side'
+    | '/_authenticated/varsler'
+    | '/auth/callback'
+    | '/auth/recovery'
+    | '/auth/reset'
     | '/auth/vipps'
     | '/dealroom/$slug'
     | '/info/$page'
@@ -309,26 +354,26 @@ export interface FileRouteTypes {
     | '/kunst/$slug'
     | '/kunstner/$slug'
     | '/profil/$slug'
-    | '/rediger/$slug'
     | '/selger/$id'
     | '/auth/'
     | '/kunst/'
+    | '/_authenticated/rediger/$slug'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  Diargioadmin007Route: typeof Diargioadmin007Route
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   GalleriplassRoute: typeof GalleriplassRoute
   KunstveggRoute: typeof KunstveggRoute
-  MeldingerRoute: typeof MeldingerRoute
-  MinSideRoute: typeof MinSideRoute
   OrdreRoute: typeof OrdreRoute
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
   UtstillingerRoute: typeof UtstillingerRoute
-  VarslerRoute: typeof VarslerRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthRecoveryRoute: typeof AuthRecoveryRoute
+  AuthResetRoute: typeof AuthResetRoute
   AuthVippsRoute: typeof AuthVippsRoute
   DealroomSlugRoute: typeof DealroomSlugRoute
   InfoPageRoute: typeof InfoPageRoute
@@ -336,7 +381,6 @@ export interface RootRouteChildren {
   KunstSlugRoute: typeof KunstSlugRoute
   KunstnerSlugRoute: typeof KunstnerSlugRoute
   ProfilSlugRoute: typeof ProfilSlugRoute
-  RedigerSlugRoute: typeof RedigerSlugRoute
   SelgerIdRoute: typeof SelgerIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
@@ -353,11 +397,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/diargioadmin007': {
-      id: '/diargioadmin007'
-      path: '/diargioadmin007'
-      fullPath: '/diargioadmin007'
-      preLoaderRoute: typeof Diargioadmin007RouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/galleriplass': {
@@ -372,20 +416,6 @@ declare module '@tanstack/react-router' {
       path: '/kunstvegg'
       fullPath: '/kunstvegg'
       preLoaderRoute: typeof KunstveggRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meldinger': {
-      id: '/meldinger'
-      path: '/meldinger'
-      fullPath: '/meldinger'
-      preLoaderRoute: typeof MeldingerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/min-side': {
-      id: '/min-side'
-      path: '/min-side'
-      fullPath: '/min-side'
-      preLoaderRoute: typeof MinSideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ordre': {
@@ -416,18 +446,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UtstillingerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/varsler': {
-      id: '/varsler'
+    '/_authenticated/diargioadmin007': {
+      id: '/_authenticated/diargioadmin007'
+      path: '/diargioadmin007'
+      fullPath: '/diargioadmin007'
+      preLoaderRoute: typeof AuthenticatedDiargioadmin007RouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/meldinger': {
+      id: '/_authenticated/meldinger'
+      path: '/meldinger'
+      fullPath: '/meldinger'
+      preLoaderRoute: typeof AuthenticatedMeldingerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/min-side': {
+      id: '/_authenticated/min-side'
+      path: '/min-side'
+      fullPath: '/min-side'
+      preLoaderRoute: typeof AuthenticatedMinSideRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/varsler': {
+      id: '/_authenticated/varsler'
       path: '/varsler'
       fullPath: '/varsler'
-      preLoaderRoute: typeof VarslerRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedVarslerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/auth/': {
       id: '/auth/'
       path: '/auth'
       fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/recovery': {
+      id: '/auth/recovery'
+      path: '/auth/recovery'
+      fullPath: '/auth/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/auth/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/vipps': {
@@ -486,19 +558,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rediger/$slug': {
-      id: '/rediger/$slug'
-      path: '/rediger/$slug'
-      fullPath: '/rediger/$slug'
-      preLoaderRoute: typeof RedigerSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/selger/$id': {
       id: '/selger/$id'
       path: '/selger/$id'
       fullPath: '/selger/$id'
       preLoaderRoute: typeof SelgerIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/rediger/$slug': {
+      id: '/_authenticated/rediger/$slug'
+      path: '/rediger/$slug'
+      fullPath: '/rediger/$slug'
+      preLoaderRoute: typeof AuthenticatedRedigerSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
@@ -517,18 +589,37 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDiargioadmin007Route: typeof AuthenticatedDiargioadmin007Route
+  AuthenticatedMeldingerRoute: typeof AuthenticatedMeldingerRoute
+  AuthenticatedMinSideRoute: typeof AuthenticatedMinSideRoute
+  AuthenticatedVarslerRoute: typeof AuthenticatedVarslerRoute
+  AuthenticatedRedigerSlugRoute: typeof AuthenticatedRedigerSlugRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDiargioadmin007Route: AuthenticatedDiargioadmin007Route,
+  AuthenticatedMeldingerRoute: AuthenticatedMeldingerRoute,
+  AuthenticatedMinSideRoute: AuthenticatedMinSideRoute,
+  AuthenticatedVarslerRoute: AuthenticatedVarslerRoute,
+  AuthenticatedRedigerSlugRoute: AuthenticatedRedigerSlugRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  Diargioadmin007Route: Diargioadmin007Route,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   GalleriplassRoute: GalleriplassRoute,
   KunstveggRoute: KunstveggRoute,
-  MeldingerRoute: MeldingerRoute,
-  MinSideRoute: MinSideRoute,
   OrdreRoute: OrdreRoute,
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
   UtstillingerRoute: UtstillingerRoute,
-  VarslerRoute: VarslerRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthRecoveryRoute: AuthRecoveryRoute,
+  AuthResetRoute: AuthResetRoute,
   AuthVippsRoute: AuthVippsRoute,
   DealroomSlugRoute: DealroomSlugRoute,
   InfoPageRoute: InfoPageRoute,
@@ -536,7 +627,6 @@ const rootRouteChildren: RootRouteChildren = {
   KunstSlugRoute: KunstSlugRoute,
   KunstnerSlugRoute: KunstnerSlugRoute,
   ProfilSlugRoute: ProfilSlugRoute,
-  RedigerSlugRoute: RedigerSlugRoute,
   SelgerIdRoute: SelgerIdRoute,
   AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,

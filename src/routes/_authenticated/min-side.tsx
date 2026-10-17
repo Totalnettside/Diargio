@@ -9,9 +9,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { Button } from "@/components/ui/button";
 import { UnreadBadge } from "@/components/UnreadBadge";
+import {AccountSecurity} from "@/components/AccountSecurity";
 import { SavedWalls } from "@/components/visual/SavedWalls";
 
-export const Route = createFileRoute("/min-side")({
+export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
   head: () => ({
     meta: [
@@ -90,6 +91,7 @@ function Dashboard() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-5">
       <h1 className="font-display text-2xl font-semibold">Min kunsthandel</h1>
+      <Button asChild variant="outline" className="mt-3 mr-3"><Link to="/ordre">Kjøp, salg og oppgjør</Link></Button>
       <Button asChild variant="outline" className="mt-3"><Link to="/galleriplass" search={{ room: 2 }}>Still ut i galleriet</Link></Button>
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -140,7 +142,7 @@ function Dashboard() {
       {tab === "Min profil" && (
         <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
           <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>
-          <ProfileForm />
+          <ProfileForm /><AccountSecurity />
 
         </section>
       )}
@@ -164,7 +166,7 @@ function Dashboard() {
                     <button
                       onClick={() => {
                         if (window.confirm(`Slette «${a.title}»? Dette kan ikke angres.`)) {
-                          deleteListing(a.id);
+                          void deleteListing(a.id).catch(e=>window.alert(e instanceof Error?e.message:"Kunne ikke slette"));
                         }
                       }}
                       className="flex-1 rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 glass"
@@ -207,7 +209,7 @@ function Dashboard() {
               className="block rounded-2xl p-4 text-sm font-semibold glass"
             >
               {s.label}
-              <span className="ml-2 text-xs font-normal text-ink/50">Varsler på nett og e-post</span>
+              <span className="ml-2 text-xs font-normal text-ink/50">Lagret søk</span>
             </Link>
           ))}
         </div>
@@ -237,6 +239,7 @@ function Dashboard() {
                     </div>
                   )}
                   <p className="mt-1 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
+                  {b.buyerId===user?.id&&b.status==="Godtatt"&&art&&<Button asChild className="mt-2"><Link to="/kjop/$slug" params={{slug:art.slug}} search={{bid:b.id}}>Betal godkjent bud</Link></Button>}
                   {b.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}>Åpne samtale</Link></Button>}
                 </div>
               );
@@ -263,16 +266,16 @@ function Dashboard() {
           })}
           {followedSellers.map((id) => {
             const s = sellers.find((x) => x.id === id);
-            return s ? (
+            return (
               <Link
                 key={id}
-                to="/profil/$slug"
-                params={{ slug: s.slug }}
+                to="/selger/$id"
+                params={{ id }}
                 className="block rounded-2xl p-4 text-sm font-semibold glass"
               >
-                {s.name} <span className="text-xs font-normal text-ink/50">{s.type}</span>
+                {s?.name??"Kunstnerprofil"} <span className="text-xs font-normal text-ink/50">Kunstner</span>
               </Link>
-            ) : null;
+            );
           })}
         </div>
       )}
@@ -298,15 +301,7 @@ function Dashboard() {
           </div>
           <div className="rounded-3xl p-4 glass">
             <p className="text-sm font-bold">Visninger siste 30 dager</p>
-            <div className="mt-3 flex h-32 items-end gap-1">
-              {Array.from({ length: 30 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-t bg-brand/70"
-                  style={{ height: `${20 + ((i * 37) % 80)}%` }}
-                />
-              ))}
-            </div>
+            <p className="mt-3 text-sm text-muted-foreground">Visningsmåling er ikke aktivert. Ingen historikk er beregnet.</p>
           </div>
         </div>
       )}

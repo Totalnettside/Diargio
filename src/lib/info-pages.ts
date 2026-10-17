@@ -72,7 +72,7 @@ export const infoPages: Record<string, InfoPage> = {
     title: "Priser og gebyrer",
     lead: "Det er gratis å opprette bruker og legge ut annonser.",
     sections: [
-      { h: "Gebyr ved salg", p: ["Ved hver handel tar Diargio 20 % i gebyr, pluss 5 % kunstavgift. Totalt 25 % per handel.", "Du betaler ingenting hvis verket ikke selges."] },
+      { h: "Gebyr ved salg", p: ["Diargios provisjon er 20 % av ønsket utbetaling til selger. Kunstavgiften er 5 % av beløpet inkludert provisjon, kun når ønsket utbetaling er over 2 000 kr. Kjøperens annonsepris inkluderer disse beløpene; frakt kommer separat.", "Du betaler ingenting hvis verket ikke selges."] },
     ],
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
@@ -80,7 +80,7 @@ export const infoPages: Record<string, InfoPage> = {
     title: "Ofte stilte spørsmål",
     lead: "Svar på det mange lurer på.",
     sections: [
-      { h: "Koster det noe å legge ut kunst?", p: ["Nei. Gebyret på 25 % tas først når et verk selges."] },
+      { h: "Koster det noe å legge ut kunst?", p: ["Nei. Provisjon og eventuell kunstavgift er inkludert i annonseprisen og gjelder når verket selges."] },
       { h: "Hvordan gir jeg bud?", p: ["Åpne annonsen og trykk «Gi bud». Selger får varsel og kan godkjenne eller avslå."] },
       { h: "Kan jeg endre eller slette annonsen min?", p: ["Ja, under «Min side → Mine annonser»."] },
       { h: "Hvem kan skrive omtale?", p: ["Kun de som har kjøpt kunst av selgeren."] },
@@ -118,7 +118,7 @@ export const infoPages: Record<string, InfoPage> = {
       { h: "1. Gode bilder", p: ["Bruk dagslys og vis hele verket, pluss detaljer."] },
       { h: "2. Riktige opplysninger", p: ["Oppgi kunstner, teknikk, mål og stand nøyaktig."] },
       { h: "3. Fortell historien", p: ["Hva inspirerte verket? Det hjelper kjøperen å velge akkurat dette."] },
-      { h: "4. Realistisk pris", p: ["Husk at gebyret er 25 % ved salg."] },
+      { h: "4. Realistisk pris", p: ["Prisberegneren viser ønsket utbetaling, provisjon, eventuell kunstavgift og totalprisen kjøper ser."] },
       { h: "5. Svar raskt", p: ["Raske svar på meldinger og bud gir flere salg."] },
     ],
     cta: { label: "Legg ut kunst", to: "/selg" },

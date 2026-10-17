@@ -45,6 +45,7 @@ export function ControlCenter() {
           Live · oppdateres hvert 30. sek
         </button>
       </div>
+      <Link to="/ordre" className="mt-4 inline-block text-sm font-semibold underline">Betalinger, leveranser og refusjoner</Link>
       <nav className="mt-5 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {tabs.map((t) => (
           <button key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${tab === t ? "bg-sage text-primary-foreground shadow" : "border border-border bg-card hover:bg-muted"}`}>
@@ -70,7 +71,9 @@ const nameOf = (d: D, id: string) => {
   const u = d.users.find((x) => x.id === id);
   return u ? [u.first_name, u.last_name].filter(Boolean).join(" ") || u.display_name || u.email || "Uten navn" : "Slettet bruker";
 };
-const priceOf = (d: D, lid: string) => d.listings.find((l) => l.id === lid)?.price ?? 0;
+const priceOf = (d: D, lid: string) => (d.orders.find(o=>o.listing_id===lid&&o.paid_at)?.artwork_amount??0)/100;
+const settledOrders=(d:D)=>d.orders.filter(o=>o.paid_at&&o.status!=="refunded");
+const financial=(d:D,key:string)=>settledOrders(d).reduce((sum,o)=>{const s=o.snapshot as {fees?:Record<string,number>};return sum+(s.fees?.[key]??0);},0);
 const titleOf = (d: D, lid: string) => d.listings.find((l) => l.id === lid)?.title ?? "Fjernet annonse";
 
 function Kpi({ label, value, sub, onClick }: { label: string; value: string; sub?: string; onClick?: () => void }) {
@@ -138,7 +141,7 @@ function Overview({ d, go }: { d: D; go: (t: Tab) => void }) {
         <Kpi label="Annonser" value={String(d.listings.length)} sub={`+${within(d.listings.map((l) => l.created_at), 7 * day)} siste 7 d`} onClick={() => go("Annonser")} />
         <Kpi label="Ventende bud" value={String(pending.length)} sub={`${d.bids.length} bud totalt`} onClick={() => go("Bud & salg")} />
         <Kpi label="Salg" value={String(d.purchases.length)} sub={kr(gmv) + " omsatt"} onClick={() => go("Økonomi")} />
-        <Kpi label="Diargio inntekt" value={kr(gmv * TOTAL_FEE_RATE)} sub="provisjon + kunstavgift" onClick={() => go("Økonomi")} />
+        <Kpi label="Diargio inntekt" value={kr(financial(d,"platformFee"))} sub="provisjon · kunstavgift holdes adskilt" onClick={() => go("Økonomi")} />
         <Kpi label="Meldinger 24 t" value={String(within(d.messageTimes, day))} sub={`${d.messageTimes.length} totalt`} />
         <Kpi label="Følgerskap" value={String(d.follows.length)} sub={`${d.reviews.length} omtaler`} onClick={() => go("Toppliste")} />
       </div>
@@ -373,9 +376,9 @@ function Economy({ d }: { d: D }) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Omsatt (salg)" value={kr(gmv)} />
-        <Kpi label="Provisjon" value={kr(gmv * PLATFORM_FEE_RATE)} />
-        <Kpi label="Kunstavgift" value={kr(gmv * ART_FEE_RATE)} />
-        <Kpi label="Total inntekt" value={kr(gmv * TOTAL_FEE_RATE)} />
+        <Kpi label="Provisjon" value={kr(financial(d,"platformFee"))} />
+        <Kpi label="Kunstavgift" value={kr(financial(d,"artFee"))} />
+        <Kpi label="Provisjonsinntekt" value={kr(financial(d,"platformFee"))} />
         <Kpi label="Godkjente bud (ubetalt)" value={kr(pipeline)} sub={`${kr(pipeline * TOTAL_FEE_RATE)} i mulig inntekt`} />
         <Kpi label="Verdi på alle annonser" value={kr(inventory)} sub={`${kr(inventory * TOTAL_FEE_RATE)} om alt selges`} />
         <Kpi label="Snittpris" value={kr(avg)} />

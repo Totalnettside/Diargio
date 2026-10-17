@@ -76,7 +76,7 @@ export function Footer() {
         >
           <h3 className="text-sm font-semibold">Oppdag nye kunstnere og verk</h3>
           {done ? (
-            <p className="mt-2 text-sm text-ink/70">Takk! Vi holder deg oppdatert.</p>
+            <p className="mt-2 text-sm text-ink/70">Nyhetsbrev er ikke åpnet ennå. Følg Diargio på LinkedIn for nyheter.</p>
           ) : (
             <div className="mt-2 flex gap-2">
               <input

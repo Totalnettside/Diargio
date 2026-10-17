@@ -5,9 +5,11 @@ import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Eye, EyeOff, LoaderCircle, LockKeyhole } from "lucide-react";
+import {safeDestination} from "@/lib/commerce";
 import galleryRoom from "@/assets/gallery-hall-1.jpg";
 
 export const Route = createFileRoute("/auth/")({
+  validateSearch:(s:Record<string,unknown>):{next?:string} => typeof s["next"] === "string" ? {next:safeDestination(s["next"])} : {},
   head: () => ({
     meta: [
       { title: "Logg inn – Diargio" },
@@ -37,10 +39,11 @@ function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const {next}=Route.useSearch();
 
   useEffect(() => {
-    if (user) void navigate({ to: "/min-side" });
-  }, [user, navigate]);
+    if (user) { const destination=safeDestination(next??sessionStorage.getItem("auth-next"));sessionStorage.removeItem("auth-next");void navigate({to:destination}); }
+  }, [user, navigate, next]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +66,7 @@ function AuthPage() {
 
   const google = async () => {
     setMsg(null);
+    sessionStorage.setItem("auth-next",safeDestination(next));
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
@@ -103,6 +107,7 @@ function AuthPage() {
               {busy ? "Vennligst vent …" : mode === "inn" ? "Logg inn" : "Opprett konto"}{busy ? <LoaderCircle className="animate-spin motion-reduce:animate-none" /> : <ArrowRight />}
             </Button>
           </form>
+          <Button asChild variant="link" className="mt-3 px-0"><Link to="/auth/recovery">Glemt passord?</Link></Button>
           {msg && <p role="status" className="mt-4 border-l-2 border-gronn pl-3 text-sm leading-relaxed text-foreground">{msg}</p>}
           <div className="mt-7 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" />Trygg innlogging</div>
           <p className="mt-5 text-center text-xs leading-relaxed text-muted-foreground">Ved å fortsette godtar du Diargios vilkår.</p>

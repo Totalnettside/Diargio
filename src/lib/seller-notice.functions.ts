@@ -22,7 +22,8 @@ export const notifySeller = createServerFn({ method: "POST" })
       const ld = (l?.data ?? {}) as { title?: string; price?: number };
       if (data.kind === "sale" && ld.price) amount = Number(ld.price);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: u } = await supabaseAdmin.auth.admin.getUserById(sellerId!);
+      if(!sellerId)return {sent:false};
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(sellerId);
       const email = u?.user?.email;
       if (!email) return { sent: false };
       const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");

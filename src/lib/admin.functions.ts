@@ -15,7 +15,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const a = await assertAdmin(context);
-    const [profiles, listings, bids, purchases, messages, follows, reviews, roles, authUsers] = await Promise.all([
+    const [profiles, listings, bids, purchases, messages, follows, reviews, roles, authUsers, orders] = await Promise.all([
       a.from("profiles").select("id,display_name,first_name,last_name,avatar_url,location,phone,created_at,onboarded,bankid_verified"),
       a.from("listings").select("id,user_id,data,created_at"),
       a.from("bids").select("id,listing_id,buyer_id,seller_id,amount,status,created_at"),
@@ -25,7 +25,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       a.from("reviews").select("seller_id,rating,created_at"),
       a.from("user_roles").select("user_id,role").eq("role", "admin"),
       a.auth.admin.listUsers({ perPage: 1000 }),
+      a.from("art_orders").select("*").eq("environment","live"),
     ]);
+    if([profiles,listings,bids,purchases,messages,follows,reviews,roles,orders].some(r=>r.error)||authUsers.error)throw new Error("Kontrollsenteret kunne ikke hente alle opplysninger");
     const authMap = new Map(
       (authUsers.data?.users ?? []).map((u) => [u.id, { email: u.email ?? null, last_sign_in_at: u.last_sign_in_at ?? null, provider: (u.app_metadata?.provider as string) ?? "email" }]),
     );
@@ -47,6 +49,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       listings: listingRows,
       bids: bids.data ?? [],
       purchases: purchases.data ?? [],
+      orders: orders.data ?? [],
       messageTimes: (messages.data ?? []).map((m) => m.created_at),
       follows: follows.data ?? [],
       reviews: reviews.data ?? [],
