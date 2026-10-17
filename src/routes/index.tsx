@@ -58,7 +58,7 @@ function Index() {
   };
 
   return (
-    <div className="bg-topbar">
+    <div className="quiet-luxury bg-ivory">
       <main className="mx-auto w-full max-w-6xl px-5 pt-4">
       <section
         ref={heroRef}
