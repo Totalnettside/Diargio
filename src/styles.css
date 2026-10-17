@@ -174,9 +174,9 @@
     radial-gradient(52% 72% at 12% 12%, color-mix(in oklab, var(--champagne) 76%, transparent), transparent 64%),
     radial-gradient(46% 64% at 84% 6%, color-mix(in oklab, var(--sand) 86%, transparent), transparent 66%),
     radial-gradient(56% 74% at 96% 58%, color-mix(in oklab, var(--ivory) 78%, transparent), transparent 68%),
-    radial-gradient(62% 80% at 74% 98%, color-mix(in oklab, var(--taupe) 72%, transparent), transparent 66%),
-    radial-gradient(54% 72% at 14% 94%, color-mix(in oklab, var(--taupelys) 82%, transparent), transparent 64%),
-    radial-gradient(44% 60% at 48% 44%, color-mix(in oklab, var(--bronse) 38%, transparent), transparent 62%);
+    radial-gradient(62% 80% at 74% 98%, color-mix(in oklab, var(--taupe) 62%, transparent), transparent 66%),
+    radial-gradient(54% 72% at 14% 94%, color-mix(in oklab, var(--taupelys) 76%, transparent), transparent 64%),
+    radial-gradient(44% 60% at 48% 44%, color-mix(in oklab, var(--bronse) 28%, transparent), transparent 62%);
   background-size: 210% 210%, 190% 190%, 230% 230%, 200% 200%, 220% 220%, 180% 180%;
   background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 50% 100%, 50% 0%;
   animation: hero-drift 26s ease-in-out infinite alternate;
