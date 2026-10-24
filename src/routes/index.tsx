@@ -70,7 +70,7 @@ function Index() {
             <div className="hero-rise flex items-center gap-3" style={{ animationDelay: "0ms" }}>
               <span className="h-px w-8 bg-brand" />
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brandink">
-                Norsk markedsplass for kunst
+                Markedsplass for kunst og skaperglede
               </p>
             </div>
             <h1
