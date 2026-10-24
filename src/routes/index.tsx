@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Diargio – finn kunst du faktisk vil ha på veggen" },
+      { title: "Diargio – et kunstunivers hvor alle har sin plass" },
       {
         name: "description",
         content:
@@ -74,10 +74,10 @@ function Index() {
               </p>
             </div>
             <h1
-              className="hero-rise mt-3 max-w-[16ch] font-display text-[32px] font-semibold leading-[1.05] tracking-tight md:text-5xl"
+              className="hero-rise mt-3 max-w-[22ch] font-display text-[32px] font-semibold leading-[1.05] tracking-tight md:text-5xl"
               style={{ animationDelay: "90ms" }}
             >
-              Finn kunst du <em className="italic text-brand">faktisk</em> vil ha på veggen.
+              Velkommen til et kunstunivers hvor <em className="italic text-brand">alle</em> har sin plass.
             </h1>
             <p
               className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-ink/85 md:text-base"
