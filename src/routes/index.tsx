@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Diargio – finn kunst du faktisk vil ha på veggen" },
+      { title: "Diargio – et kunstunivers hvor alle har sin plass" },
       {
         name: "description",
         content:
