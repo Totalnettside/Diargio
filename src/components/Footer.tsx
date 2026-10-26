@@ -96,7 +96,7 @@ export function Footer() {
         </form>
 
         <div className="mt-10 space-y-2 border-t border-border pt-6 text-xs text-ink/60">
-          <p>© 2026 Diargio · Diargio AS · Org.nr. [orgnummer kommer senere]</p>
+          <p>© 2026 Diargio · Diargio AS · Org.nr. 938724148</p>
           <p>Brukervilkår · Personvern · Innstillinger for informasjonskapsler</p>
           <p>
             Kontakt:{" "}
