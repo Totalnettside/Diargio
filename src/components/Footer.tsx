@@ -4,6 +4,24 @@ import logo from "@/assets/diargio-logo.png.asset.json";
 
 const linkCls = "text-sm text-ink/70 hover:text-ink hover:underline";
 
+const SOCIAL = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/share/1KTCP1YZVs/?mibextid=wwXIfr",
+    path: "M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.4V14h2.7v8h3.4z",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/diargio_art?srtk=MTBibWtvbXloNmIxZQ%3D%3D&utm_source=qr",
+    path: "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zM17.2 5.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zM12 2c-2.7 0-3 0-4.1.1C4.3 2.2 2.2 4.3 2.1 7.9 2 9 2 9.3 2 12s0 3 .1 4.1c.1 3.6 2.2 5.7 5.8 5.8 1.1.1 1.4.1 4.1.1s3 0 4.1-.1c3.6-.1 5.7-2.2 5.8-5.8.1-1.1.1-1.4.1-4.1s0-3-.1-4.1c-.1-3.6-2.2-5.7-5.8-5.8C15 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1 2.6.1 3.9 1.4 4 4 .1 1 .1 1.3.1 4s0 3-.1 4c-.1 2.6-1.4 3.9-4 4-1 .1-1.3.1-4 .1s-3 0-4-.1c-2.6-.1-3.9-1.4-4-4-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-2.6 1.4-3.9 4-4 1-.1 1.3-.1 4-.1z",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/company/diargio/",
+    path: "M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6c.5-.9 1.6-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.5V9h3.6v11.5z",
+  },
+];
+
 export function Footer() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
@@ -60,9 +78,24 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               <li><Link to="/info/$page" params={{ page: "om-oss" }} className={linkCls}>Om oss</Link></li>
               <li><a href="mailto:post@diargio.com" className={linkCls}>Kontakt oss</a></li>
-              <li><a href="https://www.instagram.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Instagram</a></li>
-              <li><a href="https://www.facebook.com/diargio" target="_blank" rel="noreferrer" className={linkCls}>Facebook</a></li>
-              <li><a href="https://www.linkedin.com/company/diargio/about/" target="_blank" rel="noreferrer" className={linkCls}>LinkedIn</a></li>
+            </ul>
+            <ul className="mt-4 flex items-center gap-3" aria-label="Følg Diargio">
+              {SOCIAL.map((s) => (
+                <li key={s.name}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Diargio på ${s.name} (åpnes i ny fane)`}
+                    title={s.name}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-ink/70 transition-colors hover:text-ink hover:border-ink/40"
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                      <path d={s.path} />
+                    </svg>
+                  </a>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
