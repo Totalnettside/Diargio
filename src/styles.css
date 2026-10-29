@@ -430,6 +430,12 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 .wall-tone-gray .wall-tint,.tone-gray { background:var(--wall-gray); }
 .wall-tone-sage .wall-tint,.tone-sage { background:var(--wall-sage); }
 .wall-tone-clay .wall-tint,.tone-clay { background:var(--wall-clay); }
+.wall-tone-custom .wall-tint { background:var(--wall-custom); }
+.wall-scene-hallway .wall-tint { inset:0; clip-path:polygon(0 0,65% 0,93.5% 26%,93.5% 60%,0 98%); }
+.wall-color-wheel { width:138px; height:138px; margin-inline:auto; border-radius:50%; }
+.wall-color-wheel:focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
+.wall-color-brightness { accent-color:var(--primary); }
+@media(max-width:767px) { .wall-color-picker { grid-row:span 3; } }
 .tone-original { background:var(--card); }
 .wall-swatch { border-radius:50%; width:28px; height:28px; padding:4px; }
 .wall-swatch[aria-pressed=true] { outline:1px solid var(--primary); outline-offset:3px; }

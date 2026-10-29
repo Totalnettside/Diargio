@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ImagePlus, Plus, Save, Share2, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ImagePlus, Plus, Save, Share2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { categories, formatPrice, type Artwork } from '@/data/demo';
@@ -9,8 +9,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { visualArtOptions } from '@/lib/visual-art-query';
 import { getSharedWall, saveArtWall } from '@/lib/visual-art.functions';
-import { emptyWall, newPlacement, roomScenes, sceneImage, wallColors, wallLayoutSchema, visualHead, type WallLayout } from '@/lib/visual-art';
+import { emptyWall, newPlacement, wallRoomScenes, sceneImage, wallLayoutSchema, visualHead, type WallLayout } from '@/lib/visual-art';
 import { ArtStage } from '@/components/visual/ArtStage';
+import { WallColorPicker } from '@/components/visual/WallColorPicker';
 import { ArtDetails } from '@/components/visual/ArtDetails';
 import { VisualError } from '@/components/visual/VisualError';
 
@@ -99,13 +100,13 @@ function ArtWallPage() {
         <label className="visual-label">Budsjett<select value={budget} onChange={(e) => setBudget(e.target.value)}><option value="">Alle priser</option><option value="5000">Under 5 000 kr</option><option value="15000">Under 15 000 kr</option><option value="50000">Under 50 000 kr</option></select></label>
         <label className="visual-label">Kategori<select value={category} onChange={(e) => setCategory(e.target.value)}><option value="">Alle kategorier</option>{categories.map((c) => <option key={c}>{c}</option>)}</select></label>
         <label className="visual-label">Verkstørrelse<select value={size} onChange={(e) => setSize(e.target.value)}><option value="">Alle størrelser</option><option value="small">Opptil 60 cm</option><option value="medium">60–100 cm</option><option value="large">Over 100 cm</option></select></label>
-        <fieldset><legend className="visual-label">Veggfarge</legend><div className="mt-2 flex gap-2">{wallColors.map((c,i) => <Button key={c} variant="outline" size="icon" title={['Original','Lys','Grå','Salvie','Varm'][i]} aria-label={`Veggfarge ${['Original','Lys','Grå','Salvie','Varm'][i]}`} aria-pressed={layout.color === c} className={`wall-swatch tone-${c}`} onClick={() => setLayout((l) => ({ ...l,color:c }))}>{layout.color===c && <Check />}</Button>)}</div></fieldset>
-        <label className="visual-label">Rom<select value={roomUrl ? 'custom' : layout.scene} onChange={(e) => { setRoomUrl(''); setPhoto(undefined); setLayout((l) => ({ ...l,scene:e.target.value as WallLayout['scene'],roomPath:undefined,aspect:1.5,calibration:null })); }}><option value="custom" disabled>Ditt rom</option>{roomScenes.map((r) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label>
+        <WallColorPicker color={layout.color} onChange={(color) => setLayout((l) => ({ ...l, color }))} />
+        <label className="visual-label">Rom<select value={roomUrl ? 'custom' : layout.scene} onChange={(e) => { setRoomUrl(''); setPhoto(undefined); setLayout((l) => ({ ...l,scene:e.target.value as WallLayout['scene'],roomPath:undefined,aspect:1.5,calibration:null })); }}><option value="custom" disabled>Ditt rom</option>{wallRoomScenes.map((r) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label>
         <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" aria-label="Last opp romfoto" onChange={async (e) => { const f=e.target.files?.[0]; if (!f) return; if (!['image/jpeg','image/png','image/webp'].includes(f.type) || f.size>10*1024*1024) { setMessage('Velg JPG, PNG eller WebP under 10 MB.'); return; } const url=URL.createObjectURL(f); const img=new Image(); img.onload=() => { const aspect=img.width/img.height; if (aspect<0.2 || aspect>5) { setMessage('Romfotoet har et format som ikke støttes.'); URL.revokeObjectURL(url); return; } setPhoto(f); setRoomUrl(url); setLayout((l) => ({ ...l,roomPath:undefined,aspect,calibration:null })); }; img.src=url; }} />
         <Button variant="outline" onClick={() => fileInput.current?.click()} className="w-full"><ImagePlus />Last opp ditt rom</Button>
       </aside>
       <div className="visual-stage-area">
-        <ArtStage background={roomUrl || sceneImage(layout.scene)} aspect={layout.aspect} color={layout.color} placements={layout.placements} artworks={data.artworks} selected={selected} onSelect={setSelected}
+        <ArtStage background={roomUrl || sceneImage(layout.scene)} aspect={layout.aspect} color={layout.color} scene={roomUrl ? undefined : layout.scene} placements={layout.placements} artworks={data.artworks} selected={selected} onSelect={setSelected}
           onChange={(placements) => setLayout((l) => ({ ...l,placements }))}
           onDropArt={(id,x,y) => { const art=data.artworks.find((a) => a.id===id); if (art) add(art,x,y); }} />
         {layout.placements.length===0 && <div className="stage-empty"><ImagePlus className="mx-auto mb-2 size-6" /><p>Velg ditt første verk</p></div>}
