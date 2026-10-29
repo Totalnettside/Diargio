@@ -1,5 +1,5 @@
 # Budvarsler
-- [ ] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
+- [x] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
 - [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
 - [x] Avklare betalingsomfang, frakt og mottak/oppgjør: kunst først, selger oppgir frakt, admin avgjør uavklarte saker.
 - [ ] Avklare moms og kunstavgiftsmottaker — ingen avklaring oppgitt; blokkerer ekte betalinger.

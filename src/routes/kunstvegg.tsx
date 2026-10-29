@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { visualArtOptions } from '@/lib/visual-art-query';
 import { getSharedWall, saveArtWall } from '@/lib/visual-art.functions';
-import { emptyWall, newPlacement, roomScenes, sceneImage, wallLayoutSchema, visualHead, type WallLayout } from '@/lib/visual-art';
+import { emptyWall, newPlacement, wallRoomScenes, sceneImage, wallLayoutSchema, visualHead, type WallLayout } from '@/lib/visual-art';
 import { ArtStage } from '@/components/visual/ArtStage';
 import { WallColorPicker } from '@/components/visual/WallColorPicker';
 import { ArtDetails } from '@/components/visual/ArtDetails';
@@ -101,7 +101,7 @@ function ArtWallPage() {
         <label className="visual-label">Kategori<select value={category} onChange={(e) => setCategory(e.target.value)}><option value="">Alle kategorier</option>{categories.map((c) => <option key={c}>{c}</option>)}</select></label>
         <label className="visual-label">Verkstørrelse<select value={size} onChange={(e) => setSize(e.target.value)}><option value="">Alle størrelser</option><option value="small">Opptil 60 cm</option><option value="medium">60–100 cm</option><option value="large">Over 100 cm</option></select></label>
         <WallColorPicker color={layout.color} onChange={(color) => setLayout((l) => ({ ...l, color }))} />
-        <label className="visual-label">Rom<select value={roomUrl ? 'custom' : layout.scene} onChange={(e) => { setRoomUrl(''); setPhoto(undefined); setLayout((l) => ({ ...l,scene:e.target.value as WallLayout['scene'],roomPath:undefined,aspect:1.5,calibration:null })); }}><option value="custom" disabled>Ditt rom</option>{roomScenes.map((r) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label>
+        <label className="visual-label">Rom<select value={roomUrl ? 'custom' : layout.scene} onChange={(e) => { setRoomUrl(''); setPhoto(undefined); setLayout((l) => ({ ...l,scene:e.target.value as WallLayout['scene'],roomPath:undefined,aspect:1.5,calibration:null })); }}><option value="custom" disabled>Ditt rom</option>{wallRoomScenes.map((r) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label>
         <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" aria-label="Last opp romfoto" onChange={async (e) => { const f=e.target.files?.[0]; if (!f) return; if (!['image/jpeg','image/png','image/webp'].includes(f.type) || f.size>10*1024*1024) { setMessage('Velg JPG, PNG eller WebP under 10 MB.'); return; } const url=URL.createObjectURL(f); const img=new Image(); img.onload=() => { const aspect=img.width/img.height; if (aspect<0.2 || aspect>5) { setMessage('Romfotoet har et format som ikke støttes.'); URL.revokeObjectURL(url); return; } setPhoto(f); setRoomUrl(url); setLayout((l) => ({ ...l,roomPath:undefined,aspect,calibration:null })); }; img.src=url; }} />
         <Button variant="outline" onClick={() => fileInput.current?.click()} className="w-full"><ImagePlus />Last opp ditt rom</Button>
       </aside>

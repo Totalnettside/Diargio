@@ -8,6 +8,9 @@ export const roomScenes = [
   { id: 'living', name: 'Lys stue', image: living },
   { id: 'dining', name: 'Spisestue', image: dining },
   { id: 'gallery', name: 'Galleri', image: gallery },
+];
+export const wallRoomScenes = [
+  ...roomScenes,
   { id: 'hallway', name: 'Lang gang', image: hallway },
 ];
 export const wallColors = ['original', 'ivory', 'gray', 'sage', 'clay'] as const;
@@ -34,7 +37,7 @@ export type WallLayout = z.infer<typeof wallLayoutSchema>;
 export type ExhibitionRoom = z.infer<typeof exhibitionRoomSchema>;
 export type Exhibition = { id: string; title: string; published: boolean; rooms: ExhibitionRoom[] };
 export const emptyWall = (): WallLayout => ({ scene: 'living', aspect: 1.5, color: 'original', calibration: null, placements: [] });
-export function sceneImage(id: string) { return roomScenes.find((r) => r.id === id)?.image ?? living; }
+export function sceneImage(id: string) { return wallRoomScenes.find((r) => r.id === id)?.image ?? living; }
 export function newPlacement(artworkId: string, ratio: number, index: number): Placement {
   return { id: crypto.randomUUID(), artworkId, ratio: Math.max(0.05, Math.min(20, ratio || 1)), width: 0.18, x: 0.15 + (index % 3) * 0.24, y: 0.18 + (Math.floor(index / 3) % 2) * 0.2 };
 }
