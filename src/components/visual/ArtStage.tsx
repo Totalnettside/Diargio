@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import type { Placement } from '@/lib/visual-art';
 
 export function ArtStage({ background, aspect = 1.5, color = 'original', scene, placements, artworks, selected, onSelect, onChange, onDropArt, children }: {
-  background: string; aspect?: number; color?: string; scene?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
+  background: string; aspect?: number; color?: string; scene?: string | undefined; placements: Placement[]; artworks: Artwork[]; selected: string | null;
   onSelect: (id: string) => void; onChange?: (items: Placement[]) => void; onDropArt?: (id: string, x: number, y: number) => void;
   children?: ReactNode;
 }) {
