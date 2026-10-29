@@ -13,6 +13,7 @@
 - Bid decisions use a seller-authorized transactional RPC with pending-only transitions and a buyer chat message; acceptance never records payment or purchase.
 - Submit bids through the authenticated database RPC and transactional message trigger; seller notifications and bid dashboards read the same RLS-protected persistent bids, never local browser bids.
 - Visual art experiences use normalized 2D placements over room photographs in a shared ArtStage, keeping geometry consistent on all viewport sizes.
+- Art wall custom colors use validated six-digit hex values in the existing layout and a scoped CSS variable in ArtStage; the color wheel uses a shared color library so saved and shared walls retain the same color.
 - Art walls persist in owner-scoped art_walls with explicit opt-in sharing; room photos stay in private storage readable only by the owner or viewers of a shared wall.
 - Exhibitions persist room layouts in art_exhibitions with server-validated admin writes and RLS; public visual-art reads use a publishable server client and polling to hide sold or unavailable listings without exposing purchase details.
 - Gallery room geometry and preview pricing are shared across exhibition and placement previews; previews never persist bookings or claim payment until a server-confirmed payment integration exists.

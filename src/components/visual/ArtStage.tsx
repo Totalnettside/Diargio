@@ -1,10 +1,10 @@
-import { useRef, type PointerEvent, type ReactNode } from 'react';
+import { useRef, type CSSProperties, type PointerEvent, type ReactNode } from 'react';
 import type { Artwork } from '@/data/demo';
 import { Button } from '@/components/ui/button';
 import type { Placement } from '@/lib/visual-art';
 
-export function ArtStage({ background, aspect = 1.5, color = 'original', placements, artworks, selected, onSelect, onChange, onDropArt, children }: {
-  background: string; aspect?: number; color?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
+export function ArtStage({ background, aspect = 1.5, color = 'original', scene, placements, artworks, selected, onSelect, onChange, onDropArt, children }: {
+  background: string; aspect?: number; color?: string; scene?: string; placements: Placement[]; artworks: Artwork[]; selected: string | null;
   onSelect: (id: string) => void; onChange?: (items: Placement[]) => void; onDropArt?: (id: string, x: number, y: number) => void;
   children?: ReactNode;
 }) {
@@ -33,7 +33,8 @@ export function ArtStage({ background, aspect = 1.5, color = 'original', placeme
       update(p.id, { width, x: left ? rightEdge - width : p.x, y: top ? bottomEdge - width * aspect / p.ratio : p.y });
     } else update(p.id, { x: clamp(p.x + dx, 0, 1 - p.width), y: clamp(p.y + dy, 0, 1 - p.width * aspect / p.ratio) });
   }
-  return <div ref={ref} className={`art-stage wall-tone-${color}`} style={{ aspectRatio: aspect }}
+  const custom = /^#[0-9a-f]{6}$/i.test(color);
+  return <div ref={ref} className={`art-stage wall-tone-${custom ? 'custom' : color} ${scene === 'hallway' ? 'wall-scene-hallway' : ''}`} style={{ aspectRatio: aspect, ...(custom ? { '--wall-custom': color } : {}) } as CSSProperties}
     onDragOver={(e) => { if (onDropArt) e.preventDefault(); }} onDrop={(e) => { e.preventDefault(); const r = ref.current?.getBoundingClientRect(); if (r) onDropArt?.(e.dataTransfer.getData('text/plain'), (e.clientX-r.left)/r.width, (e.clientY-r.top)/r.height); }}
     >
     <img src={background} alt="Rom med vegg for kunst" className="absolute inset-0 size-full object-fill" />
