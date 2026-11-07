@@ -503,3 +503,8 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 @media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } }
 @media(max-width:900px) { .gallery-preview-layout { grid-template-columns:minmax(0,1fr); } .gallery-preview-layout>section:last-child { border-left:0; } }
 @media(max-width:600px) { .gallery-slot { padding:4px 6px; gap:3px; font-size:10px; } .gallery-slot-number { width:16px; height:16px; font-size:9px; } }
+
+/* Recolor only the original logo silhouette, never photographs or artwork. */
+.signature-logo-link { position:relative; }
+.signature-logo-link .signature-logo { opacity:0; }
+.signature-logo-link::after { content:""; position:absolute; inset:0; background:var(--signature-highlight); mask-image:var(--logo-source); mask-repeat:no-repeat; mask-size:100% 100%; pointer-events:none; }

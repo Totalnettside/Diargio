@@ -12,8 +12,8 @@ export function BottomNav() {
     <nav className="fixed inset-x-0 bottom-0 z-30 flex items-end justify-around gap-1 border-t border-border bg-topbar px-3 pb-4 pt-2 backdrop-blur-md md:hidden">
       <Link
         to="/"
-        className="flex flex-col items-center gap-1 text-ink/45"
-        activeProps={{ className: "flex flex-col items-center gap-1 text-brandink" }}
+        className="flex flex-col items-center gap-1 text-nav-highlight/75"
+        activeProps={{ className: "flex flex-col items-center gap-1 text-nav-highlight" }}
         activeOptions={{ exact: true }}
       >
         <Home className="size-5" />
@@ -21,8 +21,8 @@ export function BottomNav() {
       </Link>
       <Link
         to="/sok"
-        className="flex flex-col items-center gap-1 text-ink/45"
-        activeProps={{ className: "flex flex-col items-center gap-1 text-brandink" }}
+        className="flex flex-col items-center gap-1 text-nav-highlight/75"
+        activeProps={{ className: "flex flex-col items-center gap-1 text-nav-highlight" }}
       >
         <Search className="size-5" />
         <span className="text-[10px] font-semibold">Søk</span>
@@ -37,16 +37,16 @@ export function BottomNav() {
       </Link>
       <Link
         to="/meldinger"
-        className="flex flex-col items-center gap-1 text-ink/45"
-        activeProps={{ className: "flex flex-col items-center gap-1 text-brandink" }}
+        className="flex flex-col items-center gap-1 text-nav-highlight/75"
+        activeProps={{ className: "flex flex-col items-center gap-1 text-nav-highlight" }}
       >
         <span className="relative"><MessageCircle className="size-5" /><UnreadBadge count={unread} className="absolute -right-2.5 -top-2" /></span>
         <span className="text-[10px] font-semibold">Meld</span>
       </Link>
       <Link
         to="/min-side"
-        className="flex flex-col items-center gap-1 text-ink/45"
-        activeProps={{ className: "flex flex-col items-center gap-1 text-brandink" }}
+        className="flex flex-col items-center gap-1 text-nav-highlight/75"
+        activeProps={{ className: "flex flex-col items-center gap-1 text-nav-highlight" }}
       >
         <span className="relative"><User className="size-5" /><UnreadBadge count={unreadNotifications} className="absolute -right-2.5 -top-2" /></span>
         <span className="text-[10px] font-semibold">Profil</span>

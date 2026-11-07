@@ -41,7 +41,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link to="/" className="flex items-center" aria-label="Diargio">
+        <Link to="/" className="signature-logo-link flex items-center" style={{ ["--logo-source" as string]: `url("${diargioLogo.url}")` }} aria-label="Diargio">
           <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-14 w-auto" />
         </Link>
 
@@ -63,19 +63,19 @@ export function TopBar() {
         </form>
 
         <nav className="hidden shrink-0 items-center gap-4 text-sm font-semibold text-nav-highlight lg:flex">
-          <Link to="/kunst" className="transition-colors hover:text-brandink">
+          <Link to="/kunst" className="transition-colors hover:text-primary-foreground">
             Kunst
           </Link>
-          <Link to="/kunstvegg" className="whitespace-nowrap transition-colors hover:text-brandink">Din kunstvegg</Link>
-          <Link to="/utstillinger" className="transition-colors hover:text-brandink">Utstillinger</Link>
-          <Link to="/selg" className="transition-colors hover:text-brandink">
+          <Link to="/kunstvegg" className="whitespace-nowrap transition-colors hover:text-primary-foreground">Din kunstvegg</Link>
+          <Link to="/utstillinger" className="transition-colors hover:text-primary-foreground">Utstillinger</Link>
+          <Link to="/selg" className="transition-colors hover:text-primary-foreground">
             Selg kunst
           </Link>
-          <Link to="/meldinger" className="relative transition-colors hover:text-brandink">
+          <Link to="/meldinger" className="relative transition-colors hover:text-primary-foreground">
             Meldinger
             <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
           </Link>
-          <Link to="/min-side" className="transition-colors hover:text-brandink">
+          <Link to="/min-side" className="transition-colors hover:text-primary-foreground">
             Min side
           </Link>
         </nav>
