@@ -1,5 +1,5 @@
 # Budvarsler
-- [ ] Oppdater kun fargene på hele nettstedet til Grønn signatur; sammenlign mobil, nettbrett og pc.
+- [x] Oppdater kun fargene til Grønn signatur; offentlige og innloggede sider kontrollert på mobil, nettbrett og pc, med uendrede mål i før/etter-sammenligning; innebygd kortbetaling og fylte samtaler ikke visuelt kontrollert.
 - [x] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
 - [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
 - [x] Avklare betalingsomfang, frakt og mottak/oppgjør: kunst først, selger oppgir frakt, admin avgjør uavklarte saker.
