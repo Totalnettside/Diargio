@@ -46,6 +46,8 @@
   --color-ink: var(--ink);
   --color-mist: var(--mist);
   --color-topbar: var(--topbar);
+  --color-nav-highlight: var(--signature-highlight);
+  --color-nav-gold: var(--signature-gold);
   --color-hero: var(--hero);
   --color-ivory: var(--ivory);
   --color-sort: var(--sort);
@@ -66,51 +68,64 @@
 :root {
   --radius: 1rem;
 
-  --brand: oklch(0.49 0.028 133);
-  --brandink: oklch(0.4 0.045 158);
-  --sage: oklch(0.49 0.028 133);
-  --sagelight: oklch(0.56 0.032 133);
-  --gronn: oklch(0.45 0.075 152);
-  --gronnmork: oklch(0.38 0.075 152);
-  --gronnlys: oklch(0.56 0.032 133);
-  --mint: oklch(0.9 0.035 135);
-  --peach: oklch(0.89 0.04 70);
-  --lav: oklch(0.92 0.02 130);
-  --ink: oklch(0.273 0.009 88.8);
-  --mist: oklch(0.965 0.01 115);
-  --topbar: oklch(0.868 0.026 78.9);
-  --hero: oklch(0.922 0.021 79.1);
+  --signature-green: #002825;
+  --signature-white: #FFFFFF;
+  --signature-ink: #181616;
+  --signature-gold: #D6BE83;
+  --signature-highlight: #E2C681;
+  --signature-edge: #B8955A;
+  --signature-green-hover: color-mix(in oklab, var(--signature-green) 88%, var(--signature-white));
+  --signature-green-deep: color-mix(in oklab, var(--signature-green) 88%, var(--signature-ink));
+  --signature-tint: color-mix(in oklab, var(--signature-green) 5%, var(--signature-white));
+  --signature-muted: color-mix(in oklab, var(--signature-ink) 68%, var(--signature-white));
+  --hero-glow: color-mix(in oklab, var(--signature-green) 92%, var(--signature-highlight));
+
+
+  --brand: var(--signature-green);
+  --brandink: var(--signature-green);
+  --sage: var(--signature-green);
+  --sagelight: var(--signature-green-hover);
+  --gronn: var(--signature-green);
+  --gronnmork: var(--signature-green-deep);
+  --gronnlys: var(--signature-green-hover);
+  --mint: var(--signature-tint);
+  --peach: var(--signature-white);
+  --lav: var(--signature-white);
+  --ink: var(--signature-ink);
+  --mist: var(--signature-white);
+  --topbar: var(--signature-green);
+  --hero: var(--signature-green);
 
   /* Quiet Luxury — Ivory, Sort, Taupe, Champagne */
-  --ivory: oklch(0.963 0.009 78);
-  --sort: oklch(0.205 0 0);
-  --taupe: oklch(0.744 0.025 74);
-  --taupelys: oklch(0.859 0.022 77);
-  --sand: oklch(0.906 0.02 80);
-  --champagne: oklch(0.733 0.079 78);
-  --bronse: oklch(0.603 0.083 79);
+  --ivory: var(--signature-white);
+  --sort: var(--signature-ink);
+  --taupe: var(--signature-green);
+  --taupelys: var(--signature-tint);
+  --sand: var(--signature-white);
+  --champagne: var(--signature-gold);
+  --bronse: var(--signature-edge);
 
 
 
 
-  --background: oklch(0.903 0.020 80.1);
+  --background: var(--signature-white);
   --foreground: var(--ink);
-  --card: oklch(0.971 0.009 84.6);
+  --card: var(--signature-white);
   --card-foreground: var(--ink);
-  --popover: oklch(0.971 0.009 84.6);
+  --popover: var(--signature-white);
   --popover-foreground: var(--ink);
   --primary: var(--brandink);
   --primary-foreground: oklch(1 0 0);
-  --secondary: var(--mint);
+  --secondary: var(--signature-white);
   --secondary-foreground: var(--brandink);
-  --muted: oklch(0.88 0.024 79.7);
-  --muted-foreground: oklch(0.501 0.023 77.1);
-  --accent: var(--peach);
+  --muted: var(--signature-tint);
+  --muted-foreground: var(--signature-muted);
+  --accent: var(--signature-tint);
   --accent-foreground: var(--brandink);
   --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.808 0.025 79.7);
-  --input: oklch(0.808 0.025 79.7);
+  --border: var(--signature-edge);
+  --input: var(--signature-edge);
   --ring: var(--brand);
 
   --font-display-family: "Sora", ui-sans-serif, system-ui, sans-serif;
@@ -137,11 +152,7 @@
 
 /* Authentication is a quiet, unframed gallery layout; styles stay on this page. */
 .auth-page {
-  --background: oklch(0.903 0.020 80.1);
-  --foreground: oklch(0.273 0.009 88.8);
-  --border: oklch(0.808 0.025 79.7);
-  --ring: var(--gronn);
-  --muted-foreground: oklch(0.49 0.014 78);
+  --ring: var(--signature-green);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   color: var(--foreground);
@@ -202,18 +213,18 @@
     oklch(1 0 0),
     color-mix(in oklab, var(--mint) 80%, transparent)
   );
-  box-shadow: var(--shadow-glass), 0 20px 40px -28px oklch(0.63 0.176 288 / 0.7);
+  box-shadow: var(--shadow-glass), 0 20px 40px -28px color-mix(in oklab, var(--signature-green) 70%, transparent);
 }
 
 @utility home-hero {
   background-color: var(--hero);
   background-image:
-    radial-gradient(52% 72% at 12% 12%, color-mix(in oklab, var(--champagne) 76%, transparent), transparent 64%),
-    radial-gradient(46% 64% at 84% 6%, color-mix(in oklab, var(--sand) 86%, transparent), transparent 66%),
-    radial-gradient(56% 74% at 96% 58%, color-mix(in oklab, var(--ivory) 78%, transparent), transparent 68%),
-    radial-gradient(62% 80% at 74% 98%, color-mix(in oklab, var(--taupe) 62%, transparent), transparent 66%),
-    radial-gradient(54% 72% at 14% 94%, color-mix(in oklab, var(--taupelys) 76%, transparent), transparent 64%),
-    radial-gradient(44% 60% at 48% 44%, color-mix(in oklab, var(--bronse) 28%, transparent), transparent 62%);
+    radial-gradient(52% 72% at 12% 12%, color-mix(in oklab, var(--hero-glow) 76%, transparent), transparent 64%),
+    radial-gradient(46% 64% at 84% 6%, color-mix(in oklab, var(--hero-glow) 86%, transparent), transparent 66%),
+    radial-gradient(56% 74% at 96% 58%, color-mix(in oklab, var(--hero-glow) 78%, transparent), transparent 68%),
+    radial-gradient(62% 80% at 74% 98%, color-mix(in oklab, var(--hero-glow) 62%, transparent), transparent 66%),
+    radial-gradient(54% 72% at 14% 94%, color-mix(in oklab, var(--hero-glow) 76%, transparent), transparent 64%),
+    radial-gradient(44% 60% at 48% 44%, color-mix(in oklab, var(--hero-glow) 28%, transparent), transparent 62%);
   background-size: 210% 210%, 190% 190%, 230% 230%, 200% 200%, 220% 220%, 180% 180%;
   background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 50% 100%, 50% 0%;
   animation: hero-drift 26s ease-in-out infinite alternate;
@@ -235,19 +246,7 @@
 
 /* ============ Quiet Luxury — kun forsiden ============ */
 .quiet-luxury {
-  --background: oklch(0.903 0.020 80.1);
-  --foreground: oklch(0.273 0.009 88.8);
-  --ink: oklch(0.273 0.009 88.8);
-  --mist: oklch(0.903 0.020 80.1);
-  --brand: var(--bronse);
-  --brandink: var(--sort);
-  --sage: var(--taupe);
-  --sagelight: var(--taupelys);
-  --mint: var(--sand);
-  --peach: var(--taupelys);
-  --lav: var(--ivory);
-  --border: oklch(0.808 0.025 79.7);
-  --ring: var(--champagne);
+  --ring: var(--signature-green);
 }
 
 @utility sell-surface {
@@ -470,16 +469,16 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 .gallery-preview-layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; align-items:start; }
 .gallery-preview-layout>section:last-child { border-left:1px solid var(--border); }
 .messages-page {
-  --background: #E6DED1;
-  --foreground: #292722;
-  --primary: #2d4a39;
-  --primary-foreground: #ffffff;
-  --muted-foreground: #6B6255;
-  --border: #C9BFAF;
-  --message-selected: #DFD5C5;
-  --message-selected-border: #C9BFAF;
-  --message-paper: #F8F5EF;
-  --message-incoming: #F1EBE0;
+  --background: var(--signature-white);
+  --foreground: var(--signature-ink);
+  --primary: var(--signature-green);
+  --primary-foreground: var(--signature-white);
+  --muted-foreground: var(--signature-muted);
+  --border: var(--signature-edge);
+  --message-selected: var(--signature-tint);
+  --message-selected-border: var(--signature-green);
+  --message-paper: var(--signature-white);
+  --message-incoming: var(--signature-tint);
   --message-title-font: "Playfair Display", Georgia, serif;
   --message-shadow: 0 2px 8px color-mix(in oklab, var(--foreground) 4%, transparent);
   color: var(--foreground);
@@ -504,3 +503,8 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 @media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } }
 @media(max-width:900px) { .gallery-preview-layout { grid-template-columns:minmax(0,1fr); } .gallery-preview-layout>section:last-child { border-left:0; } }
 @media(max-width:600px) { .gallery-slot { padding:4px 6px; gap:3px; font-size:10px; } .gallery-slot-number { width:16px; height:16px; font-size:9px; } }
+
+/* Recolor only the original logo silhouette, never photographs or artwork. */
+.signature-logo-link { position:relative; }
+.signature-logo-link .signature-logo { opacity:0; }
+.signature-logo-link::after { content:""; position:absolute; inset:0; background:var(--signature-highlight); mask-image:var(--logo-source); mask-repeat:no-repeat; mask-size:100% 100%; pointer-events:none; }

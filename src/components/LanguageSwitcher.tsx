@@ -80,7 +80,7 @@ export function LanguageSwitcher() {
       <div id="gt-el" className="hidden" />
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex h-10 items-center gap-1.5 rounded-2xl bg-white/60 px-3 text-sm font-semibold text-ink glass"
+        className="flex h-10 items-center gap-1.5 rounded-2xl bg-topbar px-3 text-sm font-semibold text-nav-highlight glass"
         aria-label="Velg språk"
       >
         <Globe className="size-4" />
