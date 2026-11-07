@@ -39,7 +39,7 @@ export const infoPages: Record<string, InfoPage> = {
           "Kjernestikkordene våre er nyskapende, tidløst, og kjærlighet, energi og visdom – drivkraften bak hvert eneste kunstverk og møtet med publikum.",
         ],
       },
-      { h: "Kontakt", p: ["Spørsmål? Send oss en e-post på post@diargio.com, eller følg oss på LinkedIn."] },
+      { h: "Kontakt", p: ["Spørsmål? Send e-post til post@diargio.com. Følg oss på LinkedIn, Instagram & Facebook."] },
     ],
   },
   "slik-fungerer-diargio": {
