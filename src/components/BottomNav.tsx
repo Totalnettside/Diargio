@@ -9,7 +9,7 @@ export function BottomNav() {
   const { notifications } = useStore();
   const unreadNotifications = notifications.filter((n) => !n.read).length;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-end justify-around gap-1 border-t border-white/60 bg-white/80 px-3 pb-4 pt-2 backdrop-blur-md md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-end justify-around gap-1 border-t border-border bg-topbar px-3 pb-4 pt-2 backdrop-blur-md md:hidden">
       <Link
         to="/"
         className="flex flex-col items-center gap-1 text-ink/45"
@@ -29,8 +29,8 @@ export function BottomNav() {
       </Link>
       <Link
         to="/selg"
-        className="-mt-6 grid size-14 place-items-center rounded-full bg-brandink text-primary-foreground"
-        style={{ boxShadow: "0 14px 26px -12px oklch(0.48 0.219 285)" }}
+        className="-mt-6 grid size-14 place-items-center rounded-full bg-nav-gold text-brandink"
+        style={{ boxShadow: "0 14px 26px -12px var(--signature-green)" }}
         aria-label="Selg kunst"
       >
         <Plus className="size-6" />

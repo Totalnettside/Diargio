@@ -68,26 +68,26 @@ function Index() {
         <div className="grid items-center gap-8 p-5 md:p-10 lg:min-h-[480px] lg:grid-cols-[1.05fr_1fr] lg:gap-4">
           <div className="relative z-10">
             <div className="hero-rise flex items-center gap-3" style={{ animationDelay: "0ms" }}>
-              <span className="h-px w-8 bg-brand" />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brandink">
+              <span className="h-px w-8 bg-nav-highlight" />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-foreground">
                 Markedsplass for kunst og skaperglede
               </p>
             </div>
             <h1
-              className="hero-rise mt-3 max-w-[22ch] font-display text-[32px] font-semibold leading-[1.05] tracking-tight md:text-5xl"
+              className="hero-rise mt-3 max-w-[22ch] font-display text-[32px] font-semibold leading-[1.05] tracking-tight text-primary-foreground md:text-5xl"
               style={{ animationDelay: "90ms" }}
             >
-              Velkommen til et kunstunivers hvor <em className="italic text-brand">alle</em> har sin plass.
+              Velkommen til et kunstunivers hvor <em className="italic text-nav-highlight">alle</em> har sin plass.
             </h1>
             <p
-              className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-ink/85 md:text-base"
+              className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-primary-foreground/85 md:text-base"
               style={{ animationDelay: "180ms" }}
             >
               Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere,
               gallerier og private selgere.
             </p>
             <form
-              className="hero-rise mt-4 flex items-center gap-2 rounded-2xl bg-white/70 px-4 py-3 glass md:max-w-xl"
+              className="hero-rise mt-4 flex items-center gap-2 rounded-2xl bg-card text-ink px-4 py-3 glass md:max-w-xl"
               style={{ animationDelay: "270ms" }}
               onSubmit={(e) => {
                 e.preventDefault();
@@ -112,7 +112,7 @@ function Index() {
               </Link>
               <Link
                 to="/selg"
-                className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-brandink glass transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronn hover:text-white"
+                className="rounded-2xl bg-gronn px-4 py-3 text-sm font-semibold text-primary-foreground glass transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronnmork hover:text-primary-foreground"
 
 
               >
@@ -198,7 +198,7 @@ function Index() {
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className="shrink-0 whitespace-nowrap rounded-full bg-white/60 px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-gronn hover:text-white hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
+            className={`shrink-0 whitespace-nowrap rounded-full ${c === 'Fotografi' ? 'bg-gronn text-primary-foreground' : c === 'Skulpturer' || c === 'Tegninger' ? 'bg-sort text-primary-foreground' : 'bg-card text-brandink'} px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-gronn hover:text-primary-foreground hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center`}
           >
 
 

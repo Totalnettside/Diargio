@@ -39,15 +39,15 @@ export function TopBar() {
 
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-topbar/95 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center" aria-label="Diargio">
-          <img src={diargioLogo.url} alt="Diargio" className="h-14 w-auto" />
+          <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-14 w-auto" />
         </Link>
 
 
         <form
-          className="hidden min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 xl:flex"
+          className="hidden min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border bg-card text-ink px-4 py-2.5 xl:flex"
           onSubmit={(e) => {
             e.preventDefault();
             void navigate({ to: "/sok", search: { q } });
@@ -62,7 +62,7 @@ export function TopBar() {
           />
         </form>
 
-        <nav className="hidden shrink-0 items-center gap-4 text-sm font-semibold text-ink lg:flex">
+        <nav className="hidden shrink-0 items-center gap-4 text-sm font-semibold text-nav-highlight lg:flex">
           <Link to="/kunst" className="transition-colors hover:text-brandink">
             Kunst
           </Link>
@@ -84,7 +84,7 @@ export function TopBar() {
           <LanguageSwitcher />
           <Link
             to="/varsler"
-            className="relative grid size-10 place-items-center rounded-2xl bg-white/60 glass"
+            className="relative grid size-10 place-items-center rounded-2xl bg-topbar glass"
             aria-label="Varsler"
           >
             <Bell className="size-4" />
@@ -94,7 +94,7 @@ export function TopBar() {
             <>
               <Link
                 to="/min-side"
-                className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-white/60 text-sm font-semibold text-brandink glass"
+                className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-nav-gold text-sm font-semibold text-brandink glass"
                 aria-label="Min side"
               >
                 {avatar ? (
@@ -105,7 +105,7 @@ export function TopBar() {
               </Link>
               <button
                 onClick={() => void signOut()}
-                className="hidden rounded-2xl bg-white/60 px-3 py-2 text-sm font-semibold text-ink glass md:block"
+                className="hidden rounded-2xl bg-topbar px-3 py-2 text-sm font-semibold text-nav-highlight glass md:block"
               >
                 Logg ut
               </button>
@@ -114,13 +114,13 @@ export function TopBar() {
             <>
               <Link
                 to="/auth"
-                className="hidden rounded-2xl px-3 py-2.5 text-sm font-semibold text-ink underline-offset-4 hover:underline md:block"
+                className="hidden rounded-2xl px-3 py-2.5 text-sm font-semibold text-nav-highlight underline-offset-4 hover:underline md:block"
               >
                 Logg inn
               </Link>
               <Link
                 to="/auth"
-                className="rounded-2xl bg-gronn px-5 py-2.5 text-sm font-bold text-white shadow-md ring-2 ring-gronn/30 transition hover:bg-gronnmork hover:shadow-lg"
+                className="rounded-2xl bg-gronn px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md ring-2 ring-nav-highlight/30 transition hover:bg-gronnmork hover:shadow-lg"
               >
                 Opprett bruker
               </Link>
@@ -128,7 +128,7 @@ export function TopBar() {
           )}
         </div>
       </div>
-      <nav aria-label="Oppdag kunst" className="flex gap-5 overflow-x-auto border-t border-border px-5 py-2 text-xs font-semibold lg:hidden">
+      <nav aria-label="Oppdag kunst" className="flex gap-5 overflow-x-auto border-t border-border bg-nav-gold text-brandink px-5 py-2 text-xs font-semibold lg:hidden">
         <Link to="/kunst" className="shrink-0">Kunst</Link><Link to="/kunstvegg" className="shrink-0">Din kunstvegg</Link><Link to="/utstillinger" className="shrink-0">Utstillinger</Link><Link to="/selg" className="shrink-0">Selg kunst</Link>
       </nav>
     </header>
