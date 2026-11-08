@@ -67,6 +67,10 @@
 
 :root {
   --radius: 1rem;
+  --site-width: 1920px;
+  --site-gutter: 24px;
+  --site-top-space: 44px;
+  --nav-outline: color-mix(in oklab, var(--signature-white) 60%, transparent);
 
   --signature-green: #002825;
   --signature-white: #FFFFFF;
@@ -260,7 +264,7 @@
 }
 
 /* Reference composition: shared outer edge, flexible text, bounded artwork. */
-.home-main { max-width:1440px; padding:28px 24px 0; }
+.home-main { max-width:var(--site-width); padding:var(--site-top-space) var(--site-gutter) 0; }
 .home-hero { border-radius:40px; }
 .home-hero-grid { display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); align-items:center; gap:24px; padding:48px; }
 .home-heading { font-size:48px; line-height:1.07; letter-spacing:0; margin-top:18px; }
@@ -287,7 +291,7 @@
   .home-art-card { padding:9px; }
 }
 @media(max-width:767px) {
-  .home-main { padding:20px 16px 0; }
+  .home-main { padding:var(--site-top-space) var(--site-gutter) 0; }
   .home-hero { border-radius:28px; }
   .home-hero-grid { grid-template-columns:minmax(0,1fr); padding:28px 24px; gap:32px; }
   .home-heading { font-size:34px; line-height:1.12; }
@@ -582,20 +586,55 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
   80% { opacity:.35; }
   100% { transform:translateX(200%); opacity:0; }
 }
-.topbar-inner { max-width:1440px; min-height:96px; padding:12px 32px; gap:24px; }
+.site-content { width:100%; min-width:0; }
+.site-content > main:not(.visual-page), .site-content > div > main:not(.home-main) { padding-inline:var(--site-gutter); }
+.site-content > main[class*="max-w-6xl"], .site-content > main[class*="max-w-7xl"] { max-width:var(--site-width); padding-top:var(--site-top-space); }
+.site-content > .visual-page { width:calc(100% - 2 * var(--site-gutter)); max-width:calc(var(--site-width) - 2 * var(--site-gutter)); margin:var(--site-top-space) auto 0; }
+.site-topbar { isolation:isolate; }
+.topbar-inner { max-width:var(--site-width); min-height:112px; padding:18px 32px; gap:24px; }
 .topbar-inner .signature-logo-link { width:max-content; max-width:100%; min-width:0; flex-shrink:0; }
-.topbar-main-nav { display:none; gap:20px; justify-content:center; white-space:nowrap; }
-.topbar-control, .topbar-account [aria-label="Velg språk"] { border:1px solid color-mix(in oklab,var(--primary-foreground) 60%,transparent); border-radius:999px; background:var(--topbar); box-shadow:none; }
-@media(min-width:1200px) {
+.topbar-inner .signature-logo { width:210px; height:auto; }
+.topbar-main-nav { display:none; gap:24px; justify-content:center; white-space:nowrap; font-size:18px; }
+.topbar-account { gap:12px; }
+.topbar-control, .topbar-account [aria-label="Velg språk"] { border:2px solid var(--nav-outline); border-radius:999px; background:var(--topbar); box-shadow:none; height:56px; }
+.topbar-account > a[aria-label="Varsler"], .topbar-avatar { width:56px; height:56px; }
+.topbar-account [aria-label="Velg språk"] { padding-inline:18px; font-size:18px; gap:10px; }
+.topbar-account svg { width:22px; height:22px; }
+.topbar-logout { padding-inline:20px; font-size:18px; }
+.topbar-menu-toggle { display:grid; width:44px; height:44px; flex-shrink:0; }
+.topbar-expanded-menu { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:16px var(--site-gutter); border-top:1px solid var(--nav-outline); background:var(--topbar); }
+.topbar-expanded-menu > a { display:flex; align-items:center; gap:8px; min-height:44px; padding:8px; border-radius:6px; }
+.topbar-expanded-menu > a:hover { background:var(--gronnlys); }
+@media(min-width:1440px) {
   .topbar-inner { grid-template-columns:auto minmax(0,1fr) auto; }
   .topbar-main-nav { display:flex; }
-  .topbar-mobile-nav { display:none; }
+  .topbar-mobile-nav, .topbar-menu-toggle, .topbar-expanded-menu { display:none; }
+}
+@media(min-width:1700px) {
+  .topbar-inner { min-height:146px; padding:28px 36px 28px 48px; gap:36px; }
+  .topbar-inner .signature-logo { width:250px; }
+  .topbar-main-nav { gap:30px; font-size:24px; }
+  .topbar-control, .topbar-account [aria-label="Velg språk"] { height:72px; }
+  .topbar-account > a[aria-label="Varsler"], .topbar-avatar { width:72px; height:72px; }
+  .topbar-account [aria-label="Velg språk"], .topbar-logout { font-size:24px; }
+  .topbar-account [aria-label="Velg språk"] { padding-inline:20px; }
+  .topbar-account svg { width:28px; height:28px; }
 }
 @media(max-width:767px) {
+  :root { --site-gutter:16px; --site-top-space:20px; }
   .topbar-inner { min-height:76px; padding:8px 16px; gap:12px; }
-  .topbar-inner .signature-logo { max-width:112px; height:auto; }
-  .topbar-signup { padding:10px; font-size:11px; }
+  .topbar-inner .signature-logo { width:112px; max-width:100%; height:auto; }
+  .topbar-signup { display:none; }
   .topbar-account { gap:6px; }
-  .topbar-account [aria-label="Velg språk"] { padding:0 8px; }
+  .topbar-control, .topbar-account [aria-label="Velg språk"] { height:36px; border-width:1px; }
+  .topbar-account > a[aria-label="Varsler"], .topbar-avatar, .topbar-menu-toggle { width:36px; height:36px; }
+  .topbar-account [aria-label="Velg språk"] { padding:0 8px; font-size:12px; gap:4px; }
+  .topbar-account svg { width:16px; height:16px; }
+}
+@media(max-width:359px) {
+  .topbar-inner { padding-inline:12px; gap:8px; }
+  .topbar-inner .signature-logo { width:90px; }
+  .topbar-account { gap:4px; }
+  .topbar-account [aria-label="Velg språk"] { padding-inline:6px; }
 }
 @media (prefers-reduced-motion: reduce) { .topbar-gallery-light::before { animation:none; opacity:.2; transform:none; } }
