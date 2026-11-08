@@ -39,7 +39,7 @@ export function TopBar() {
 
 
   return (
-    <header className="site-topbar sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md">
+    <header className={`site-topbar sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md${user ? " is-authenticated" : ""}`}>
       <span aria-hidden="true" className="topbar-gallery-light" />
       <div className="topbar-inner mx-auto grid w-full grid-cols-[minmax(0,1fr)_auto] items-center">
         <Link to="/" className="signature-logo-link flex items-center" style={{ ["--logo-source" as string]: `url("${diargioLogo.url}")` }} aria-label="Diargio">
@@ -56,13 +56,17 @@ export function TopBar() {
           <Link to="/selg" className="transition-colors hover:text-primary-foreground">
             Selg kunst
           </Link>
-          <Link to="/meldinger" className="relative transition-colors hover:text-primary-foreground">
-            Meldinger
-            <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
-          </Link>
-          <Link to="/min-side" className="transition-colors hover:text-primary-foreground">
-            Min side
-          </Link>
+          {user && (
+            <>
+              <Link to="/meldinger" className="relative transition-colors hover:text-primary-foreground">
+                Meldinger
+                <UnreadBadge count={unreadMsgs} className="absolute -right-4 -top-2.5" />
+              </Link>
+              <Link to="/min-side" className="transition-colors hover:text-primary-foreground">
+                Min side
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="topbar-account flex shrink-0 items-center gap-2">
@@ -116,17 +120,18 @@ export function TopBar() {
           </Button>
         </div>
       </div>
-      <nav aria-label="Oppdag kunst" className="topbar-mobile-nav flex gap-5 overflow-x-auto border-t border-border bg-nav-gold text-brandink px-5 py-2 text-xs font-semibold">
-        <Link to="/kunst" className="shrink-0">Kunst</Link><Link to="/kunstvegg" className="shrink-0">Din kunstvegg</Link><Link to="/utstillinger" className="shrink-0">Utstillinger</Link><Link to="/selg" className="shrink-0">Selg kunst</Link>
-      </nav>
       {menuOpen && (
         <nav id="topbar-expanded-menu" aria-label="Alle menypunkter" className="topbar-expanded-menu" onClick={() => setMenuOpen(false)}>
           <Link to="/kunst">Kunst</Link>
           <Link to="/kunstvegg">Din kunstvegg</Link>
           <Link to="/utstillinger">Utstillinger</Link>
           <Link to="/selg">Selg kunst</Link>
-          <Link to="/meldinger">Meldinger <UnreadBadge count={unreadMsgs} /></Link>
-          <Link to="/min-side">Min side</Link>
+          {user && (
+            <>
+              <Link to="/meldinger">Meldinger <UnreadBadge count={unreadMsgs} /></Link>
+              <Link to="/min-side">Min side</Link>
+            </>
+          )}
           {user ? <Button variant="ghost" className="text-nav-highlight hover:bg-gronnlys hover:text-nav-highlight" onClick={() => void signOut()}>Logg ut</Button> : <Link to="/auth">Logg inn / Opprett bruker</Link>}
         </nav>
       )}
