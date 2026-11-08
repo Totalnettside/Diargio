@@ -43,7 +43,7 @@ export function TopBar() {
       <span aria-hidden="true" className="topbar-gallery-light" />
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="signature-logo-link flex items-center" style={{ ["--logo-source" as string]: `url("${diargioLogo.url}")` }} aria-label="Diargio">
-          <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-16 w-auto" />
+          <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-[58.8px] w-auto" />
         </Link>
 
 
