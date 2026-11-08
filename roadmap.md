@@ -1,5 +1,5 @@
 # Budvarsler
-- [ ] Tilpass felles toppmeny og sideramme til Bilde.png; kontroller alle sidetyper og mobilmeny uten å endre funksjoner.
+- [x] Tilpass felles toppmeny og sideramme til Bilde.png; kontrollert 320–1920 px, syv sidetyper, innlogget mobilmeny og søk uten overlapp eller nettleserfeil.
 - [x] Oppdater kun fargene til Grønn signatur; offentlige og innloggede sider kontrollert på mobil, nettbrett og pc, med uendrede mål i før/etter-sammenligning; innebygd kortbetaling og fylte samtaler ikke visuelt kontrollert.
 - [x] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
 - [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
