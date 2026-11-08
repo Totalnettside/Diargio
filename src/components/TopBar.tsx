@@ -40,6 +40,7 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md">
+      <span aria-hidden="true" className="topbar-gallery-light" />
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="signature-logo-link flex items-center" style={{ ["--logo-source" as string]: `url("${diargioLogo.url}")` }} aria-label="Diargio">
           <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-14 w-auto" />

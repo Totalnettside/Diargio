@@ -516,3 +516,19 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 .signature-logo-link { position:relative; }
 .signature-logo-link .signature-logo { opacity:0; }
 .signature-logo-link::after { content:""; position:absolute; inset:0; background:var(--signature-highlight); mask-image:var(--logo-source); mask-repeat:no-repeat; mask-size:100% 100%; pointer-events:none; }
+
+/* Mykt gallerilys: decorative, clipped layer behind topbar content */
+.topbar-gallery-light { position:absolute; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+.topbar-gallery-light::before {
+  content:""; position:absolute; top:-60%; bottom:-60%; left:0; width:60%;
+  background: radial-gradient(ellipse at center, color-mix(in oklab, var(--topbar) 78%, white) 0%, transparent 70%);
+  opacity:0; transform:translateX(-100%);
+  animation: topbar-gallery-light 30s ease-in-out infinite;
+}
+@keyframes topbar-gallery-light {
+  0% { transform:translateX(-100%); opacity:0; }
+  20% { opacity:.35; }
+  80% { opacity:.35; }
+  100% { transform:translateX(200%); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce) { .topbar-gallery-light::before { animation:none; opacity:0; } }
