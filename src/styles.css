@@ -277,7 +277,7 @@
 .home-art-back { width:36%; left:7%; top:0; z-index:10; }
 .home-art-right { width:38%; right:0; bottom:0; z-index:10; }
 .home-art-card { padding:12px; box-shadow:var(--shadow-lift); }
-.home-new-badge { bottom:5%; right:-2%; box-shadow:var(--shadow-lift); }
+.home-new-badge { bottom:10%; right:-2%; box-shadow:var(--shadow-lift); }
 @media(min-width:1280px) { .home-hero-grid { padding:56px; } .home-heading { font-size:52px; } }
 @media(max-width:1099px) {
   .home-hero-grid { padding:36px; gap:20px; }
@@ -351,6 +351,7 @@
   animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .hero-float {
+  transform: rotate(var(--r, 0deg));
   animation: hero-float 7s ease-in-out infinite;
 }
 .hero-ring {

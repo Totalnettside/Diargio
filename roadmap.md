@@ -34,4 +34,4 @@
 - [ ] Utbetaling til selger og avklart Diargio-provisjon etter at kjøper godkjenner varen — krever egne betalingskontoer for kunstnerne.
 - [ ] Ekte betalinger: eierne må fullføre oppfølgingen i Betalinger-fanen (claim, aktivisering, installasjon).
 
-- [ ] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.
+- [x] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.

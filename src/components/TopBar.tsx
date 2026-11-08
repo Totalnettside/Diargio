@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import diargioLogo from "@/assets/diargio-logo.png.asset.json";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
@@ -16,7 +16,6 @@ export function TopBar() {
   const { unread: unreadMsgs } = useChat();
   const unread = notifications.filter((n) => !n.read).length;
   const [avatar, setAvatar] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
