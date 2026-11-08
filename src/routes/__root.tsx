@@ -134,7 +134,7 @@ function RootComponent() {
         <div className="min-h-screen bg-mist pb-24 font-body text-ink md:pb-0">
           <TopBar />
           {/* Required: nested routes render here. */}
-          <Outlet />
+          <div className="site-content"><Outlet /></div>
           <Footer />
           <BottomNav />
           <OnboardingDialog />
