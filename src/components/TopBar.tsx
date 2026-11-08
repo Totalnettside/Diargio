@@ -2,19 +2,19 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import diargioLogo from "@/assets/diargio-logo.png.asset.json";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export function TopBar() {
   const { notifications } = useStore();
   const { user, signOut } = useAuth();
   const { unread: unreadMsgs } = useChat();
   const unread = notifications.filter((n) => !n.read).length;
-  const [q, setQ] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -41,29 +41,13 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-topbar text-nav-highlight backdrop-blur-md">
       <span aria-hidden="true" className="topbar-gallery-light" />
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3">
+      <div className="topbar-inner mx-auto grid w-full grid-cols-[minmax(0,1fr)_auto] items-center">
         <Link to="/" className="signature-logo-link flex items-center" style={{ ["--logo-source" as string]: `url("${diargioLogo.url}")` }} aria-label="Diargio">
           <img src={diargioLogo.url} alt="Diargio" className="signature-logo h-[58.8px] w-auto" />
         </Link>
 
 
-        <form
-          className="hidden min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border bg-card text-ink px-4 py-2.5 xl:flex"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void navigate({ to: "/sok", search: { q } });
-          }}
-        >
-          <Search className="size-4 opacity-60" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Søk etter kunstner, verk, stil eller kategori"
-            className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/45"
-          />
-        </form>
-
-        <nav className="hidden shrink-0 items-center gap-4 text-sm font-semibold text-nav-highlight lg:flex">
+        <nav aria-label="Hovedmeny" className="topbar-main-nav shrink-0 items-center text-sm font-semibold text-nav-highlight">
           <Link to="/kunst" className="transition-colors hover:text-primary-foreground">
             Kunst
           </Link>
@@ -81,11 +65,11 @@ export function TopBar() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="topbar-account flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <Link
             to="/varsler"
-            className="relative grid size-10 place-items-center rounded-2xl bg-topbar glass"
+            className="topbar-control relative grid size-10 shrink-0 place-items-center rounded-full bg-topbar"
             aria-label="Varsler"
           >
             <Bell className="size-4" />
@@ -95,7 +79,7 @@ export function TopBar() {
             <>
               <Link
                 to="/min-side"
-                className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-nav-gold text-sm font-semibold text-brandink glass"
+                className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-nav-gold text-sm font-semibold text-brandink"
                 aria-label="Min side"
               >
                 {avatar ? (
@@ -104,12 +88,12 @@ export function TopBar() {
                   (user.email ?? "?").slice(0, 1).toUpperCase()
                 )}
               </Link>
-              <button
+              <Button variant="ghost"
                 onClick={() => void signOut()}
-                className="hidden rounded-2xl bg-topbar px-3 py-2 text-sm font-semibold text-nav-highlight glass md:block"
+                className="topbar-control hidden rounded-full bg-topbar px-3 py-2 text-sm font-semibold text-nav-highlight hover:bg-gronnlys hover:text-nav-highlight md:block"
               >
                 Logg ut
-              </button>
+              </Button>
             </>
           ) : (
             <>
@@ -121,7 +105,7 @@ export function TopBar() {
               </Link>
               <Link
                 to="/auth"
-                className="rounded-2xl bg-gronn px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md ring-2 ring-nav-highlight/30 transition hover:bg-gronnmork hover:shadow-lg"
+                className="topbar-signup rounded-full bg-gronn px-4 py-2.5 text-sm font-bold text-primary-foreground ring-1 ring-nav-highlight/50 transition hover:bg-gronnlys"
               >
                 Opprett bruker
               </Link>
@@ -129,7 +113,7 @@ export function TopBar() {
           )}
         </div>
       </div>
-      <nav aria-label="Oppdag kunst" className="flex gap-5 overflow-x-auto border-t border-border bg-nav-gold text-brandink px-5 py-2 text-xs font-semibold lg:hidden">
+      <nav aria-label="Oppdag kunst" className="topbar-mobile-nav flex gap-5 overflow-x-auto border-t border-border bg-nav-gold text-brandink px-5 py-2 text-xs font-semibold">
         <Link to="/kunst" className="shrink-0">Kunst</Link><Link to="/kunstvegg" className="shrink-0">Din kunstvegg</Link><Link to="/utstillinger" className="shrink-0">Utstillinger</Link><Link to="/selg" className="shrink-0">Selg kunst</Link>
       </nav>
     </header>
