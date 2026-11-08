@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const LANGS = [
   { code: "no", label: "Norsk", flag: "🇳🇴" },
@@ -78,25 +79,26 @@ export function LanguageSwitcher() {
   return (
     <div className="relative notranslate" translate="no">
       <div id="gt-el" className="hidden" />
-      <button
+      <Button variant="ghost"
         onClick={() => setOpen((o) => !o)}
         className="flex h-10 items-center gap-1.5 rounded-2xl bg-topbar px-3 text-sm font-semibold text-nav-highlight glass"
         aria-label="Velg språk"
+        aria-expanded={open}
       >
         <Globe className="size-4" />
         <span>{active.code.toUpperCase()}</span>
-      </button>
+      </Button>
       {open && (
         <div className="absolute right-0 top-12 z-50 w-40 overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
           {LANGS.map((l) => (
-            <button
+            <Button variant="ghost"
               key={l.code}
               onClick={() => choose(l.code)}
-              className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-mist ${l.code === lang ? "font-semibold text-brandink" : "text-ink"}`}
+              className={`flex w-full justify-start items-center gap-2 px-3 py-2 text-left text-sm hover:bg-mist ${l.code === lang ? "font-semibold text-brandink" : "text-ink"}`}
             >
               <span>{l.flag}</span>
               {l.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
