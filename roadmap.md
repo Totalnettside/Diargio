@@ -36,3 +36,4 @@
 - [ ] Ekte betalinger: eierne må fullføre oppfølgingen i Betalinger-fanen (claim, aktivisering, installasjon).
 
 - [x] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.
+- [x] Fjern den separate gullfargede navigasjonsraden; samle logo, riktige brukerlenker og kontovalg i én kompakt grønn toppmeny. Kontrollert utlogget ved 390/768/861/1280 px og innlogget ved 861/1080/1280 px uten overlapp eller nettleserfeil.
