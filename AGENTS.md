@@ -22,6 +22,7 @@
 - Keep investor artwork in a separate presentation-only catalog and explicit exhibition search mode; never merge it into listings, commerce, favorites, or user records, so demo content cannot be mistaken for available inventory.
 - Scope authentication presentation to `.auth-page` and preserve existing sign-in and signup calls so visual changes cannot alter account access.
 - Keep homepage gallery scenery in non-interactive CSS background pseudo-elements scoped to the welcome field; this preserves content geometry and independent artwork animation.
+- Keep homepage text and artwork in separate minmax grid columns and switch the top navigation before it collides; reference styling must not change artwork links or commerce behavior.
 - Payments go through Lovable's built-in payments using the shared gateway utility; checkout charges the listing total the buyer already sees (fees included) plus shipping as its own line, and never recomputes commission or the art fee in the cart — seller payouts wait for connected artist accounts.
 
 - Use immutable art_orders and server-confirmed Stripe state for trade status; sandbox orders never create live purchase records, so preview tests cannot sell real inventory.

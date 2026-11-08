@@ -59,80 +59,63 @@ function Index() {
 
   return (
     <div className="quiet-luxury bg-ivory">
-      <main className="mx-auto w-full max-w-6xl px-5 pt-4">
+      <main className="home-main mx-auto w-full">
       <section
         ref={heroRef}
         onMouseMove={onHeroMove}
-        className="home-hero relative mt-2 overflow-hidden rounded-3xl"
+        className="home-hero relative overflow-hidden"
       >
-        <div className="grid items-center gap-8 p-5 md:p-10 lg:min-h-[480px] lg:grid-cols-[1.05fr_1fr] lg:gap-4">
-          <div className="relative z-10">
+        <div className="home-hero-grid">
+          <div className="home-hero-copy relative z-10 min-w-0">
             <div className="hero-rise flex items-center gap-3" style={{ animationDelay: "0ms" }}>
               <span className="h-px w-8 bg-nav-highlight" />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-foreground">
+              <p className="home-eyebrow text-primary-foreground">
                 Markedsplass for kunst og skaperglede
               </p>
             </div>
             <h1
-              className="hero-rise mt-3 max-w-[22ch] font-display text-[32px] font-semibold leading-[1.05] tracking-tight text-primary-foreground md:text-5xl"
+              className="hero-rise home-heading font-display font-semibold text-primary-foreground"
               style={{ animationDelay: "90ms" }}
             >
-              Velkommen til et kunstunivers hvor <em className="italic text-nav-highlight">alle</em> har sin plass.
+              <span className="home-heading-line">Velkommen til et</span>{" "}<span className="home-heading-line">kunstunivers hvor</span>{" "}<span className="home-heading-line"><em className="italic text-nav-highlight">alle</em> har sin plass.</span>
             </h1>
             <p
-              className="hero-rise mt-2 max-w-[60ch] text-sm leading-relaxed text-primary-foreground/85 md:text-base"
+              className="hero-rise home-description text-primary-foreground/85"
               style={{ animationDelay: "180ms" }}
             >
               Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere,
               gallerier og private selgere.
             </p>
             <form
-              className="hero-rise mt-4 flex items-center gap-2 rounded-2xl bg-card text-ink px-4 py-3 glass md:max-w-xl"
+              className="hero-rise home-search flex min-w-0 items-center gap-3 bg-card text-ink"
               style={{ animationDelay: "270ms" }}
               onSubmit={(e) => {
                 e.preventDefault();
                 void navigate({ to: "/sok", search: { q } });
               }}
             >
-              <Search className="size-4 opacity-60" />
+              <Search className="size-5 shrink-0 opacity-60" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Søk etter kunstner, verk, stil eller kategori"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink/80"
+                aria-label="Søk etter kunstner, verk, stil eller kategori"
+                className="min-w-0 w-full bg-transparent text-sm outline-none placeholder:text-ink/80"
               />
             </form>
-            <div className="hero-rise mt-3 flex gap-2" style={{ animationDelay: "360ms" }}>
-              <Link
-                to="/kunst"
-                className="flex-1 rounded-2xl bg-gronn py-3 text-center text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronnmork md:flex-none md:px-8"
-                style={{ boxShadow: "0 12px 24px -14px oklch(0.25 0.018 155 / 0.55)" }}
-              >
-                Utforsk kunst
-              </Link>
-              <Link
-                to="/selg"
-                className="rounded-2xl bg-gronn px-4 py-3 text-sm font-semibold text-primary-foreground glass transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gronnmork hover:text-primary-foreground"
-
-
-              >
-                Selg kunst
-              </Link>
+            <div className="hero-rise home-actions flex items-center gap-4" style={{ animationDelay: "360ms" }}>
+              <Button asChild variant="ghost" className="home-explore"><Link to="/kunst">Utforsk kunst</Link></Button>
+              <Button asChild variant="outline" className="home-sell"><Link to="/selg">Selg kunst</Link></Button>
             </div>
           </div>
 
-          <div className="hero-rise relative h-[300px] sm:h-[360px] lg:h-[440px]" style={{ animationDelay: "250ms" }}>
-            <div className="hero-ring absolute left-1/2 top-1/2 size-64 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-brand/25 lg:size-80" />
+          <div className="hero-rise home-art-composition relative min-w-0" style={{ animationDelay: "250ms" }}>
             {heroFrames.map((a, i) => {
-              const spots = [
-                "left-1/2 top-1/2 z-20 w-44 -translate-x-[62%] -translate-y-[58%] sm:w-52 lg:w-56",
-                "left-1/2 top-1/2 z-10 w-28 -translate-x-[150%] -translate-y-[95%] -rotate-6 sm:w-32 lg:w-36",
-                "left-1/2 top-1/2 z-10 w-32 translate-x-[15%] translate-y-[15%] rotate-3 sm:w-36 lg:w-40",
-              ];
+              const spots = ["home-art-front", "home-art-back", "home-art-right"];
               return (
                 <div
                   key={a.id}
-                  className={`absolute ${spots[i]}`}
+                  className={`home-art-position absolute ${spots[i]}`}
                   style={{
                     transform: `translate3d(calc(var(--mx, 0) * ${[10, -18, 22][i]}px), calc(var(--my, 0) * ${[8, -14, 16][i]}px), 0)`,
                     transition: "transform 0.25s ease-out",
@@ -146,13 +129,13 @@ function Index() {
                       <Link
                         to="/utstillinger"
                         search={{ investor: true }}
-                        className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
+                        className="hero-frame home-art-card block bg-card text-card-foreground"
                       >
                         <img
                           src={a.image}
                           alt={a.title}
                           loading={i === 0 ? "eager" : "lazy"}
-                          className="aspect-[3/4] w-full object-cover"
+                          className="aspect-[3/4] w-full object-contain"
                         />
                         <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
                           <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
@@ -163,13 +146,13 @@ function Index() {
                       <Link
                         to="/kunst/$slug"
                         params={{ slug: a.slug }}
-                        className="hero-frame block bg-white p-2 shadow-[0_25px_50px_-15px_oklch(0.25_0.018_155/0.4)] ring-1 ring-ink/10 sm:p-3"
+                        className="hero-frame home-art-card block bg-card text-card-foreground"
                       >
                         <img
                           src={a.image}
                           alt={a.title}
                           loading={i === 0 ? "eager" : "lazy"}
-                          className="aspect-[3/4] w-full object-cover"
+                          className="aspect-[3/4] w-full object-contain"
                         />
                         <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
                           <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
@@ -181,7 +164,7 @@ function Index() {
                 </div>
               );
             })}
-            <div className="absolute bottom-0 right-0 z-30 flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 shadow-lg backdrop-blur glass">
+            <div className="home-new-badge absolute z-30 flex items-center gap-2 rounded-full bg-card/90 px-4 py-2 text-brandink">
               <span className="size-2 rounded-full bg-brand" />
               <span className="text-[10px] font-bold uppercase tracking-wide text-brandink">
                 Nye verk hver uke
