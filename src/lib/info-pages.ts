@@ -1,5 +1,5 @@
 export type InfoSection = { h: string; p: string[] };
-export type InfoPage = { title: string; lead: string; sections: InfoSection[]; cta?: { label: string; to: "/selg" | "/kunst" } };
+export type InfoPage = { title: string; lead: string; intro?: string[]; sections: InfoSection[]; outro?: string; cta?: { label: string; to: "/selg" | "/kunst" } };
 
 export const infoPages: Record<string, InfoPage> = {
   "om-oss": {
@@ -120,11 +120,40 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "for-kunstnere": {
     title: "For kunstnere",
-    lead: "Vis frem kunsten din og fortellingen bak den.",
-    sections: [
-      { h: "Din egen profil", p: ["Legg til biografi, historien bak kunsten, atelierbilder og teknikker under «Min side → Min profil»."] },
-      { h: "Følgere", p: ["Brukere kan følge deg og får varsel når du legger ut nye verk."] },
+    lead: "Gi kunsten din en plass – og muligheten til å finne et nytt hjem.",
+    intro: [
+      "Diargio er for deg som skaper. Enten du lever av kunsten, utforsker et nytt uttrykk eller ønsker å selge ditt aller første verk, er du velkommen. Her kan du vise frem malerier, skulpturer og andre kunstverk og komme i kontakt med mennesker som setter pris på det du lager.",
     ],
+    sections: [
+      {
+        h: "Vis frem det du skaper",
+        p: [
+          "Presenter verkene dine med gode bilder, tydelige opplysninger og noen ord om historien bak. Fortell gjerne om inspirasjonen, materialene og arbeidsprosessen. Det gir kjøperen mulighet til å bli kjent med både kunsten og deg som står bak.",
+          "Oppgi størrelse, eventuell vekt, teknikk og pris, og vær tydelig på om verket er unikt eller del av et opplag. Du trenger ikke ha en lang merittliste – en ærlig og gjennomtenkt presentasjon er et godt utgangspunkt.",
+        ],
+      },
+      {
+        h: "Ha direkte kontakt med kjøperen",
+        p: [
+          "På Diargio kan interesserte stille spørsmål, kjøpe direkte eller gi bud. Du følger opp henvendelser gjennom meldingstjenesten og bestemmer selv hvilke bud du vil godta.",
+          "Bruk prisberegneren for å få oversikt over utbetaling, provisjon og eventuelle avgifter før du publiserer.",
+        ],
+      },
+      {
+        h: "Avtal en god levering",
+        p: [
+          "Betalingen håndteres gjennom Stripe i Diargios betalingsløsning. Levering avtales med kjøperen: Posten/Bring der det passer, eller henting, personlig overlevering eller annen egnet transport.",
+          "Du sørger for forsvarlig emballasje som beskytter verket underveis. Trenger du veiledning om pakking eller levering, hjelper vi deg gjerne.",
+        ],
+      },
+      {
+        h: "Kom i gang",
+        p: [
+          "Opprett en bruker, legg til ditt første verk og fortell historien bak. Se vår «Guide til å selge kunst» for praktiske råd om bilder, beskrivelse og pris.",
+        ],
+      },
+    ],
+    outro: "Hos Diargio er det plass til både nye uttrykk og lang erfaring.",
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
   "for-gallerier": {
