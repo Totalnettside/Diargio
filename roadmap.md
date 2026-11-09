@@ -1,5 +1,6 @@
 # Budvarsler
-- [ ] Annonsegodkjenning: versjoner, selgerutkast/status, administratorkø, historikk, private vedlegg, varsler og sikkerhetstester.
+- [x] Annonsegodkjenning: versjoner, selgerutkast/status, administratorkø, historikk, private vedlegg, varsler og sikkerhetsvern; 34 tester, eier/adminflyt, offentlige sperrer og fire bekreftede e-postutsendinger.
+- [ ] Sluttkontroll av annonsegodkjenning med separat vanlig selgerkonto — verktøytilgangen tillater bare forespørrende administratorkonto; se moderation-verification.md.
 - [x] Tilpass felles toppmeny og sideramme til Bilde.png; kontrollert 320–1920 px, syv sidetyper, innlogget mobilmeny og søk uten overlapp eller nettleserfeil.
 - [x] Oppdater kun fargene til Grønn signatur; offentlige og innloggede sider kontrollert på mobil, nettbrett og pc, med uendrede mål i før/etter-sammenligning; innebygd kortbetaling og fylte samtaler ikke visuelt kontrollert.
 - [x] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
