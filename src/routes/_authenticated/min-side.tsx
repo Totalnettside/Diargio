@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import {AccountSecurity} from "@/components/AccountSecurity";
 import { SavedWalls } from "@/components/visual/SavedWalls";
+import {moderationLabels,submissionConfirmation} from '@/lib/moderation';
+import {ArtworkPreview} from '@/components/ArtworkPreview';
 
 export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
@@ -56,6 +58,7 @@ function Dashboard() {
     markBidRead,
     decideBid,
     deleteListing,
+    changeVisibility,
   } = useStore();
   const { isAdmin } = useIsAdmin();
   const { user } = useAuth();
@@ -153,7 +156,11 @@ function Dashboard() {
             const isMine = myListings.some((l) => l.id === a.id);
             return (
               <div key={a.id} className="relative">
-                <ArtworkCard artwork={a} />
+                <ArtworkPreview image={a.image} alt={a.title}/>
+                <h3 className="mt-2 font-semibold">{a.title}</h3>
+                <p className="text-sm text-primary">{moderationLabels[a.moderationStatus as keyof typeof moderationLabels]??'Publisert'}</p>
+                {a.moderationStatus==='pending'&&<p className="mt-2 text-xs text-muted-foreground">{submissionConfirmation}</p>}
+                {a.sellerMessage&&<p className="mt-2 text-sm">Beskjed fra Diargio: {a.sellerMessage}</p>}
                 {isMine && (
                   <div className="mt-2 flex gap-2">
                     <Link
@@ -163,18 +170,19 @@ function Dashboard() {
                     >
                       Endre
                     </Link>
-                    <button
+                    <Button variant="outline"
                       onClick={() => {
-                        if (window.confirm(`Slette «${a.title}»? Dette kan ikke angres.`)) {
+                        if (window.confirm(`Trekke «${a.title}» fra markedsplassen?`)) {
                           void deleteListing(a.id).catch(e=>window.alert(e instanceof Error?e.message:"Kunne ikke slette"));
                         }
                       }}
-                      className="flex-1 rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 glass"
+                      className="text-xs"
                     >
-                      Slett
-                    </button>
+                      Trekk
+                    </Button>
                   </div>
                 )}
+                {a.moderationStatus!=='sold'&&<Button variant="ghost" className="mt-2 text-xs" onClick={()=>{if(window.confirm('Markere verket som solgt? Dette kan ikke angres.'))void changeVisibility(a.id,'sold').catch(e=>window.alert(e.message));}}>Marker som solgt</Button>}
               </div>
             );
           })}

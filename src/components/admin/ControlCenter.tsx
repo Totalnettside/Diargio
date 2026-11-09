@@ -6,12 +6,13 @@ import { getAdminOverview, setAdminRole, setVerified } from "@/lib/admin.functio
 import { adminDeleteUser } from "@/lib/account.functions";
 import { useStore } from "@/lib/store";
 import { breakdownFromTotal } from "@/lib/fees";
+import {ModerationQueue} from './ModerationQueue';
 const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
 const TOTAL_FEE_RATE = feeShare(10000);
 const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
 const ART_FEE_RATE = breakdownFromTotal(10000).artFee / 10000;
 
-const tabs = ["Oversikt", "Brukere", "Annonser", "Bud & salg", "Toppliste", "Økonomi"] as const;
+const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi"] as const;
 type Tab = (typeof tabs)[number];
 const kr = (n: number) => new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK", maximumFractionDigits: 0 }).format(n);
 const day = 86400000;
@@ -57,6 +58,7 @@ export function ControlCenter() {
         {tab === "Oversikt" && <Overview d={data} go={setTab} />}
         {tab === "Brukere" && <Users d={data} reload={reload} />}
         {tab === "Annonser" && <Listings d={data} reload={reload} />}
+        {tab === "Annonser til godkjenning" && <ModerationQueue />}
         {tab === "Bud & salg" && <Deals d={data} />}
         {tab === "Toppliste" && <Leaderboard d={data} />}
         {tab === "Økonomi" && <Economy d={data} />}
