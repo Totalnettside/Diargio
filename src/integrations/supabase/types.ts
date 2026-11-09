@@ -303,6 +303,7 @@ export type Database = {
           price: number
           read_at: string | null
           reason: string | null
+          reviewed_data: Json | null
           revision_id: string | null
           title: string
           user_id: string
@@ -320,6 +321,7 @@ export type Database = {
           price?: number
           read_at?: string | null
           reason?: string | null
+          reviewed_data?: Json | null
           revision_id?: string | null
           title: string
           user_id: string
@@ -337,6 +339,7 @@ export type Database = {
           price?: number
           read_at?: string | null
           reason?: string | null
+          reviewed_data?: Json | null
           revision_id?: string | null
           title?: string
           user_id?: string

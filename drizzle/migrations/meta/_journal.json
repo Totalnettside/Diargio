@@ -148,6 +148,13 @@
       "when": 1794268564891,
       "tag": "0020_allow_incomplete_listing_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794268621775,
+      "tag": "0021_review_event_version_snapshots",
+      "breakpoints": true
     }
   ]
 }
