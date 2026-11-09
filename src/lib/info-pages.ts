@@ -145,13 +145,69 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "guide-til-a-selge-kunst": {
     title: "Guide til å selge kunst",
-    lead: "Fem råd for en god annonse.",
+    lead: "En god presentasjon gjør det lettere å oppdage kunsten din – og tryggere å kjøpe den. Enten du skal selge ditt første verk eller har lang erfaring, hjelper denne guiden deg med å lage en tydelig og innbydende annonse på Diargio.",
     sections: [
-      { h: "1. Gode bilder", p: ["Bruk dagslys og vis hele verket, pluss detaljer."] },
-      { h: "2. Riktige opplysninger", p: ["Oppgi kunstner, teknikk, mål og stand nøyaktig."] },
-      { h: "3. Fortell historien", p: ["Hva inspirerte verket? Det hjelper kjøperen å velge akkurat dette."] },
-      { h: "4. Realistisk pris", p: ["Prisberegneren viser ønsket utbetaling, provisjon, eventuell kunstavgift og totalprisen kjøper ser."] },
-      { h: "5. Svar raskt", p: ["Raske svar på meldinger og bud gir flere salg."] },
+      {
+        h: "1. Vis verket fra sin beste side",
+        p: [
+          "Bruk skarpe bilder i jevnt dagslys, og unngå gjenskinn, sterke skygger og filtre som endrer fargene. En mobiltelefon er ofte tilstrekkelig når lyset er godt.",
+          "La hovedbildet vise hele verket. Suppler gjerne med nærbilder av struktur, signatur og detaljer. Vis ramme, kanter og bakside der det er relevant, og fotografer skulpturer fra flere vinkler.",
+          "Et bilde av verket i et rom kan hjelpe kjøperen å forstå størrelsen. Hvis du bruker en digital romvisning, merk den tydelig som en illustrasjon og vis verket i realistisk skala.",
+        ],
+      },
+      {
+        h: "2. Gi presise og ærlige opplysninger",
+        p: [
+          "En god annonse svarer på det kjøperen trenger å vite. Ta med:",
+          "• Kunstnerens navn og verkets tittel.",
+          "• Teknikk, materialer og årstall, hvis kjent.",
+          "• Høyde, bredde og eventuell dybde i centimeter, samt vekt når det er relevant for transport.",
+          "• Om verket er et originalverk, et trykk eller en reproduksjon. Oppgi opplag og nummerering der det finnes.",
+          "• Om verket er signert, innrammet og klart til å henges opp eller stilles ut.",
+          "• Verkets tilstand, inkludert eventuelle skader, slitasje eller reparasjoner.",
+          "Oppgi mål både med og uten ramme. Selger du et verk av en annen kunstner, bør du også beskrive det du kjenner til om verkets opprinnelse og eventuell dokumentasjon. Vær tydelig dersom opplysninger er ukjente.",
+        ],
+      },
+      {
+        h: "3. Fortell historien bak verket",
+        p: [
+          "Gi kjøperen et innblikk i det som gjør verket spesielt. Hva inspirerte motivet? Hvordan har du arbeidet med materialene? Hvilket uttrykk ønsket du å skape?",
+          "Skriv personlig, enkelt og konkret. Du trenger ikke bruke kunstfaglige begreper – noen få gjennomtenkte setninger kan gjøre det lettere å få et forhold til verket.",
+          "Selger du kunst du selv har kjøpt, kan du fortelle om verkets historie og ditt forhold til det, uten å gjette på kunstnerens intensjon.",
+        ],
+      },
+      {
+        h: "4. Sett en gjennomtenkt pris",
+        p: [
+          "Ta utgangspunkt i materialer, tidsbruk, størrelse, teknikk og tidligere salg. Sammenlign gjerne med lignende verk av kunstnere med tilsvarende erfaring, men husk at en annonsert pris ikke nødvendigvis er en oppnådd salgspris.",
+          "Bruk prisberegneren på Diargio for å se ønsket utbetaling, provisjon, eventuell kunstavgift og totalprisen som vises til kjøperen. Kontroller også hvordan frakt og emballasje påvirker regnestykket.",
+          "Bestem gjerne på forhånd hvilke bud du er villig til å godta.",
+        ],
+      },
+      {
+        h: "5. Planlegg pakking og levering",
+        p: [
+          "Tenk gjennom hvordan verket kan leveres allerede før du publiserer annonsen. Posten/Bring kan være et alternativ der størrelse, vekt og innhold passer. For store, tunge eller skjøre verk kan henting, personlig overlevering eller annen transport være mer egnet.",
+          "Som selger har du ansvar for å emballere verket forsvarlig. Tilpass beskyttelsen til materialene, overflaten og eventuelle skjøre deler. Kontroller transportørens vilkår for kunst, emballasje og eventuell transportforsikring før du sender.",
+          "Ta bilder av verkets tilstand og innpakkingen før sending, og ta vare på kvittering og sporingsinformasjon. Avtal leveringsmåte, kostnader og forventet sendetid med kjøperen.",
+        ],
+      },
+      {
+        h: "6. Følg opp interessen",
+        p: [
+          "Svar så raskt du har anledning på spørsmål og bud. Vær imøtekommende, gi tydelige svar og tilby flere bilder hvis kjøperen ønsker det.",
+          "Bruk meldingstjenesten på Diargio til å samle dialogen og avtalene. Betalingen gjennomføres via Stripe i Diargios betalingsløsning. Kontroller at betalingen er bekreftet i løsningen før du sender eller overleverer verket.",
+          "Hold annonsen oppdatert, og marker verket som solgt eller fjern det fra salg dersom det blir solgt et annet sted.",
+        ],
+      },
+      {
+        h: "Før du publiserer",
+        p: [
+          "Se gjennom annonsen med kjøperens øyne: Viser bildene verket slik det faktisk er? Er mål, tilstand, pris og levering tydelig beskrevet? Jo bedre informasjon du gir, desto enklere blir det å ta et godt valg.",
+          "Trenger du hjelp med annonsen, pakking eller levering? Kontakt oss på post@diargio.com, så hjelper vi deg videre.",
+          "Hos Diargio er det plass til både ditt første verk og ditt neste kapittel som kunstner.",
+        ],
+      },
     ],
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
