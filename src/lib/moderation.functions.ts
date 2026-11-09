@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { z } from 'zod';
-import { listingContentSchema } from './moderation';
+import { listingDraftSchema } from './moderation';
 import type { Json } from '@/integrations/supabase/types';
 
 export const saveListingDraft = createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
-  .inputValidator(d => z.object({listing: listingContentSchema}).parse(d))
+  .inputValidator(d => z.object({listing: listingDraftSchema}).parse(d))
   .handler(async({data,context}) => {
     const {data:id,error} = await context.supabase.rpc('save_listing_revision',{_id:data.listing.id,_data:data.listing as Json});
     if(error) throw new Error(error.message);

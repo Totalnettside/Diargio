@@ -16,6 +16,7 @@ export const listingContentSchema = z.object({
   sellerType: z.enum(['Kunstner', 'Privat', 'Galleri', 'Kunsthandler']), ownWork: z.boolean(),
   type: z.string().min(1), condition: z.string().min(1), delivery: z.enum(['Må hentes','Kan sendes','Begge deler']),
 }).passthrough().superRefine((v,ctx)=>{if(v['saleType']!=='Pris på forespørsel'&&v.price<=0)ctx.addIssue({code:'custom',path:['price'],message:'Pris kreves.'});});
+export const listingDraftSchema = z.object({id:z.string().min(1).max(200),slug:z.string().min(1).max(240),title:z.string().trim().min(1).max(200),image:z.string().min(1).max(3000000),images:z.array(z.string().max(3000000)).max(15).optional(),price:z.number().nonnegative().max(1000000000),shippingPrice:z.number().nonnegative().max(1000000000)}).passthrough();
 // Only commercial fields can bypass a new content review.
 export const commercialKeys = ['price','sellerPayout','artFeeApplies','shippingPrice','delivery','saleType'] as const;
 export function contentChanged(a: Record<string, unknown>, b: Record<string, unknown>) {

@@ -15,7 +15,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const a = await assertAdmin(context);
-    const [profiles, listings, bids, purchases, messages, follows, reviews, roles, authUsers, orders] = await Promise.all([
+    const [profiles, listings, bids, purchases, messages, follows, reviews, roles, authUsers, orders, pending] = await Promise.all([
       a.from("profiles").select("id,display_name,first_name,last_name,avatar_url,location,phone,created_at,onboarded,bankid_verified"),
       a.from("listings").select("id,user_id,data,created_at"),
       a.from("bids").select("id,listing_id,buyer_id,seller_id,amount,status,created_at"),
@@ -26,6 +26,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       a.from("user_roles").select("user_id,role").eq("role", "admin"),
       a.auth.admin.listUsers({ perPage: 1000 }),
       a.from("art_orders").select("*").eq("environment","live"),
+      a.from('listing_revisions').select('id',{count:'exact',head:true}).eq('status','pending'),
     ]);
     if([profiles,listings,bids,purchases,messages,follows,reviews,roles,orders].some(r=>r.error)||authUsers.error)throw new Error("Kontrollsenteret kunne ikke hente alle opplysninger");
     const authMap = new Map(
@@ -54,6 +55,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       follows: follows.data ?? [],
       reviews: reviews.data ?? [],
       adminIds: (roles.data ?? []).map((r) => r.user_id),
+      pendingListings:pending.count??0,
     };
   });
 

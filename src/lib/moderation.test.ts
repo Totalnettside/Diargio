@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {canReview,contentChanged,listingContentSchema} from './moderation';
+import {canReview,contentChanged,listingContentSchema,listingDraftSchema} from './moderation';
 describe('Listing review rules',()=>{
   it('pending versions can be reviewed',()=>expect(canReview('draft','pending')).toBe(true));
   it('withdrawn listings cannot be republished',()=>expect(canReview('withdrawn','pending')).toBe(false));
@@ -10,4 +10,5 @@ describe('Listing review rules',()=>{
   }
   it('price and delivery may change without content review',()=>expect(contentChanged({title:'A',price:2000,delivery:'Må hentes'},{title:'A',price:3000,delivery:'Kan sendes'})).toBe(false));
   it('mandatory content cannot be omitted',()=>expect(listingContentSchema.safeParse({id:'a',title:'A'}).success).toBe(false));
+  it('drafts can omit description and dimensions',()=>expect(listingDraftSchema.safeParse({id:'a',slug:'a',title:'A',image:'data:image/jpeg;base64,a',price:0,shippingPrice:0}).success).toBe(true));
 });

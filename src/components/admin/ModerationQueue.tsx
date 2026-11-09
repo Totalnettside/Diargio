@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useServerFn} from '@tanstack/react-start';
 import {useQuery} from '@tanstack/react-query';
 import {getModerationQueue,reviewListing,sendReviewNotice} from '@/lib/moderation.functions';
-import {moderationLabels} from '@/lib/moderation';
+import {moderationLabels,canReview} from '@/lib/moderation';
 import {Button} from '@/components/ui/button';
 import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {ListingDocumentation} from '@/components/ListingDocumentation';
@@ -27,7 +27,7 @@ export function ModerationQueue() {
   const revision=data.revisions.find(r=>r.id===selected);
   const artwork=revision?.data as unknown as Artwork|undefined;
   async function decision(decision:'published'|'changes_requested'|'rejected') {
-    if(!revision)return;
+    if(!revision||!canReview('draft',revision.status))return;
     setBusy(true);setMessage('');
     try {
       const result=await decide({data:{revisionId:revision.id,version:revision.version,decision,reason,note}});
