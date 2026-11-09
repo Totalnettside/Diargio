@@ -32,7 +32,7 @@ export function Footer() {
         <div className="max-w-xl">
           <img src={logo.url} alt="Diargio" className="h-10 w-auto" />
           <p className="mt-3 text-sm text-ink/70">
-            Diargio er en markedsplass for kjøp og salg av kunst fra kunstnere, gallerier og private selgere.
+            Diargio er en markedsplass som formidler kjøp og salg av kunst fra kunstnere, gallerier og private selgere.
           </p>
         </div>
 
