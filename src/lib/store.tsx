@@ -1,4 +1,6 @@
 import { notifySeller } from "@/lib/seller-notice.functions";
+import { saveListingDraft, submitListing, sendReviewNotice, changeListingVisibility } from './moderation.functions';
+import { submissionConfirmation } from './moderation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
@@ -82,8 +84,10 @@ type Store = State & {
   sendMessage: (artworkId: string, text: string) => void;
   saveSearch: (query: string, label: string) => void;
   markAllRead: () => void;
-  addListing: (a: Artwork) => Promise<void>;
+  addListing: (a: Artwork, draft?: boolean) => Promise<void>;
   updateListing: (a: Artwork) => Promise<void>;
+  submitListing: (id: string) => Promise<void>;
+  changeVisibility: (id: string, action: 'draft'|'withdrawn'|'sold') => Promise<void>;
   deleteListing: (id: string) => Promise<void>;
   allArtworks: Artwork[];
 };
@@ -94,7 +98,9 @@ const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
-  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork; created_at?: string }[]>([]);
+  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork; moderation_status: string; created_at?: string }[]>([]);
+  const [ownListings, setOwnListings] = useState<Artwork[]>([]);
+  const [reviewNotifications, setReviewNotifications] = useState<AppNotification[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [dbBids, setDbBids] = useState<Bid[]>([]);
   const [follows, setFollows] = useState<{ artist_id: string; created_at: string; last_seen_at: string }[]>([]);
@@ -131,7 +137,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const loadListings = useCallback(async () => {
     const { data, error } = await supabase
       .from("listings")
-      .select("id,user_id,data,created_at")
+      .select("id,user_id,data,created_at,moderation_status")
+      .eq('moderation_status','published')
       .order("created_at", { ascending: false });
     if (error) console.error("listings", error);
     else {
@@ -140,6 +147,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setDbListings((data??[]).filter(l=>!unavailable.has(l.id)).map(l=>({...l,data:{...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id}})));
     }
   }, []);
+
+  const loadOwnListings = useCallback(async () => {
+    if(!userId) {setOwnListings([]);setReviewNotifications([]);return;}
+    const [listings,revisions,events] = await Promise.all([
+      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId),
+      supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
+      supabase.from('listing_review_events').select('*').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
+    ]);
+    setOwnListings((listings.data??[]).map(l=>{
+      const rs=(revisions.data??[]).filter(r=>r.listing_id===l.id);
+      const r=rs.find(r=>['draft','pending','changes_requested'].includes(r.status))??rs[0];
+      return {...((r && !['published','withdrawn','sold'].includes(r.status)?r.data:l.data) as unknown as Artwork),id:l.id,sellerId:userId,moderationStatus:['sold','withdrawn'].includes(l.moderation_status)?l.moderation_status:r?.status??l.moderation_status,sellerMessage:r?.seller_message,revisionId:r?.id,revisionVersion:r?.version};
+    }));
+    setReviewNotifications((events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()})));
+  },[userId]);
+  useEffect(()=>{void loadOwnListings();const t=setInterval(()=>void loadOwnListings(),15000);return()=>clearInterval(t);},[loadOwnListings]);
 
   useEffect(() => {
     void loadListings();
@@ -182,7 +205,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ...state,
       bids: dbBids,
       followedSellers: follows.map(f=>f.artist_id),
-      notifications: [...dbBids.filter((b) => b.sellerId === userId).map((b) => ({
+      notifications: [...reviewNotifications, ...dbBids.filter((b) => b.sellerId === userId).map((b) => ({
         id: b.id, title: "Nytt bud mottatt", body: `${Number(b.amount).toLocaleString("nb-NO")} kr på «${dbListings.find((l) => l.id === b.artworkId)?.data.title ?? "kunstverk"}»`,
         read: b.read ?? false, createdAt: b.createdAt, conversationId: b.conversationId,
       })), ...dbListings.flatMap((l) => {
@@ -190,7 +213,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!f || !l.created_at || l.created_at <= f.created_at) return [];
         return [{ id: `nw-${l.id}`, title: "Nytt verk fra en kunstner du følger", body: `«${l.data.title}»`, read: l.created_at <= f.last_seen_at, createdAt: new Date(l.created_at).getTime(), slug: l.data.slug }];
       }), ...state.notifications].sort((a, b) => b.createdAt - a.createdAt),
-      myListings: dbListings.filter((l) => l.user_id === userId).map((l) => l.data),
+      myListings: ownListings,
       allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
       isFavorite: (id) => state.favorites.includes(id),
       toggleFavorite: (id) => {
@@ -265,28 +288,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         notify("Søk lagret", `Du finner «${label}» under lagrede søk.`);
       },
       markAllRead: () => {
+        void supabase.rpc('mark_review_events_read').then(()=>loadOwnListings());
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
         if (userId) void supabase.from("artist_follows").update({ last_seen_at: new Date().toISOString() }).eq("follower_id", userId).then(() => loadFollows());
         if (userId) void supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("seller_id", userId).is("read_at", null).then(() => loadBids());
       },
-      addListing: async (a) => {
+      addListing: async (a, draft = false) => {
         if(!userId)throw new Error('Logg inn for å publisere.');
         const fees=priceFromPayout(a.sellerPayout??0,a.artFeeApplies??true);
         if(!a.title.trim()||!a.image||(!fees.total&&a.saleType!=='Pris på forespørsel'))throw new Error('Sjekk bilde, tittel og pris.');
-        const {error}=await supabase.from('listings').insert({id:a.id,data:{...a,sellerId:userId,price:fees.total} as never});
-        if(error)throw new Error('Annonsen kunne ikke publiseres.');
-        await loadListings();
+        await saveListingDraft({data:{listing:{...a,sellerId:userId,price:fees.total} as never}});
+        if(!draft){const result=await submitListing({data:{id:a.id}});if(result.eventId){const notice=await sendReviewNotice({data:{eventId:result.eventId}});if(notice.status==='failed')notify('E-postvarsel venter','Annonsen ligger i godkjenningskøen. E-postvarselet kan sendes på nytt fra administrasjonen.');}notify('Sendt til godkjenning',submissionConfirmation);}
+        await Promise.all([loadListings(),loadOwnListings()]);
       },
       updateListing: async (a) => {
-        const {error}=await supabase.from('listings').update({data:{...a,sellerId:userId} as never,updated_at:new Date().toISOString()}).eq('id',a.id).select('id').single();
-        if(error)throw new Error('Annonsen kunne ikke lagres.');await loadListings();
+        await saveListingDraft({data:{listing:a as never}});await Promise.all([loadListings(),loadOwnListings()]);
       },
+      submitListing:async(id)=>{const r=await submitListing({data:{id}});if(r.eventId)await sendReviewNotice({data:{eventId:r.eventId}});notify('Sendt til godkjenning',submissionConfirmation);await loadOwnListings();},
+      changeVisibility:async(id,action)=>{await changeListingVisibility({data:{id,action}});await Promise.all([loadListings(),loadOwnListings()]);},
       deleteListing: async (id) => {
-        const {error}=await supabase.from('listings').delete().eq('id',id).select('id').single();
-        if(error)throw new Error('Annonsen kunne ikke slettes.');await loadListings();
+        await changeListingVisibility({data:{id,action:'withdrawn'}});await Promise.all([loadListings(),loadOwnListings()]);
       },
     }),
-    [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows],
+    [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows,ownListings,reviewNotifications,loadOwnListings],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -78,6 +78,13 @@ export type Artwork = {
   auctionEndsInMin?: number;
   minIncrement?: number;
   image: string;
+  images?: string[];
+  sellerType?: SellerType;
+  ownWork?: boolean;
+  moderationStatus?: string;
+  sellerMessage?: string | null;
+  revisionId?: string;
+  revisionVersion?: number;
   views: number;
   favorites: number;
   verified: boolean;
