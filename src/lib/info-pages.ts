@@ -196,10 +196,40 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "for-private-selgere": {
     title: "For private selgere",
-    lead: "Har du kunst som fortjener et nytt hjem?",
-    sections: [
-      { h: "Enkelt å selge", p: ["Ta gode bilder, beskriv verket og sett pris. Du kan ta imot bud og snakke med kjøper i meldinger."] },
+    lead: "La kunst du har hatt glede av, finne et nytt hjem.",
+    intro: [
+      "Har du et maleri, en skulptur eller et annet kunstverk du ønsker å selge? På Diargio kan privatpersoner presentere kunst de eier og komme i kontakt med interesserte kjøpere. Enten du gjør plass til noe nytt eller ønsker å selge et verk du har arvet, hjelper en god presentasjon kunsten videre.",
     ],
+    sections: [
+      {
+        h: "Presenter verket og historien",
+        p: [
+          "Legg ut tydelige bilder av hele verket, detaljer, signatur og eventuell ramme. Oppgi kunstner, teknikk, mål og årstall dersom du kjenner til dette.",
+          "Beskriv tilstanden ærlig, og vis eventuell slitasje, skader eller tidligere reparasjoner. Fortell gjerne hvor og når verket ble kjøpt, og om kvittering, ekthetsbevis eller annen dokumentasjon følger med. Er noe ukjent, skriver du det tydelig.",
+        ],
+      },
+      {
+        h: "Sett en gjennomtenkt pris",
+        p: [
+          "Ta utgangspunkt i det du vet om verket, tilstanden og relevante tidligere salg. Husk at priser i andre annonser ikke nødvendigvis viser hva verkene faktisk blir solgt for.",
+          "Bruk prisberegneren for å få oversikt over utbetaling, provisjon og eventuelle avgifter. Du kan svare på spørsmål gjennom meldingstjenesten og velger selv hvilke bud du vil godta.",
+        ],
+      },
+      {
+        h: "Avtal en god levering",
+        p: [
+          "Betalingen håndteres gjennom Stripe i Diargios betalingsløsning. Sammen med kjøperen avtaler du sending med Posten/Bring der det passer, henting eller annen egnet transport.",
+          "Som selger sørger du for forsvarlig emballasje. Ta gjerne bilder av verket og innpakkingen før sending, og avklar leveringsmåte og kostnader før handelen fullføres.",
+        ],
+      },
+      {
+        h: "Kom i gang",
+        p: [
+          "Opprett en bruker og legg ut verket med bilder, beskrivelse og pris. Se vår «Guide til å selge kunst» for hjelp med presentasjonen, eller kontakt oss på post@diargio.com hvis du trenger veiledning.",
+        ],
+      },
+    ],
+    outro: "Et verk som har vært en del av din historie, kan bli starten på en annens.",
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
   "guide-til-a-selge-kunst": {
