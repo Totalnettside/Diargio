@@ -158,10 +158,40 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "for-gallerier": {
     title: "For gallerier",
-    lead: "Nå nye kjøpere med utvalget deres.",
-    sections: [
-      { h: "Slik kommer du i gang", p: ["Opprett en bruker for galleriet, fyll ut profilen og legg ut verkene. Ta kontakt på post@diargio.com for spørsmål om større utvalg."] },
+    lead: "Gjør kunsten, kunstnerne og galleriet deres synlig for flere.",
+    intro: [
+      "Diargio gir gallerier en ekstra arena for å presentere kunst og komme i kontakt med interesserte kjøpere. Vis frem et utvalg fra galleriet, fortell om kunstnerne dere representerer, og skap interesse for både verkene og opplevelsene rundt dem.",
     ],
+    sections: [
+      {
+        h: "Presenter kunsten med galleriets faglige blikk",
+        p: [
+          "En god presentasjon gir kjøperen mer enn et bilde. Del kunstnerens bakgrunn, sett verkene i sammenheng og fortell om teknikk, materialer og kunstnerisk uttrykk.",
+          "Bruk gode fotografier og presise opplysninger om mål, tilstand, signatur, opplag og eventuell dokumentasjon. Hold utvalget oppdatert når verk selges eller ikke lenger er tilgjengelige.",
+        ],
+      },
+      {
+        h: "Bygg kontakt med interesserte kjøpere",
+        p: [
+          "Bruk meldingstjenesten til å svare på spørsmål, følge opp bud og gi kjøperen den informasjonen som trengs for å ta et godt valg. Ved behov kan dere avtale en nærmere visning i galleriet.",
+          "Betalingen håndteres gjennom Stripe i Diargios betalingsløsning. Frakt, henting eller annen overlevering avtales med kjøperen, tilpasset verkets størrelse, verdi og behov for beskyttelse.",
+        ],
+      },
+      {
+        h: "Skap interesse for kunstkvelder og arrangementer",
+        p: [
+          "Gallerier vil også få mulighet til å annonsere kommende kunstkvelder, utstillinger, eventer og andre arrangementer på Diargios nettside.",
+          "Presenter programmet med en innbydende beskrivelse, relevante bilder og tydelig informasjon om tid, sted og eventuell påmelding. Slik kan den digitale presentasjonen bli en invitasjon til å oppleve kunsten og møte menneskene bak.",
+        ],
+      },
+      {
+        h: "Kom i gang",
+        p: [
+          "Opprett en bruker og presenter et utvalg av galleriets verk. Ønsker dere mer informasjon om arrangementsannonsering eller hjelp til å komme i gang, kontakt oss på post@diargio.com.",
+        ],
+      },
+    ],
+    outro: "La flere oppdage galleriet deres – og kunsten dere brenner for.",
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
   "for-private-selgere": {
