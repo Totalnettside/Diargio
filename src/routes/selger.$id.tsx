@@ -76,7 +76,7 @@ function SellerPage() {
   const load = useCallback(async () => {
     const [{ data: p }, { data: l }, { data: r }] = await Promise.all([
       supabase.from("profiles").select("id, display_name, avatar_url, bio, location, website, bankid_verified, created_at, story, techniques, studio_images").eq("id", id).maybeSingle(),
-      supabase.from("listings").select("id, data").eq("user_id", id).order("created_at", { ascending: false }),
+      supabase.from("listings").select("id, data").eq("moderation_status","published").eq("user_id", id).order("created_at", { ascending: false }),
       supabase.from("reviews").select("id, reviewer_id, rating, comment, created_at").eq("seller_id", id).order("created_at", { ascending: false }),
     ]);
     setProfile(p ?? null);

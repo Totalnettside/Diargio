@@ -21,6 +21,7 @@ import {
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { submissionDisclosure } from '@/lib/moderation';
 
 export const Route = createFileRoute("/selg")({
   head: () => ({
@@ -141,6 +142,8 @@ function SellPage() {
   const [publishing,setPublishing]=useState(false);
   const [delivery, setDelivery] = useState("Begge deler");
   const [county, setCounty] = useState(counties[0] ?? "Oslo");
+  const [sellerType,setSellerType] = useState<'Kunstner'|'Privat'|'Galleri'>('Kunstner');
+  const [ownWork,setOwnWork] = useState(true);
 
   const suggestions = useMemo(
     () =>
@@ -172,10 +175,10 @@ function SellPage() {
       </div>
     );
   }
-  async function publish() {
+  async function publish(draft = false) {
     if(!user)return;
     if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
-    if (!toCm(width) || !toCm(height)) {
+    if (!draft && (!toCm(width) || !toCm(height))) {
       alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
       return;
     }
@@ -211,16 +214,19 @@ function SellPage() {
       sellerPayout: Number(price) || 0,
       artFeeApplies,
       image: images[0] ?? "",
+      images,
+      sellerType,
+      ownWork,
       views: 0,
       favorites: 0,
       verified: false,
       createdDaysAgo: 0,
-      description: description || "Ingen beskrivelse.",
+      description: description.trim(),
       delivery,
       shippingPrice: delivery === "Må hentes" ? 0 : Number(shippingPrice),
     };
     setPublishing(true);
-    try { await addListing(listing); await navigate({ to: "/min-side" }); } catch(e) {setImageError(e instanceof Error?e.message:"Kunne ikke publisere");} finally {setPublishing(false); }
+    try { await addListing(listing,draft); await navigate({ to: "/min-side",search:{tab:'Mine annonser'} }); } catch(e) {setImageError(e instanceof Error?e.message:"Kunne ikke sende inn");} finally {setPublishing(false); }
   }
 
   const maxStep = images.length === 0 ? 0 : !title.trim() ? 2 : stepTitles.length - 1;
@@ -373,6 +379,8 @@ function SellPage() {
           <>
             <p className="font-display text-lg font-semibold">Informasjon om verket</p>
             <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Selgertype"><select value={sellerType} onChange={e=>setSellerType(e.target.value as typeof sellerType)} className={inputClass}>{['Kunstner','Privat','Galleri'].map(t=><option key={t}>{t}</option>)}</select></Field>
+              <Field label="Eget verk eller videresalg"><select value={ownWork?'own':'resale'} onChange={e=>setOwnWork(e.target.value==='own')} className={inputClass}><option value="own">Eget verk</option><option value="resale">Videresalg</option></select></Field>
               <Field label="Verkets navn *">
                 <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
               </Field>
@@ -542,7 +550,7 @@ function SellPage() {
               <img
                 src={images[0] ?? artImages[0]}
                 alt=""
-                className="aspect-square w-full object-cover"
+                className="aspect-square w-full object-contain"
               />
               <div className="p-4">
                 <p className="text-sm font-semibold">{artistName || "Ukjent kunstner"}</p>
@@ -555,12 +563,8 @@ function SellPage() {
                 <p className="mt-2 text-sm text-ink/70">{description || "Ingen beskrivelse."}</p>
               </div>
             </div>
-            <button
-              disabled={publishing} onClick={()=>void publish()}
-              className="w-full rounded-2xl bg-brandink py-3 text-sm font-semibold text-primary-foreground"
-            >
-              Publiser annonse
-            </button>
+            <p className="text-sm text-muted-foreground">{submissionDisclosure}</p>
+            <Button className="w-full" disabled={publishing} onClick={()=>void publish()}>Send til godkjenning</Button>
           </>
         )}
 
@@ -582,6 +586,7 @@ function SellPage() {
           )}
         </div>
       </section>
+      <Button variant="outline" className="mt-4" disabled={publishing||!title.trim()||images.length===0} onClick={()=>void publish(true)}>Lagre utkast</Button>
       {cropIndex !== null && originalImages[cropIndex] && (
         <ImageCropDialog
           key={cropIndex}

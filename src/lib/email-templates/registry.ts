@@ -20,8 +20,10 @@ import { template as sellerNoticeTemplate } from './seller-notice'
  */
 import { template as welcomeTemplate } from './welcome'
 import { template as sellerNoticeTemplate } from './seller-notice'
+import { template as listingReviewTemplate } from './listing-review'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  'listing-review': listingReviewTemplate,
   'welcome': welcomeTemplate,
   'seller-notice': sellerNoticeTemplate,
   // Add templates here as they are created, e.g.:

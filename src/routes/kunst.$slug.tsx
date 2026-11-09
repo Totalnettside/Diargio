@@ -26,7 +26,7 @@ export const Route = createFileRoute("/kunst/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData?.artwork) {
-        return { meta: [{ title: "Annonse | Diargio" }, { name: "robots", content: "noindex" }] };
+        return { meta: [{ title: "Kunstannonse | Diargio" }, {name:'description',content:'Oppdag kunstverket og kontakt selger på Diargio.'},{property:'og:title',content:'Kunstannonse | Diargio'},{property:'og:description',content:'Kunst fra kunstnere, gallerier og private selgere.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}, { name: "robots", content: "noindex" }] };
     }
     const { artwork, artistName } = loaderData;
     const title = `${artistName} – ${artwork.title} til salgs | Diargio`;

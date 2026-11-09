@@ -6,12 +6,14 @@ import { getAdminOverview, setAdminRole, setVerified } from "@/lib/admin.functio
 import { adminDeleteUser } from "@/lib/account.functions";
 import { useStore } from "@/lib/store";
 import { breakdownFromTotal } from "@/lib/fees";
+import {ModerationQueue} from './ModerationQueue';
+import {Button} from '@/components/ui/button';
 const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
 const TOTAL_FEE_RATE = feeShare(10000);
 const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
 const ART_FEE_RATE = breakdownFromTotal(10000).artFee / 10000;
 
-const tabs = ["Oversikt", "Brukere", "Annonser", "Bud & salg", "Toppliste", "Økonomi"] as const;
+const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi"] as const;
 type Tab = (typeof tabs)[number];
 const kr = (n: number) => new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK", maximumFractionDigits: 0 }).format(n);
 const day = 86400000;
@@ -48,15 +50,16 @@ export function ControlCenter() {
       <Link to="/ordre" className="mt-4 inline-block text-sm font-semibold underline">Betalinger, leveranser og refusjoner</Link>
       <nav className="mt-5 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {tabs.map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${tab === t ? "bg-sage text-primary-foreground shadow" : "border border-border bg-card hover:bg-muted"}`}>
-            {t}
-          </button>
+          <Button key={t} variant={tab===t?'default':'outline'} onClick={() => setTab(t)} className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold">
+            {t}{t==='Annonser til godkjenning'?` (${data.pendingListings})`:''}
+          </Button>
         ))}
       </nav>
       <div className="mt-5">
         {tab === "Oversikt" && <Overview d={data} go={setTab} />}
         {tab === "Brukere" && <Users d={data} reload={reload} />}
         {tab === "Annonser" && <Listings d={data} reload={reload} />}
+        {tab === "Annonser til godkjenning" && <ModerationQueue />}
         {tab === "Bud & salg" && <Deals d={data} />}
         {tab === "Toppliste" && <Leaderboard d={data} />}
         {tab === "Økonomi" && <Economy d={data} />}
@@ -270,7 +273,7 @@ function Listings({ d, reload }: { d: D; reload: () => void }) {
                 <p className="text-xs text-muted-foreground">{nb.length} bud{top ? ` · høyeste ${kr(top)}` : ""}</p>
                 <div className="mt-2 flex gap-1.5">
                   <Link to="/kunst/$slug" params={{ slug: l.slug }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Vis</Link>
-                  <button onClick={async () => { if (confirm(`Slette «${l.title}»?`)) { await deleteListing(l.id); reload(); } }} className="rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground">Slett</button>
+                  <Button variant="destructive" onClick={async () => { if (confirm(`Trekke «${l.title}» fra markedsplassen?`)) {try{await deleteListing(l.id);reload();}catch(e){window.alert(e instanceof Error?e.message:'Kunne ikke trekke annonsen.');}} }} className="rounded-full px-3 py-1 text-xs font-semibold">Trekk</Button>
                 </div>
               </div>
             </div>

@@ -120,6 +120,41 @@
       "when": 1792245057053,
       "tag": "0016_claim_payment_events_with_retry_leases",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794268027679,
+      "tag": "0017_listing_moderation_versions",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794268079488,
+      "tag": "0018_moderation_private_documentation",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794268343217,
+      "tag": "0019_moderation_guard_reservations_and_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794268564891,
+      "tag": "0020_allow_incomplete_listing_drafts",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794268621775,
+      "tag": "0021_review_event_version_snapshots",
+      "breakpoints": true
     }
   ]
 }

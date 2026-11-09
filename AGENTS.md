@@ -33,3 +33,5 @@
 - Serialize refund claims and use leased payment events with retryable processing; every lifecycle side effect must be idempotent.
 - Preserve trade and conversation history by blocking destructive account deletion when counterparties have records; do not recreate self-service deletion.
 - Route payment account creation and status through the shared gateway, with live checkout and transfers blocked until operational and legal requirements are approved.
+- Listing moderation uses immutable reviewed revisions, locked owner/admin RPC transitions and a separate public approved snapshot; RLS and trade triggers prevent unreviewed content from entering commerce.
+- Review events persist decisions and single-recipient email outcomes with managed API idempotency keys; internal notes and private storage documentation remain separate from seller-facing messages.

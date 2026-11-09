@@ -14,6 +14,10 @@ import {
   type SaleType,
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import {Button} from '@/components/ui/button';
+import {ArtworkPreview} from '@/components/ArtworkPreview';
+import {ListingDocumentation} from '@/components/ListingDocumentation';
+import {moderationLabels,submissionDisclosure} from '@/lib/moderation';
 
 export const Route = createFileRoute("/_authenticated/rediger/$slug")({
   head: () => ({
@@ -42,7 +46,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function EditListingPage() {
   const { slug } = Route.useParams();
-  const { myListings, updateListing, deleteListing } = useStore();
+  const { myListings, updateListing, deleteListing, submitListing, changeVisibility } = useStore();
   const navigate = useNavigate();
   const listing = myListings.find((l) => l.slug === slug);
 
@@ -59,6 +63,13 @@ function EditListingPage() {
   const [saleType, setSaleType] = useState<SaleType>(listing?.saleType ?? "Fastpris");
   const [county, setCounty] = useState(listing?.county ?? counties[0] ?? "Oslo");
   const [description, setDescription] = useState(listing?.description ?? "");
+  const [artistName,setArtistName]=useState(listing?.artistName??'');
+  const [ownWork,setOwnWork]=useState(listing?.ownWork??true);
+  const [sellerType,setSellerType]=useState(listing?.sellerType??'Kunstner');
+  const [images,setImages]=useState(listing?.images??(listing?.image?[listing.image]:[]));
+  const [edition,setEdition]=useState(listing?.edition??'');
+  const [preview,setPreview]=useState(false);
+  useEffect(()=>{if(!listing)return;setArtistName(listing.artistName??'');setOwnWork(listing.ownWork??true);setSellerType(listing.sellerType??'Kunstner');setImages(listing.images??[listing.image]);setEdition(listing.edition??'');},[listing?.id]);
 
   useEffect(()=>{if(listing){setTitle(listing.title);setPrice(String(listing.sellerPayout??breakdownFromTotal(listing.price,listing.artFeeApplies??true).payout));setShippingPrice(String(listing.shippingPrice??0));setCategory(listing.category);setTechnique(listing.technique);setStyle(listing.style);setType(listing.type);setCondition(listing.condition);setSaleType(listing.saleType);setCounty(listing.county);setDescription(listing.description);setArtFeeApplies(listing.artFeeApplies??true);}},[listing?.id]);
 
@@ -79,10 +90,11 @@ function EditListingPage() {
     );
   }
 
-  async function save() {
+  async function save(submit = false) {
     if(!listing)return;
     try {await updateListing({
       ...listing,
+      artistName,ownWork,sellerType,images,image:images[0]??listing.image,edition,
       title: title || listing.title,
       ...(Number(price) ? { price: priceFromPayout(Number(price), artFeeApplies).total, sellerPayout: Number(price), artFeeApplies } : {}),
       category,
@@ -95,13 +107,14 @@ function EditListingPage() {
       shippingPrice:Number(shippingPrice),
       description: description || listing.description,
     });
-    await navigate({ to: "/kunst/$slug", params: { slug: listing.slug } });
+    if(submit)await submitListing(listing.id);
+    await navigate({ to: "/min-side",search:{tab:'Mine annonser'} });
     }catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke lagre");}
   }
 
   async function remove() {
     if(!listing)return;
-    if (window.confirm(`Slette «${listing.title}»? Dette kan ikke angres.`)) {
+    if (window.confirm(`Trekke «${listing.title}» fra markedsplassen?`)) {
       try{await deleteListing(listing.id);await navigate({ to: "/min-side" });}catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke slette");}
     }
   }
@@ -110,9 +123,18 @@ function EditListingPage() {
     <main className="mx-auto w-full max-w-2xl px-5 py-5">
       <h1 className="font-display text-2xl font-semibold">Endre annonse</h1>
       <p className="mt-1 text-sm text-ink/60">«{listing.title}» · {formatPrice(listing.price)}</p>
+      <p className="mt-2 text-primary">{moderationLabels[listing.moderationStatus as keyof typeof moderationLabels]??'Publisert'}</p>
+      {listing.sellerMessage&&<p className="mt-2">Beskjed fra Diargio: {listing.sellerMessage}</p>}
+      {listing.moderationStatus==='pending'&&<Button className="mt-3" variant="outline" onClick={()=>void changeVisibility(listing.id,'draft').then(()=>window.location.reload()).catch(e=>setSaveError(e.message))}>Trekk innsendt versjon tilbake til utkast</Button>}
 
       {saveError&&<p role="alert" className="text-destructive">{saveError}</p>}
       <section className="mt-4 space-y-4 rounded-3xl p-5 glass">
+        <Field label="Kunstner"><input className={inputClass} value={artistName} onChange={e=>setArtistName(e.target.value)}/></Field>
+        <Field label="Selgertype"><select className={inputClass} value={sellerType} onChange={e=>setSellerType(e.target.value as typeof sellerType)}>{['Kunstner','Privat','Galleri','Kunsthandler'].map(t=><option key={t}>{t}</option>)}</select></Field>
+        <Field label="Eget verk eller videresalg"><select className={inputClass} value={ownWork?'own':'resale'} onChange={e=>setOwnWork(e.target.value==='own')}><option value="own">Eget verk</option><option value="resale">Videresalg</option></select></Field>
+        <Field label="Opplag"><input className={inputClass} value={edition} onChange={e=>setEdition(e.target.value)}/></Field>
+        <div className="grid grid-cols-3 gap-2">{images.map((src,i)=><div key={i}><ArtworkPreview image={src} alt={`Bilde ${i+1}`}/><Button variant="ghost" disabled={images.length<=1} onClick={()=>setImages(images.filter((_,n)=>n!==i))}>Fjern</Button></div>)}</div>
+        <label className="block text-sm">Legg til bilder<input aria-label="Legg til annonsebilder" type="file" accept="image/*" multiple onChange={e=>{for(const file of Array.from(e.target.files??[]).slice(0,15-images.length)){if(file.size>2000000){setSaveError('Velg et bilde under 2 MB.');continue;}const reader=new FileReader();reader.onload=()=>{if(typeof reader.result==='string'){const src=reader.result;setImages(prev=>[...prev,src].slice(0,15));}};reader.readAsDataURL(file);}}}/></label>
         <Field label="Tittel">
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
         </Field>
@@ -192,20 +214,25 @@ function EditListingPage() {
           />
         </Field>
       </section>
+      <ListingDocumentation listingId={listing.id} ownerId={listing.sellerId} editable={listing.moderationStatus!=='pending'}/>
+      <p className="mt-4 text-sm text-muted-foreground">{submissionDisclosure}</p>
+      <Button variant="outline" className="mt-4" onClick={()=>setPreview(!preview)}>Forhåndsvisning</Button>
+      {preview&&<div className="mt-4 space-y-3"><ArtworkPreview image={images[0]??listing.image} alt={title}/><h2 className="font-display text-xl">{title}</h2><p>{artistName}</p><p>{description}</p><p>{formatPrice(priceFromPayout(Number(price),artFeeApplies).total)}</p></div>}
 
       <div className="mt-4 flex gap-2">
-        <button
-          onClick={save}
+        <Button disabled={listing.moderationStatus==='pending'||listing.moderationStatus==='sold'}
+          onClick={()=>void save()}
           className="flex-1 rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground"
         >
           Lagre endringer
-        </button>
-        <button
+        </Button>
+        <Button disabled={listing.moderationStatus==='pending'||listing.moderationStatus==='sold'} onClick={()=>void save(true)}>Send til godkjenning</Button>
+        <Button variant="outline"
           onClick={remove}
           className="rounded-2xl bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 glass"
         >
-          Slett annonsen
-        </button>
+          Trekk annonsen
+        </Button>
       </div>
     </main>
   );

@@ -33,7 +33,7 @@ const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:e
 export const createArtCheckout=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>checkoutInput.parse(d)).handler(async({data,context}):Promise<{clientSecret:string;orderId:string}|{error:string}>=>{
  try {
   if(data.environment==='live') throw new Error('Ekte betaling er stengt til moms, kunstavgift og utsatt kunstneroppgjør er avklart.');
-  const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data,updated_at').eq('id',data.listingId).single();
+  const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data,updated_at').eq('moderation_status','published').eq('id',data.listingId).single();
   if(error||!l||l.user_id===context.userId) throw new Error('Verket er utilgjengelig eller tilhører deg.');
   if(l.id.startsWith('demo'))throw new Error('Presentasjonsverk kan ikke kjøpes.');
   const a=l.data as unknown as Artwork & {shippingPrice?:number};
