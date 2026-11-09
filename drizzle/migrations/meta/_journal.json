@@ -134,6 +134,13 @@
       "when": 1794268079488,
       "tag": "0018_moderation_private_documentation",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794268343217,
+      "tag": "0019_moderation_guard_reservations_and_documents",
+      "breakpoints": true
     }
   ]
 }
