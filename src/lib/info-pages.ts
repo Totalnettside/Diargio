@@ -102,9 +102,36 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "priser-og-gebyrer": {
     title: "Priser og gebyrer",
-    lead: "Det er gratis å opprette bruker og legge ut annonser.",
+    lead: "En oversikt over kostnadene når du kjøper eller selger kunst gjennom Diargio.",
     sections: [
-      { h: "Gebyr ved salg", p: ["Diargios provisjon er 20 % av ønsket utbetaling til selger. Kunstavgiften er 5 % av beløpet inkludert provisjon, kun når ønsket utbetaling er over 2 000 kr. Kjøperens annonsepris inkluderer disse beløpene; frakt kommer separat.", "Du betaler ingenting hvis verket ikke selges."] },
+      {
+        h: "Provisjon ved salg",
+        p: [
+          "Diargios provisjon er 20 % av verkets avtalte salgspris ved gjennomført salg. Provisjonen trekkes fra selgerens oppgjør via Stripe.",
+          "Provisjonen beregnes av salgsprisen før kunstavgift, frakt og eventuell transportforsikring.",
+        ],
+      },
+      {
+        h: "Kunstavgift",
+        p: [
+          "Ved salg av kunstverk som omfattes av kunstavgiftsordningen, med en salgspris over 2 000 kr, legges det normalt til 5 % kunstavgift. Avgiften beregnes av hele salgsprisen og betales av kjøperen i tillegg til denne.",
+          "Kunstavgiften er en lovpålagt avgift som går til kunstnere og rettighetshavere gjennom kunstavgiftsordningen. Den er ikke en del av Diargios provisjon. Ved enkelte videresalg med høy salgssum kan andre satser gjelde.",
+        ],
+      },
+      {
+        h: "Frakt og eventuell forsikring",
+        p: [
+          "Frakt og eventuell transportforsikring kommer i tillegg. Kostnaden avhenger av verkets størrelse, vekt, verdi og valgt leveringsmåte.",
+          "Kjøper og selger avtaler sending med Posten/Bring der det passer, henting, personlig overlevering eller annen egnet transport. Leveringsmåte og kostnader avklares før handelen fullføres.",
+        ],
+      },
+      {
+        h: "Se hva du betaler og får utbetalt",
+        p: [
+          "Bruk prisberegneren på Diargio for å få oversikt over salgspris, provisjon, eventuell kunstavgift og beregnet utbetaling. Ta også høyde for avtalt frakt og eventuell forsikring.",
+          "Har du spørsmål om priser, gebyrer eller levering? Kontakt oss på post@diargio.com, så hjelper vi deg.",
+        ],
+      },
     ],
     cta: { label: "Legg ut kunst", to: "/selg" },
   },
