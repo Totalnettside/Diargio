@@ -77,6 +77,8 @@ export const infoPages: Record<string, InfoPage> = {
         h: "En felles plass for kunst",
         p: [
           "Diargio er en markedsplass og formidler mellom kjøper og selger. Selve handelen skjer mellom dere, mens vi legger til rette for enkel kontakt, trygg betaling og en oversiktlig prosess.",
+          "Vi gjennomgår alle nye annonser før de publiseres, slik at opplysningene er tydelige og presentasjonen følger Diargios retningslinjer. Du får beskjed når annonsen er publisert, eller dersom vi trenger flere opplysninger.",
+          "Gjennomgangen innebærer ikke en verdivurdering eller bekreftelse av verkets ekthet. Som selger er du ansvarlig for at opplysningene er riktige, og at du har rett til å selge verket.",
           "Enten du selger ditt første verk eller har skapt kunst i mange år, er du velkommen. Hos Diargio har alle sin plass.",
         ],
       },
