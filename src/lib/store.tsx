@@ -296,7 +296,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       addListing: async (a, draft = false) => {
         if(!userId)throw new Error('Logg inn for å publisere.');
         const fees=priceFromPayout(a.sellerPayout??0,a.artFeeApplies??true);
-        if(!a.title.trim()||!a.image||(!fees.total&&a.saleType!=='Pris på forespørsel'))throw new Error('Sjekk bilde, tittel og pris.');
+        if(!a.title.trim()||!a.image||(!draft&&!fees.total&&a.saleType!=='Pris på forespørsel'))throw new Error('Sjekk bilde, tittel og pris.');
         await saveListingDraft({data:{listing:{...a,sellerId:userId,price:fees.total} as never}});
         if(!draft){const result=await submitListing({data:{id:a.id}});if(result.eventId){try{const notice=await sendReviewNotice({data:{eventId:result.eventId}});if(notice.status==='failed')notify('E-postvarsel venter','Annonsen ligger i godkjenningskøen. E-postvarselet kan sendes på nytt fra administrasjonen.');}catch{notify('E-postvarsel venter','Annonsen er sendt inn. E-postvarselet kan sendes på nytt fra administrasjonen.');}}notify('Sendt til godkjenning',submissionConfirmation);}
         await Promise.all([loadListings(),loadOwnListings()]);

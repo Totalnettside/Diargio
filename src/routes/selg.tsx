@@ -178,7 +178,7 @@ function SellPage() {
   async function publish(draft = false) {
     if(!user)return;
     if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
-    if (!toCm(width) || !toCm(height)) {
+    if (!draft && (!toCm(width) || !toCm(height))) {
       alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
       return;
     }
@@ -221,7 +221,7 @@ function SellPage() {
       favorites: 0,
       verified: false,
       createdDaysAgo: 0,
-      description: description || "Ingen beskrivelse.",
+      description: description.trim(),
       delivery,
       shippingPrice: delivery === "Må hentes" ? 0 : Number(shippingPrice),
     };
