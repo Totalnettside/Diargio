@@ -44,10 +44,42 @@ export const infoPages: Record<string, InfoPage> = {
   },
   "slik-fungerer-diargio": {
     title: "Slik fungerer Diargio",
-    lead: "Fra første klikk til verket henger på veggen.",
+    lead: "Et sted å vise frem, oppdage og handle kunst.",
     sections: [
-      { h: "For kjøpere", p: ["Bla gjennom kunst, bruk filtrene og lagre favoritter. Du kan kjøpe direkte med «Kjøp nå» eller gi bud.", "Du kan snakke med selger i meldinger og i dealroom."] },
-      { h: "For selgere", p: ["Opprett bruker, legg ut bilder og informasjon om verket, og publiser. Du får varsel når noen gir bud eller sender melding.", "Du godkjenner eller avslår bud selv under «Min side → Bud»."] },
+      {
+        h: "Et sted å vise frem, oppdage og handle kunst",
+        p: [
+          "Diargio knytter sammen mennesker som skaper kunst, og mennesker som ønsker å gi den en plass i livet sitt. Her kan både etablerte kunstnere, hobbykunstnere, gallerier og private selgere vise frem og selge malerier, skulpturer og andre kunstverk. Du trenger ikke være profesjonell for å dele det du skaper.",
+        ],
+      },
+      {
+        h: "For kjøpere",
+        p: [
+          "Utforsk kunst, finn dine favoritter og bli kjent med verkene og menneskene bak. Kjøp direkte med «Kjøp nå», eller gi et bud. Har du spørsmål om verket eller leveringen, kan du kontakte selger gjennom meldingstjenesten.",
+          "Betalingen håndteres trygt gjennom Stripe. Levering avtales med selger, slik at dere finner en løsning som passer verket.",
+        ],
+      },
+      {
+        h: "For selgere",
+        p: [
+          "Opprett en bruker og presenter verket ditt med gode bilder, en beskrivelse og ønsket pris. Fortell om materialene, størrelsen, vekt og historien bak – det gjør det lettere for kjøperen å bli kjent med det du selger.",
+          "Du får varsel når noen sender en melding eller gir et bud. Du bestemmer selv hvilke bud du vil godta, og administrerer dem under «Min side → Bud».",
+        ],
+      },
+      {
+        h: "Frakt og overlevering",
+        p: [
+          "Kunst kommer i mange former og størrelser. Du kan velge sending med Posten/Bring der det passer, eller avtale henting, personlig overlevering eller annen transport direkte med kjøperen eller selgeren.",
+          "Noen verk trenger ekstra omtanke underveis. Selger er ansvarlig for å pakke sin kunst slik at den kommer trygt og uskadet fram til kjøper. Diargio kan hjelpe med veiledning, slik at dere finner en egnet løsning for pakking og levering – post@diargio.com.",
+        ],
+      },
+      {
+        h: "En felles plass for kunst",
+        p: [
+          "Diargio er en markedsplass og formidler mellom kjøper og selger. Selve handelen skjer mellom dere, mens vi legger til rette for enkel kontakt, trygg betaling og en oversiktlig prosess.",
+          "Enten du selger ditt første verk eller har skapt kunst i mange år, er du velkommen. Hos Diargio har alle sin plass.",
+        ],
+      },
     ],
     cta: { label: "Utforsk kunst", to: "/kunst" },
   },
