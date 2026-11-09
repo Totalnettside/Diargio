@@ -56,7 +56,6 @@ export function Footer() {
           <nav aria-label="Selg på Diargio">
             <h3 className="text-sm font-semibold">Selg på Diargio</h3>
             <ul className="mt-3 space-y-2">
-              <li><Link to="/selg" className={linkCls}>Legg ut kunst</Link></li>
               <li><Link to="/info/$page" params={{ page: "for-kunstnere" }} className={linkCls}>For kunstnere</Link></li>
               <li><Link to="/info/$page" params={{ page: "for-gallerier" }} className={linkCls}>For gallerier</Link></li>
               <li><Link to="/info/$page" params={{ page: "for-private-selgere" }} className={linkCls}>For private selgere</Link></li>
