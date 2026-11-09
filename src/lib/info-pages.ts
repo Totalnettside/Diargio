@@ -320,6 +320,13 @@ export const infoPages: Record<string, InfoPage> = {
         h: "Før du publiserer",
         p: [
           "Se gjennom annonsen med kjøperens øyne: Viser bildene verket slik det faktisk er? Er mål, tilstand, pris og levering tydelig beskrevet? Jo bedre informasjon du gir, desto enklere blir det å ta et godt valg.",
+        ],
+      },
+      {
+        h: "Annonsen sendes til gjennomgang",
+        p: [
+          "Vi gjennomgår alle nye annonser før de publiseres, slik at opplysningene er tydelige og presentasjonen følger Diargios retningslinjer. Du får beskjed når annonsen er publisert, eller dersom vi trenger flere opplysninger.",
+          "Gjennomgangen innebærer ikke en verdivurdering eller bekreftelse av verkets ekthet. Som selger er du ansvarlig for at opplysningene er riktige, og at du har rett til å selge verket.",
           "Trenger du hjelp med annonsen, pakking eller levering? Kontakt oss på post@diargio.com, så hjelper vi deg videre.",
           "Hos Diargio er det plass til både ditt første verk og ditt neste kapittel som kunstner.",
         ],
