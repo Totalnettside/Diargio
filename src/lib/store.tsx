@@ -298,13 +298,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const fees=priceFromPayout(a.sellerPayout??0,a.artFeeApplies??true);
         if(!a.title.trim()||!a.image||(!fees.total&&a.saleType!=='Pris på forespørsel'))throw new Error('Sjekk bilde, tittel og pris.');
         await saveListingDraft({data:{listing:{...a,sellerId:userId,price:fees.total} as never}});
-        if(!draft){const result=await submitListing({data:{id:a.id}});if(result.eventId){const notice=await sendReviewNotice({data:{eventId:result.eventId}});if(notice.status==='failed')notify('E-postvarsel venter','Annonsen ligger i godkjenningskøen. E-postvarselet kan sendes på nytt fra administrasjonen.');}notify('Sendt til godkjenning',submissionConfirmation);}
+        if(!draft){const result=await submitListing({data:{id:a.id}});if(result.eventId){try{const notice=await sendReviewNotice({data:{eventId:result.eventId}});if(notice.status==='failed')notify('E-postvarsel venter','Annonsen ligger i godkjenningskøen. E-postvarselet kan sendes på nytt fra administrasjonen.');}catch{notify('E-postvarsel venter','Annonsen er sendt inn. E-postvarselet kan sendes på nytt fra administrasjonen.');}}notify('Sendt til godkjenning',submissionConfirmation);}
         await Promise.all([loadListings(),loadOwnListings()]);
       },
       updateListing: async (a) => {
         await saveListingDraft({data:{listing:a as never}});await Promise.all([loadListings(),loadOwnListings()]);
       },
-      submitListing:async(id)=>{const r=await submitListing({data:{id}});if(r.eventId)await sendReviewNotice({data:{eventId:r.eventId}});notify('Sendt til godkjenning',submissionConfirmation);await loadOwnListings();},
+      submitListing:async(id)=>{const r=await submitListing({data:{id}});if(r.eventId){try{await sendReviewNotice({data:{eventId:r.eventId}});}catch{notify('E-postvarsel venter','Annonsen er sendt inn; e-postvarselet kan sendes på nytt.');}}notify('Sendt til godkjenning',submissionConfirmation);await loadOwnListings();},
       changeVisibility:async(id,action)=>{await changeListingVisibility({data:{id,action}});await Promise.all([loadListings(),loadOwnListings()]);},
       deleteListing: async (id) => {
         await changeListingVisibility({data:{id,action:'withdrawn'}});await Promise.all([loadListings(),loadOwnListings()]);

@@ -114,7 +114,7 @@ function EditListingPage() {
 
   async function remove() {
     if(!listing)return;
-    if (window.confirm(`Slette «${listing.title}»? Dette kan ikke angres.`)) {
+    if (window.confirm(`Trekke «${listing.title}» fra markedsplassen?`)) {
       try{await deleteListing(listing.id);await navigate({ to: "/min-side" });}catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke slette");}
     }
   }

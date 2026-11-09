@@ -32,7 +32,7 @@ export function ModerationQueue() {
     try {
       const result=await decide({data:{revisionId:revision.id,version:revision.version,decision,reason,note}});
       setMessage('Beslutningen er lagret.');
-      if(result.eventId){const delivery=await send({data:{eventId:result.eventId}});setMessage(delivery.status==='sent'?'Beslutningen er lagret, og e-postvarselet er sendt.':delivery.status==='suppressed'?'Beslutningen er lagret. Modtageren har fravalgt e-post.':'Beslutningen er lagret. E-postvarselet venter; prøv igjen nedenfor.');}
+      if(result.eventId){try{const delivery=await send({data:{eventId:result.eventId}});setMessage(delivery.status==='sent'?'Beslutningen er lagret, og e-postvarselet er sendt.':delivery.status==='suppressed'?'Beslutningen er lagret. E-post er blokkert for mottakeren.':'Beslutningen er lagret. E-postvarselet venter; prøv igjen nedenfor.');}catch{setMessage('Beslutningen er lagret. E-postvarselet venter; prøv igjen nedenfor.');}}
       setSelected(null);setReason('');setNote('');
     }catch(e){setMessage(e instanceof Error?e.message:'Kunne ikke behandle annonsen.');}
     finally{await refetch();setBusy(false);}
