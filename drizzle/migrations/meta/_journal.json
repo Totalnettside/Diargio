@@ -127,6 +127,13 @@
       "when": 1794268027679,
       "tag": "0017_listing_moderation_versions",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794268079488,
+      "tag": "0018_moderation_private_documentation",
+      "breakpoints": true
     }
   ]
 }
