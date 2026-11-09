@@ -290,11 +290,151 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_review_events: {
+        Row: {
+          actor_id: string
+          created_at: string
+          decision: string
+          email_error: string | null
+          email_retry_at: string | null
+          email_status: string
+          id: string
+          listing_id: string
+          price: number
+          read_at: string | null
+          reason: string | null
+          revision_id: string | null
+          title: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          decision: string
+          email_error?: string | null
+          email_retry_at?: string | null
+          email_status?: string
+          id?: string
+          listing_id: string
+          price?: number
+          read_at?: string | null
+          reason?: string | null
+          revision_id?: string | null
+          title: string
+          user_id: string
+          version: number
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          decision?: string
+          email_error?: string | null
+          email_retry_at?: string | null
+          email_status?: string
+          id?: string
+          listing_id?: string
+          price?: number
+          read_at?: string | null
+          reason?: string | null
+          revision_id?: string | null
+          title?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_review_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_review_events_revision_id_fkey"
+            columns: ["revision_id"]
+            isOneToOne: false
+            referencedRelation: "listing_revisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_review_notes: {
+        Row: {
+          event_id: string
+          note: string
+        }
+        Insert: {
+          event_id: string
+          note: string
+        }
+        Update: {
+          event_id?: string
+          note?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_review_notes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "listing_review_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_revisions: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          listing_id: string
+          seller_message: string | null
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          listing_id: string
+          seller_message?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          listing_id?: string
+          seller_message?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_revisions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           created_at: string
           data: Json
           id: string
+          moderation_status: string
           updated_at: string
           user_id: string
         }
@@ -302,6 +442,7 @@ export type Database = {
           created_at?: string
           data: Json
           id: string
+          moderation_status?: string
           updated_at?: string
           user_id?: string
         }
@@ -309,6 +450,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          moderation_status?: string
           updated_at?: string
           user_id?: string
         }
@@ -508,6 +650,10 @@ export type Database = {
     }
     Functions: {
       artist_follower_count: { Args: { _artist: string }; Returns: number }
+      change_listing_visibility: {
+        Args: { _action: string; _id: string }
+        Returns: undefined
+      }
       claim_payment_event: {
         Args: { _environment: string; _event: string }
         Returns: boolean
@@ -537,6 +683,7 @@ export type Database = {
         Args: { _cid: string; _uid: string }
         Returns: boolean
       }
+      mark_review_events_read: { Args: never; Returns: undefined }
       reserve_art_order: {
         Args: {
           _artwork: number
@@ -577,12 +724,28 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      review_listing_revision: {
+        Args: {
+          _decision: string
+          _note: string
+          _reason: string
+          _revision: string
+          _version: number
+        }
+        Returns: string
+      }
+      save_listing_revision: {
+        Args: { _data: Json; _id: string }
+        Returns: string
+      }
       sold_listing_ids: { Args: { _seller: string }; Returns: string[] }
       submit_artwork_bid: {
         Args: { _amount: number; _listing_id: string; _message?: string }
         Returns: string
       }
+      submit_listing_revision: { Args: { _id: string }; Returns: string }
       unavailable_artwork_ids: { Args: never; Returns: string[] }
+      validate_review_content: { Args: { _data: Json }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
