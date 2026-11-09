@@ -158,7 +158,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setOwnListings((listings.data??[]).map(l=>{
       const rs=(revisions.data??[]).filter(r=>r.listing_id===l.id);
       const r=rs.find(r=>['draft','pending','changes_requested'].includes(r.status))??rs[0];
-      return {...((r && !['published','withdrawn','sold'].includes(r.status)?r.data:l.data) as unknown as Artwork),id:l.id,sellerId:userId,moderationStatus:['sold','withdrawn'].includes(l.moderation_status)?l.moderation_status:r?.status??l.moderation_status,sellerMessage:r?.seller_message,revisionId:r?.id,revisionVersion:r?.version};
+      return {...((r && !['published','withdrawn','sold'].includes(r.status)?r.data:l.data) as unknown as Artwork),id:l.id,sellerId:userId,moderationStatus:['sold','withdrawn'].includes(l.moderation_status)?l.moderation_status:r?.status??l.moderation_status,...(r?{sellerMessage:r.seller_message,revisionId:r.id,revisionVersion:r.version}:{})};
     }));
     setReviewNotifications((events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()})));
   },[userId]);

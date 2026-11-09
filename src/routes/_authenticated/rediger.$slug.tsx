@@ -69,6 +69,7 @@ function EditListingPage() {
   const [images,setImages]=useState(listing?.images??(listing?.image?[listing.image]:[]));
   const [edition,setEdition]=useState(listing?.edition??'');
   const [preview,setPreview]=useState(false);
+  useEffect(()=>{if(!listing)return;setArtistName(listing.artistName??'');setOwnWork(listing.ownWork??true);setSellerType(listing.sellerType??'Kunstner');setImages(listing.images??[listing.image]);setEdition(listing.edition??'');},[listing?.id]);
 
   useEffect(()=>{if(listing){setTitle(listing.title);setPrice(String(listing.sellerPayout??breakdownFromTotal(listing.price,listing.artFeeApplies??true).payout));setShippingPrice(String(listing.shippingPrice??0));setCategory(listing.category);setTechnique(listing.technique);setStyle(listing.style);setType(listing.type);setCondition(listing.condition);setSaleType(listing.saleType);setCounty(listing.county);setDescription(listing.description);setArtFeeApplies(listing.artFeeApplies??true);}},[listing?.id]);
 
