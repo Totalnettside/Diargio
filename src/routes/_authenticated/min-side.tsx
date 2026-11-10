@@ -16,6 +16,7 @@ import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
 import {useNavigate} from '@tanstack/react-router';
 import { privateHead, privatePageFor } from '@/lib/seo';
+import { ArrowRight, BarChart3, BadgeCheck, Clock3, Eye, Gavel, Heart, Inbox, LayoutGrid, MessageCircle, MessageSquareQuote, Palette, Plus, Send, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
@@ -79,63 +80,88 @@ function Dashboard() {
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
   const views = myActive.reduce((sum, a) => sum + a.views, 0);
 
-  const cards: Array<[string, string]> = [
-    ["Aktive annonser", String(myActive.length)],
-    ["Totale visninger", views.toLocaleString("nb-NO")],
-    ["Favoritter", String(favorites.length)],
-    ["Meldinger", String(conversations.length)],
-    ["Aktive bud", String(bids.length)],
-    ["Solgt", "0"],
+  const cards = [
+    { label: "Aktive annonser", value: String(myActive.length), detail: "Kunst du har lagt ut", icon: LayoutGrid },
+    { label: "Totale visninger", value: views.toLocaleString("nb-NO"), detail: "På dine annonser", icon: Eye },
+    { label: "Favoritter", value: String(favorites.length), detail: "Verk du har lagret", icon: Heart },
+    { label: "Meldinger", value: String(conversations.length), detail: "Samtaler med kjøpere og selgere", icon: MessageCircle },
+    { label: "Aktive bud", value: String(bids.length), detail: "Mottatte og sendte bud", icon: Gavel },
+    { label: "Solgt", value: "0", detail: "Registrerte salg", icon: BadgeCheck },
   ];
+  const statsCards = [
+    { label: "Visninger", value: views.toLocaleString("nb-NO"), icon: Eye },
+    { label: "Favoritter", value: String(myActive.reduce((s, a) => s + a.favorites, 0)), icon: Heart },
+    { label: "Henvendelser", value: String(conversations.length), icon: MessageCircle },
+    { label: "Konvertering", value: "0 %", icon: BarChart3 },
+    { label: "Bud", value: String(bids.length), icon: Gavel },
+    { label: "Salg", value: "0", icon: BadgeCheck },
+    { label: "Snitt salgstid", value: "–", icon: Clock3 },
+    { label: "Snitt salgspris", value: "–", icon: Sparkles },
+  ];
+  const mostViewed = [...myActive].sort((a, b) => b.views - a.views).slice(0, 3);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Min kunsthandel</h1>
-      <Button asChild variant="outline" className="mt-3 mr-3"><Link to="/ordre">Kjøp, salg og oppgjør</Link></Button>
-      <Button asChild variant="outline" className="mt-3"><Link to="/galleriplass" search={{ room: 2 }}>Still ut i galleriet</Link></Button>
+    <main className="account-dashboard mx-auto w-full max-w-6xl px-5 py-5">
+      <header className="account-hero">
+        <div className="account-hero-content">
+          <p className="account-eyebrow">Ditt Diargio</p>
+          <h1 className="account-hero-title">Min kunsthandel</h1>
+          <p className="account-hero-description">Annonser, bud og aktivitet – samlet på ett rolig sted.</p>
+        </div>
+        <div className="account-hero-actions">
+          <Button asChild variant="ghost" className="account-hero-button account-hero-button-primary"><Link to="/ordre">Kjøp, salg og oppgjør <ArrowRight /></Link></Button>
+          <Button asChild variant="ghost" className="account-hero-button"><Link to="/galleriplass" search={{ room: 2 }}><Palette /> Still ut i galleriet</Link></Button>
+        </div>
+      </header>
 
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <nav aria-label="Min side" className="account-tabs mt-5 flex gap-1 overflow-x-auto no-scrollbar">
         {tabs.map((t) => (
           <Button
             variant="ghost"
             key={t}
             onClick={() => setTab(t)}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold glass ${
-              tab === t ? "bg-brandink text-primary-foreground" : "bg-white/60"
-            }`}
+            aria-pressed={tab === t}
+            className={`account-tab shrink-0 ${tab === t ? "is-active" : ""}`}
           >
             {t}
             {t === "Bud" && <UnreadBadge count={unreadBids} />}
           </Button>
         ))}
-      </div>
+      </nav>
 
       {tab === "Oversikt" && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
-            {cards.map(([k, v]) => (
-              <div key={k} className="rounded-2xl p-4 glass">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
-                <p className="font-display text-2xl font-semibold">{v}</p>
-              </div>
+        <section className="account-section" aria-labelledby="account-overview-title">
+          <div className="account-section-heading">
+            <div><p className="account-kicker">Din aktivitet</p><h2 id="account-overview-title">Et raskt overblikk</h2></div>
+            <p>Alt som skjer med kunsten din</p>
+          </div>
+          <div className="account-metrics">
+            {cards.map(({ label, value, detail, icon: Icon }) => (
+              <article key={label} className="account-metric">
+                <div className="account-metric-top"><p>{label}</p><span className="account-metric-icon"><Icon /></span></div>
+                <p className="account-metric-value">{value}</p>
+                <p className="account-metric-detail">{detail}</p>
+              </article>
             ))}
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {receivedBids.length > 0 && <Button onClick={() => setTab("Bud")} variant="outline">Mottatte bud ({receivedBids.length}) <UnreadBadge count={unreadBids} /></Button>}
-            <Link
-              to="/selg"
-              className="rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground"
-            >
-              Legg ut kunst
-            </Link>
-            <Link to="/meldinger" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
-              Meldinger
-            </Link>
-            {isAdmin && <Link to="/diargioadmin007" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
-              Adminpanel
-            </Link>}
+          <div className="account-overview-panels">
+            <article className="account-panel account-bid-highlight">
+              <div className="account-panel-icon"><Gavel /></div>
+              <p className="account-kicker">Bud og forhandlinger</p>
+              <h3>{receivedBids.length} {receivedBids.length === 1 ? "mottatt bud" : "mottatte bud"}</h3>
+              <p>{unreadBids > 0 ? `${unreadBids} nye bud venter på deg.` : "Se status og svar på bud fra interesserte kjøpere."}</p>
+              <Button onClick={() => setTab("Bud")} variant="ghost" className="account-hero-button account-hero-button-primary">Gå til bud <ArrowRight /></Button>
+            </article>
+            <article className="account-panel account-shortcuts">
+              <p className="account-kicker">Snarveier</p><h3>Hva vil du gjøre nå?</h3>
+              <div className="account-shortcut-list">
+                <Link to="/selg"><span className="account-shortcut-icon"><Plus /></span><span><strong>Legg ut kunst</strong><small>Opprett en ny annonse</small></span><ArrowRight /></Link>
+                <Link to="/meldinger"><span className="account-shortcut-icon"><MessageCircle /></span><span><strong>Åpne meldinger</strong><small>Fortsett samtalene dine</small></span><ArrowRight /></Link>
+                {isAdmin && <Link to="/diargioadmin007"><span className="account-shortcut-icon"><LayoutGrid /></span><span><strong>Adminpanel</strong><small>Administrer Diargio</small></span><ArrowRight /></Link>}
+              </div>
+            </article>
           </div>
-        </>
+        </section>
       )}
 
       {tab === "Kunstvegger" && <SavedWalls />}
@@ -217,36 +243,60 @@ function Dashboard() {
       )}
 
       {tab === "Bud" && (
-        <div className="mt-4 space-y-2">
-          {bidError && <p role="alert" className="text-sm text-destructive">{bidError}</p>}
-          {[["Mottatte bud", receivedBids], ["Mine bud", sentBids]].map(([label, list]) => (
-            <section key={String(label)} className="mb-6">
-            <h2 className="mb-3 font-semibold">{String(label)}</h2>
-            {(list as typeof bids).length === 0 && <p className="text-sm text-muted-foreground">Ingen bud ennå.</p>}
-            {(list as typeof bids).map((b) => {
-              const art = allArtworks.find((a) => a.id === b.artworkId);
-              return (
-                <div key={b.id} className="rounded-2xl p-4 text-sm glass">
-                  <p className="font-semibold">{art?.title}</p>
-                  <p className="text-ink/60">
-                    {formatPrice(b.amount)} {b.sellerId === user?.id && !b.read && <span className="font-semibold text-brandink">· Nytt bud</span>}
-                  </p>
-                  {b.message && <p className="mt-1">{b.message}</p>}
-                  <p className="mt-2 font-semibold">{b.status === "Sendt" ? "Venter på svar" : b.status === "Godtatt" ? "Godkjent · ikke betalt" : b.status}</p>
-                  {b.sellerId === user?.id && b.status === "Sendt" && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Button disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "accepted")}>Godkjenn bud</Button>
-                      <Button variant="outline" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "rejected")}>Avslå bud</Button>
-                    </div>
-                  )}
-                  <p className="mt-1 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
-                  {b.buyerId===user?.id&&b.status==="Godtatt"&&art&&<Button asChild className="mt-2"><Link to="/kjop/$slug" params={{slug:art.slug}} search={{bid:b.id}}>Betal godkjent bud</Link></Button>}
-                  {b.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}>Åpne samtale</Link></Button>}
+        <div className="account-section">
+          {bidError && <p role="alert" className="mb-4 text-sm text-destructive">{bidError}</p>}
+          {([["Mottatte bud", receivedBids], ["Mine bud", sentBids]] as const).map(([label, list]) => {
+            const SectionIcon = label === "Mottatte bud" ? Inbox : Send;
+            return (
+              <section key={label} className="account-bid-section" aria-labelledby={`bids-${label === "Mottatte bud" ? "received" : "sent"}`}>
+                <div className="account-section-heading account-bid-heading">
+                  <div className="account-bid-heading-title"><span className="account-section-icon"><SectionIcon /></span><div><p className="account-kicker">Forhandlinger</p><h2 id={`bids-${label === "Mottatte bud" ? "received" : "sent"}`}>{label}</h2></div></div>
+                  <span className="account-count">{list.length}</span>
                 </div>
-              );
-            })}
-            </section>
-          ))}
+                {list.length === 0 ? (
+                  <div className="account-empty"><Gavel /><div><h3>Ingen bud ennå</h3><p>{label === "Mottatte bud" ? "Nye bud fra kjøpere vises her." : "Bud du sender på kunst vises her."}</p></div></div>
+                ) : (
+                  <div className="account-bid-list">
+                    {list.map((b) => {
+                      const art = allArtworks.find((a) => a.id === b.artworkId);
+                      const statusLabel = b.status === "Sendt" ? "Venter på svar" : b.status === "Godtatt" ? "Godkjent · ikke betalt" : b.status;
+                      return (
+                        <article key={b.id} className="account-bid-card">
+                          <div className="account-bid-main">
+                            <div className="account-bid-art">
+                              {art ? <ArtworkPreview image={art.image} alt={art.title} /> : <Gavel />}
+                            </div>
+                            <div className="account-bid-info">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`account-status status-${b.status.toLowerCase().replace("å", "a")}`}>{statusLabel}</span>
+                                {b.sellerId === user?.id && !b.read && <span className="account-new-bid">Nytt bud</span>}
+                              </div>
+                              {art ? <Link to="/kunst/$slug" params={{ slug: art.slug }} className="account-bid-title">{art.title}</Link> : <h3 className="account-bid-title">Kunstverk</h3>}
+                              <p className="account-bid-date">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
+                            </div>
+                            <div className="account-bid-amount"><span>Budbeløp</span><strong>{formatPrice(b.amount)}</strong></div>
+                          </div>
+                          {b.message && <blockquote className="account-bid-message"><MessageSquareQuote /><p>{b.message}</p></blockquote>}
+                          {(b.sellerId === user?.id && b.status === "Sendt") || (b.buyerId === user?.id && b.status === "Godtatt" && art) || b.conversationId ? (
+                            <div className="account-bid-footer">
+                              <div className="account-bid-actions">
+                                {b.sellerId === user?.id && b.status === "Sendt" && <>
+                                  <Button size="sm" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "accepted")}>Godkjenn bud</Button>
+                                  <Button size="sm" variant="outline" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "rejected")}>Avslå bud</Button>
+                                </>}
+                                {b.buyerId === user?.id && b.status === "Godtatt" && art && <Button asChild size="sm"><Link to="/kjop/$slug" params={{ slug: art.slug }} search={{ bid: b.id }}>Betal godkjent bud <ArrowRight /></Link></Button>}
+                              </div>
+                              {b.conversationId && <Button asChild variant="ghost" size="sm" className="account-conversation-link"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}><MessageCircle /> Åpne samtale</Link></Button>}
+                            </div>
+                          ) : null}
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
       )}
 
@@ -282,29 +332,36 @@ function Dashboard() {
       )}
 
       {tab === "Statistikk" && (
-        <div className="mt-4 space-y-4">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              ["Visninger", views.toLocaleString("nb-NO")],
-              ["Favoritter", String(myActive.reduce((s, a) => s + a.favorites, 0))],
-              ["Henvendelser", String(conversations.length)],
-              ["Konvertering", "0 %"],
-              ["Bud", String(bids.length)],
-              ["Salg", "0"],
-              ["Snitt salgstid", "–"],
-              ["Snitt salgspris", "–"],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl p-4 glass">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
-                <p className="text-lg font-bold">{v}</p>
-              </div>
+        <section className="account-section" aria-labelledby="account-stats-title">
+          <div className="account-section-heading">
+            <div><p className="account-kicker">Innsikt</p><h2 id="account-stats-title">Slik presterer kunsten din</h2></div>
+            <p>Registrert aktivitet på annonsene dine</p>
+          </div>
+          <div className="account-metrics account-stats-metrics">
+            {statsCards.map(({ label, value, icon: Icon }) => (
+              <article key={label} className="account-metric account-stat-card">
+                <div className="account-metric-top"><p>{label}</p><span className="account-metric-icon"><Icon /></span></div>
+                <p className="account-metric-value">{value}</p>
+              </article>
             ))}
           </div>
-          <div className="rounded-3xl p-4 glass">
-            <p className="text-sm font-bold">Visninger siste 30 dager</p>
-            <p className="mt-3 text-sm text-muted-foreground">Visningsmåling er ikke aktivert. Ingen historikk er beregnet.</p>
+          <div className="account-insight-grid">
+            <article className="account-panel account-chart-panel">
+              <div className="account-panel-heading"><div><p className="account-kicker">Utvikling</p><h3>Visninger siste 30 dager</h3></div><BarChart3 /></div>
+              <div className="account-chart-empty"><span><BarChart3 /></span><p>Ingen historikk er beregnet ennå.</p><small>Visningsmåling er ikke aktivert.</small></div>
+            </article>
+            <article className="account-panel account-ranking-panel">
+              <div className="account-panel-heading"><div><p className="account-kicker">Mest sett</p><h3>Annonser med oppmerksomhet</h3></div><Eye /></div>
+              {mostViewed.length > 0 ? <div className="account-ranking-list">{mostViewed.map((artwork, index) => (
+                <Link key={artwork.id} to="/kunst/$slug" params={{ slug: artwork.slug }} className="account-ranking-item">
+                  <span className="account-ranking-number">0{index + 1}</span>
+                  <span className="account-ranking-copy"><strong>{artwork.title}</strong><small>{artwork.views.toLocaleString("nb-NO")} visninger · {artwork.favorites} favoritter</small></span>
+                  <ArrowRight />
+                </Link>
+              ))}</div> : <p className="account-ranking-empty">Legg ut kunst for å se statistikk her.</p>}
+            </article>
           </div>
-        </div>
+        </section>
       )}
 
       {tab === "Vurderinger" && (
