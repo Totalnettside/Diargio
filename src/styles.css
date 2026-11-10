@@ -735,7 +735,7 @@ a.account-bid-title:hover { color:var(--account-green); text-decoration:underlin
 .topbar-main-nav { display:none; gap:16px; justify-content:center; white-space:nowrap; font-size:14px; }
 .topbar-account { gap:6px; }
 .topbar-control, .topbar-account [aria-label="Velg språk"] { border:1px solid var(--nav-outline); border-radius:999px; background:var(--topbar); box-shadow:none; height:40px; }
-.topbar-account > a[aria-label="Varsler"], .topbar-avatar { width:40px; height:40px; }
+.topbar-account [aria-label^="Varsler"], .topbar-avatar { width:40px; height:40px; }
 .topbar-account [aria-label="Velg språk"] { padding-inline:12px; font-size:13px; gap:6px; }
 .topbar-account svg { width:18px; height:18px; }
 .topbar-logout { padding-inline:12px; font-size:13px; }
@@ -765,7 +765,7 @@ a.account-bid-title:hover { color:var(--account-green); text-decoration:underlin
   .topbar-main-nav { gap:22px; font-size:16px; }
   .topbar-account { gap:8px; }
   .topbar-control, .topbar-account [aria-label="Velg språk"] { height:44px; }
-  .topbar-account > a[aria-label="Varsler"], .topbar-avatar { width:44px; height:44px; }
+  .topbar-account [aria-label^="Varsler"], .topbar-avatar { width:44px; height:44px; }
   .topbar-account [aria-label="Velg språk"] { padding-inline:14px; font-size:14px; }
   .topbar-logout, .topbar-signup { font-size:14px; }
 }
@@ -776,7 +776,7 @@ a.account-bid-title:hover { color:var(--account-green); text-decoration:underlin
   .topbar-signup { display:none; }
   .topbar-account { gap:6px; }
   .topbar-control, .topbar-account [aria-label="Velg språk"] { height:36px; border-width:1px; }
-  .topbar-account > a[aria-label="Varsler"], .topbar-avatar, .topbar-menu-toggle { width:36px; height:36px; }
+  .topbar-account [aria-label^="Varsler"], .topbar-avatar, .topbar-menu-toggle { width:36px; height:36px; }
   .topbar-account [aria-label="Velg språk"] { padding:0 8px; font-size:12px; gap:4px; }
   .topbar-account svg { width:16px; height:16px; }
 }
