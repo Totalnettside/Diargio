@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import diargioLogo from "@/assets/diargio-logo.png.asset.json";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
-import { Bell, Menu, X } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { Menu, X } from "lucide-react";
+import { NotificationMenu } from "@/components/NotificationMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
@@ -11,10 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export function TopBar() {
-  const { notifications } = useStore();
   const { user, signOut } = useAuth();
   const { unread: unreadMsgs } = useChat();
-  const unread = notifications.filter((n) => !n.read).length;
   const [avatar, setAvatar] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -71,14 +69,7 @@ export function TopBar() {
 
         <div className="topbar-account flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
-          <Link
-            to="/varsler"
-            className="topbar-control relative grid size-10 shrink-0 place-items-center rounded-full bg-topbar"
-            aria-label="Varsler"
-          >
-            <Bell className="size-4" />
-            <UnreadBadge count={unread} className="absolute -right-1 -top-1" />
-          </Link>
+          <NotificationMenu />
           {user ? (
             <>
               <Link
