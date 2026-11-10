@@ -1,4 +1,5 @@
 # Budvarsler
+- [ ] Rett egne annonse-/bildeslettinger, skill arkivering fra trekking, erstatt nettleserdialoger, styrk adminhandlinger og historikk; test tilgang og mobil.
 - [x] Annonsegodkjenning: versjoner, selgerutkast/status, administratorkø, historikk, private vedlegg, varsler og sikkerhetsvern; 34 tester, eier/adminflyt, offentlige sperrer og fire bekreftede e-postutsendinger.
 - [ ] Sluttkontroll av annonsegodkjenning med separat vanlig selgerkonto — verktøytilgangen tillater bare forespørrende administratorkonto; se moderation-verification.md.
 - [x] Tilpass felles toppmeny og sideramme til Bilde.png; kontrollert 320–1920 px, syv sidetyper, innlogget mobilmeny og søk uten overlapp eller nettleserfeil.
