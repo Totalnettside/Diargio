@@ -162,6 +162,13 @@
       "when": 1794294710083,
       "tag": "0022_safe_listing_archival_and_account_moderation",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794294790433,
+      "tag": "0023_allow_safe_withdrawal_of_restricted_revisions",
+      "breakpoints": true
     }
   ]
 }
