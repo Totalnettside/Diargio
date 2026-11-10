@@ -13,6 +13,8 @@ import {AccountSecurity} from "@/components/AccountSecurity";
 import { SavedWalls } from "@/components/visual/SavedWalls";
 import {moderationLabels,submissionConfirmation} from '@/lib/moderation';
 import {ArtworkPreview} from '@/components/ArtworkPreview';
+import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
+import {useNavigate} from '@tanstack/react-router';
 
 export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
@@ -46,6 +48,8 @@ const tabs = [
 ] as const;
 
 function Dashboard() {
+  const dialog=useActionDialog();
+  const navigate=useNavigate();
   const {
     myListings,
     favorites,
@@ -71,12 +75,13 @@ function Dashboard() {
   const [decidingBid, setDecidingBid] = useState<string | null>(null);
   const [bidError, setBidError] = useState("");
   const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
-    if (!window.confirm(decision === "accepted" ? "Godkjenne dette budet? Betaling er ikke gjennomført." : "Avslå dette budet?")) return;
+    dialog({title:decision==='accepted'?'Godkjenne budet?':'Avslå budet?',description:decision==='accepted'?'Betaling er ikke gjennomført. Kjøperen får beskjed om at budet er godkjent.':'Kjøperen får beskjed om at budet er avslått.',confirmLabel:decision==='accepted'?'Godkjenn bud':'Avslå bud',success:'Budet er behandlet',action:async()=>{
     setDecidingBid(id);
     setBidError("");
     try { await decideBid(id, decision); }
-    catch (error) { setBidError(error instanceof Error ? error.message : "Kunne ikke behandle budet."); }
+    catch (error) { throw error; }
     finally { setDecidingBid(null); }
+    }});
   };
   const myActive = [...myListings];
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
@@ -171,18 +176,14 @@ function Dashboard() {
                       Endre
                     </Link>
                     <Button variant="outline"
-                      onClick={() => {
-                        if (window.confirm(`Trekke «${a.title}» fra markedsplassen?`)) {
-                          void deleteListing(a.id).catch(e=>window.alert(e instanceof Error?e.message:"Kunne ikke slette"));
-                        }
-                      }}
+                      onClick={() => dialog({title:'Slette annonsen?',description:listingDeletionDescription(a.title),confirmLabel:'Slett annonsen',busyLabel:'Sletter …',destructive:true,success:'Annonsen er slettet',action:async()=>{await deleteListing(a.id);setTab('Mine annonser');await navigate({to:'/min-side',search:{tab:'Mine annonser'}});}})}
                       className="text-xs"
                     >
-                      Trekk
+                      Slett
                     </Button>
                   </div>
                 )}
-                {a.moderationStatus!=='sold'&&<Button variant="ghost" className="mt-2 text-xs" onClick={()=>{if(window.confirm('Markere verket som solgt? Dette kan ikke angres.'))void changeVisibility(a.id,'sold').catch(e=>window.alert(e.message));}}>Marker som solgt</Button>}
+                {a.moderationStatus!=='sold'&&<div className="flex flex-wrap gap-1"><Button variant="ghost" className="mt-2 text-xs" onClick={()=>dialog({title:'Trekke annonsen fra salg?',description:'Annonsen blir skjult for kjøpere. Du beholder den under Mine annonser.',confirmLabel:'Trekk fra salg',success:'Annonsen er trukket fra salg',action:()=>changeVisibility(a.id,'withdrawn')})}>Trekk fra salg</Button><Button variant="ghost" className="mt-2 text-xs" onClick={()=>dialog({title:'Markere verket som solgt?',description:'Annonsen kan ikke lenger kjøpes. Dette registrerer ingen betaling eller nytt oppgjør.',confirmLabel:'Marker som solgt',action:()=>changeVisibility(a.id,'sold')})}>Marker som solgt</Button></div>}
               </div>
             );
           })}

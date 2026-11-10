@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { z } from 'zod';
 import { listingDraftSchema } from './moderation';
 import type { Json } from '@/integrations/supabase/types';
+import { actionError } from './action-errors';
 
 export const saveListingDraft = createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
   .inputValidator(d => z.object({listing: listingDraftSchema}).parse(d))
@@ -19,10 +20,10 @@ export const submitListing = createServerFn({method:'POST'}).middleware([require
     return {eventId};
   });
 export const changeListingVisibility = createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
-  .inputValidator(d => z.object({id:z.string().min(1).max(200),action:z.enum(['draft','withdrawn','sold'])}).parse(d))
+  .inputValidator(d => z.object({id:z.string().min(1).max(200),action:z.enum(['draft','withdrawn','sold','delete','block','unblock','restore']),reason:z.string().max(4000).optional(),note:z.string().max(4000).optional()}).parse(d))
   .handler(async({data,context}) => {
-    const {error} = await context.supabase.rpc('change_listing_visibility',{_id:data.id,_action:data.action});
-    if(error) throw new Error(error.message);
+    const {error} = await context.supabase.rpc('manage_listing_visibility',{_id:data.id,_action:data.action,_reason:data.reason??'',_note:data.note??''});
+    if(error) { console.error('Listing visibility failed',error); throw new Error(actionError(new Error(error.message),'Annonsen kunne ikke endres. Prøv igjen.')); }
     return {ok:true};
   });
 export const getModerationQueue = createServerFn({method:'GET'}).middleware([requireSupabaseAuth])

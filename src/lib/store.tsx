@@ -151,7 +151,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const loadOwnListings = useCallback(async () => {
     if(!userId) {setOwnListings([]);setReviewNotifications([]);return;}
     const [listings,revisions,events] = await Promise.all([
-      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId),
+      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId).is('deleted_at',null),
       supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
       supabase.from('listing_review_events').select('*').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
     ]);
@@ -307,7 +307,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       submitListing:async(id)=>{const r=await submitListing({data:{id}});if(r.eventId){try{await sendReviewNotice({data:{eventId:r.eventId}});}catch{notify('E-postvarsel venter','Annonsen er sendt inn; e-postvarselet kan sendes på nytt.');}}notify('Sendt til godkjenning',submissionConfirmation);await loadOwnListings();},
       changeVisibility:async(id,action)=>{await changeListingVisibility({data:{id,action}});await Promise.all([loadListings(),loadOwnListings()]);},
       deleteListing: async (id) => {
-        await changeListingVisibility({data:{id,action:'withdrawn'}});await Promise.all([loadListings(),loadOwnListings()]);
+        await changeListingVisibility({data:{id,action:'delete'}});await Promise.all([loadListings(),loadOwnListings()]);
       },
     }),
     [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows,ownListings,reviewNotifications,loadOwnListings],
