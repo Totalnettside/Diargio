@@ -12,10 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export function TopBar() {
-  const { notifications } = useStore();
   const { user, signOut } = useAuth();
   const { unread: unreadMsgs } = useChat();
-  const unread = notifications.filter((n) => !n.read).length;
   const [avatar, setAvatar] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
