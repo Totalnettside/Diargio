@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, MessageCircle, Send } from "lucide-react";
 import { privateHead, privatePageFor } from "@/lib/seo";
 
 export const Route = createFileRoute("/_authenticated/meldinger")({
@@ -23,10 +23,11 @@ function MessagesPage() {
   const { allArtworks, bids, markBidRead } = useStore();
   const { c } = Route.useSearch();
   const { conversations, messages, names, unreadFor, send, markRead } = useChat();
-  const [activeId, setActiveId] = useState("");
+  const navigate = useNavigate();
   const [text, setText] = useState("");
   const threadRef = useRef<HTMLDivElement>(null);
-  const active = conversations.find((conversation) => conversation.id === (activeId || c)) ?? conversations[0];
+  const active = conversations.find((conversation) => conversation.id === c) ?? conversations[0];
+  const mobileChatOpen = Boolean(c && active?.id === c);
   const thread = active ? messages.filter((m) => m.conversation_id === active.id) : [];
   const artwork = active ? allArtworks.find((a) => a.id === active.listing_id) : undefined;
   const activeUnread = active ? unreadFor(active.id) : 0;
@@ -75,10 +76,10 @@ function MessagesPage() {
     names[c.buyer_id === user?.id ? c.seller_id : c.buyer_id] ?? "Bruker";
 
   return (
-    <main className="messages-page mx-auto w-full max-w-6xl px-4 py-8 md:px-5 md:py-10">
-      <h1 className="messages-title text-3xl font-semibold">Meldinger</h1>
+    <main className={`messages-page mx-auto w-full max-w-6xl px-4 py-8 md:px-5 md:py-10 ${mobileChatOpen ? "messages-chat-open" : ""}`}>
+      <h1 className={`messages-title text-3xl font-semibold ${mobileChatOpen ? "hidden md:block" : ""}`}>Meldinger</h1>
       <div className="messages-workspace mt-6 grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)]">
-        <aside aria-label="Samtaler" className="messages-list flex min-w-0 flex-col gap-3 overflow-y-auto">
+        <aside aria-label="Samtaler" className={`messages-list min-w-0 flex-col gap-3 overflow-y-auto ${mobileChatOpen ? "hidden md:flex" : "flex"}`}>
           {conversations.map((c) => {
             const art = allArtworks.find((a) => a.id === c.listing_id);
             const last = messages.filter((m) => m.conversation_id === c.id).at(-1);
@@ -87,7 +88,7 @@ function MessagesPage() {
               <Button
                 variant="ghost"
                 key={c.id}
-                onClick={() => setActiveId(c.id)}
+                onClick={() => void navigate({ to: "/meldinger", search: { c: c.id } })}
                 aria-pressed={c.id === active?.id}
                 className={`messages-conversation h-auto w-full shrink-0 justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-left ${c.id === active?.id ? "is-active" : ""}`}
               >
@@ -103,7 +104,23 @@ function MessagesPage() {
           })}
         </aside>
 
-        <section aria-label="Aktiv samtale" className="messages-chat flex min-w-0 flex-col overflow-hidden rounded-[2rem] border">
+        <section aria-label="Aktiv samtale" className={`messages-chat min-w-0 flex-col overflow-hidden rounded-[2rem] border ${mobileChatOpen ? "flex" : "hidden md:flex"}`}>
+          <div className="flex shrink-0 items-center gap-2 border-b p-2 md:hidden">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Tilbake til samtaler"
+              onClick={() => void navigate({ to: "/meldinger", search: {} })}
+              className="shrink-0"
+            >
+              <ArrowLeft />
+            </Button>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{active ? otherName(active) : "Samtale"}</p>
+              {artwork && <p className="truncate text-xs text-muted-foreground">{artwork.title}</p>}
+            </div>
+          </div>
           {artwork && (
             <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="messages-context flex shrink-0 items-center gap-4 border-b p-5 transition-colors">
               <img src={artwork.image} alt={artwork.title} loading="lazy" className="messages-thumbnail size-16 shrink-0 rounded-xl object-contain" />
