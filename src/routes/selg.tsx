@@ -616,8 +616,26 @@ function SellPage() {
           )}
         </div>
       </section>
+      <aside className="sell-live-preview" aria-label="Forhåndsvisning av annonsen">
+        <p className="sell-flow-eyebrow">Din annonse</p>
+        <div className="sell-live-image">
+          {images[0] ? <img src={images[0]} alt="Første bilde i annonsen" /> : <><Upload /><span>Bildet ditt vises her</span></>}
+        </div>
+        <div className="sell-live-copy">
+          <p>{artistName || "Kunstner kan legges til senere"}</p>
+          <h2>{title || "Verkets navn"}</h2>
+          <strong>{saleType === "Pris på forespørsel" ? "Pris på forespørsel" : formatPrice(priceFromPayout(Number(price) || 0, artFeeApplies).total)}</strong>
+        </div>
+        <div className="sell-live-checklist">
+          <span className={images.length ? "is-done" : ""}>{images.length ? `${images.length} bilde${images.length === 1 ? "" : "r"} lagt til` : "Legg til det første bildet"}</span>
+          <span className={title.trim() ? "is-done" : ""}>{title.trim() ? "Verket har fått navn" : "Gi verket et navn"}</span>
+          <span className={step === 6 ? "is-done" : ""}>{step === 6 ? "Klar til gjennomgang" : "Forhåndsvis til slutt"}</span>
+        </div>
+        <p className="sell-live-footnote"><Sparkles /> En god presentasjon gjør det lettere for kjøperen å bli kjent med verket.</p>
+      </aside>
+      </div>
       {imageError&&step!==0&&<p role="alert" className="mt-3 text-sm text-destructive">{imageError}</p>}
-      <Button variant="outline" className="mt-4" disabled={publishing||!title.trim()||images.length===0} onClick={()=>void publish(true)}>Lagre utkast</Button>
+      <Button variant="outline" className="sell-draft-button mt-4" disabled={publishing||!title.trim()||images.length===0} onClick={()=>void publish(true)}>Lagre utkast</Button>
       {cropIndex !== null && originalImages[cropIndex] && (
         <ImageCropDialog
           key={cropIndex}
