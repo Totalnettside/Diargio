@@ -4,13 +4,16 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 async function purgeUser(uid: string) {
   const { supabaseAdmin: a } = await import("@/integrations/supabase/client.server");
-  const [orders,purchases,conversations]=await Promise.all([
+  const [orders,purchases,conversations,bids,listings,accounts]=await Promise.all([
     a.from('art_orders').select('id').or(`buyer_id.eq.${uid},seller_id.eq.${uid}`).limit(1),
     a.from('purchases').select('id').or(`buyer_id.eq.${uid},seller_id.eq.${uid}`).limit(1),
     a.from('conversations').select('id').or(`buyer_id.eq.${uid},seller_id.eq.${uid}`).limit(1),
+    a.from('bids').select('id').or(`buyer_id.eq.${uid},seller_id.eq.${uid}`).limit(1),
+    a.from('listings').select('id').eq('user_id',uid).limit(1),
+    a.from('artist_payment_accounts').select('user_id').eq('user_id',uid).limit(1),
   ]);
-  if(orders.error||purchases.error||conversations.error)throw new Error('Historikken kunne ikke kontrolleres. Ingen sletting utført.');
-  if(orders.data?.length||purchases.data?.length||conversations.data?.length)throw new Error('Kontoen har handel eller samtalehistorikk. Sletting er blokkert for å bevare andre parters rettigheter; kontakt ansvarlig for personvern og oppgjør.');
+  if([orders,purchases,conversations,bids,listings,accounts].some(r=>r.error))throw new Error('Historikken kunne ikke kontrolleres. Ingen sletting utført.');
+  if(orders.data?.length||purchases.data?.length||conversations.data?.length||bids.data?.length||listings.data?.length||accounts.data?.length)throw new Error('Kontoen har handel eller samtalehistorikk, annonser eller betalingsdokumentasjon som må bevares. Sletting krever separat personvernbehandling.');
   for(const bucket of ['avatars','art-wall-rooms']){
     const {data:objects,error}=await a.storage.from(bucket).list(uid,{limit:1000});
     if(error)throw new Error('Kunne ikke kontrollere private bilder.');
