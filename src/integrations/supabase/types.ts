@@ -726,6 +726,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_save_listing_revision: {
+        Args: { _data: Json; _id: string; _note?: string; _reason?: string }
+        Returns: string
+      }
       artist_follower_count: { Args: { _artist: string }; Returns: number }
       change_listing_visibility: {
         Args: { _action: string; _id: string }

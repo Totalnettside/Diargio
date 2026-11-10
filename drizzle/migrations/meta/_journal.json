@@ -169,6 +169,13 @@
       "when": 1794294790433,
       "tag": "0023_allow_safe_withdrawal_of_restricted_revisions",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794294925755,
+      "tag": "0024_owner_deletion_and_admin_reviewed_edits",
+      "breakpoints": true
     }
   ]
 }
