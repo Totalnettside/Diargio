@@ -332,29 +332,36 @@ function Dashboard() {
       )}
 
       {tab === "Statistikk" && (
-        <div className="mt-4 space-y-4">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              ["Visninger", views.toLocaleString("nb-NO")],
-              ["Favoritter", String(myActive.reduce((s, a) => s + a.favorites, 0))],
-              ["Henvendelser", String(conversations.length)],
-              ["Konvertering", "0 %"],
-              ["Bud", String(bids.length)],
-              ["Salg", "0"],
-              ["Snitt salgstid", "–"],
-              ["Snitt salgspris", "–"],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl p-4 glass">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
-                <p className="text-lg font-bold">{v}</p>
-              </div>
+        <section className="account-section" aria-labelledby="account-stats-title">
+          <div className="account-section-heading">
+            <div><p className="account-kicker">Innsikt</p><h2 id="account-stats-title">Slik presterer kunsten din</h2></div>
+            <p>Registrert aktivitet på annonsene dine</p>
+          </div>
+          <div className="account-metrics account-stats-metrics">
+            {statsCards.map(({ label, value, icon: Icon }) => (
+              <article key={label} className="account-metric account-stat-card">
+                <div className="account-metric-top"><p>{label}</p><span className="account-metric-icon"><Icon /></span></div>
+                <p className="account-metric-value">{value}</p>
+              </article>
             ))}
           </div>
-          <div className="rounded-3xl p-4 glass">
-            <p className="text-sm font-bold">Visninger siste 30 dager</p>
-            <p className="mt-3 text-sm text-muted-foreground">Visningsmåling er ikke aktivert. Ingen historikk er beregnet.</p>
+          <div className="account-insight-grid">
+            <article className="account-panel account-chart-panel">
+              <div className="account-panel-heading"><div><p className="account-kicker">Utvikling</p><h3>Visninger siste 30 dager</h3></div><BarChart3 /></div>
+              <div className="account-chart-empty"><span><BarChart3 /></span><p>Ingen historikk er beregnet ennå.</p><small>Visningsmåling er ikke aktivert.</small></div>
+            </article>
+            <article className="account-panel account-ranking-panel">
+              <div className="account-panel-heading"><div><p className="account-kicker">Mest sett</p><h3>Annonser med oppmerksomhet</h3></div><Eye /></div>
+              {mostViewed.length > 0 ? <div className="account-ranking-list">{mostViewed.map((artwork, index) => (
+                <Link key={artwork.id} to="/kunst/$slug" params={{ slug: artwork.slug }} className="account-ranking-item">
+                  <span className="account-ranking-number">0{index + 1}</span>
+                  <span className="account-ranking-copy"><strong>{artwork.title}</strong><small>{artwork.views.toLocaleString("nb-NO")} visninger · {artwork.favorites} favoritter</small></span>
+                  <ArrowRight />
+                </Link>
+              ))}</div> : <p className="account-ranking-empty">Legg ut kunst for å se statistikk her.</p>}
+            </article>
           </div>
-        </div>
+        </section>
       )}
 
       {tab === "Vurderinger" && (
