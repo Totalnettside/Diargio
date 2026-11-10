@@ -4,7 +4,6 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { NotificationMenu } from "@/components/NotificationMenu";
-import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
