@@ -156,7 +156,7 @@ function DealRoom() {
               value={bid}
               onChange={(e) => setBid(e.target.value)}
               placeholder="Beløp i kr"
-              className="w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border-2 border-primary/40 bg-background px-4 py-3 text-sm text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <Button type="submit" disabled={sending} variant="secondary" className="shrink-0">{sending ? "Sender …" : "Gi bud"}</Button>
           </form>
@@ -179,7 +179,7 @@ function DealRoom() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Skriv en melding …"
-              className="w-full rounded-2xl bg-white/70 px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border-2 border-primary/40 bg-background px-4 py-3 text-sm text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <Button type="submit" disabled={sending} className="shrink-0">
               Send
