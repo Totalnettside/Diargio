@@ -70,14 +70,7 @@ export function TopBar() {
 
         <div className="topbar-account flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
-          <Link
-            to="/varsler"
-            className="topbar-control relative grid size-10 shrink-0 place-items-center rounded-full bg-topbar"
-            aria-label="Varsler"
-          >
-            <Bell className="size-4" />
-            <UnreadBadge count={unread} className="absolute -right-1 -top-1" />
-          </Link>
+          <NotificationMenu />
           {user ? (
             <>
               <Link
