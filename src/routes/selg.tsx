@@ -90,7 +90,7 @@ function Field({
   );
 }
 
-const inputClass = "w-full rounded-2xl bg-white/70 px-3 py-2.5 text-sm outline-none glass";
+const inputClass = "sell-input w-full rounded-2xl px-4 py-3 text-sm outline-none";
 
 function SellPage() {
   const dialog=useActionDialog();
@@ -244,25 +244,42 @@ function SellPage() {
 
   const maxStep = images.length === 0 ? 0 : !title.trim() ? 2 : stepTitles.length - 1;
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Legg ut kunst</h1>
-      {imageError&&<p role="alert" className="mt-3 text-destructive">{imageError}</p>}
-      <div className="mt-3 flex gap-1 overflow-x-auto pb-1 no-scrollbar">
+    <main className="sell-flow mx-auto w-full max-w-6xl px-5 py-6 sm:px-8">
+      <header className="sell-flow-hero">
+        <div>
+          <p className="sell-flow-eyebrow">Fra kunstner til ny eier</p>
+          <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl">Legg ut kunst</h1>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-nav-highlight/80 sm:text-base">
+            Presenter verket med gode bilder og en tydelig historie. Vi hjelper deg steg for steg.
+          </p>
+        </div>
+        <div className="sell-flow-hero-note">
+          <span>Gratis å legge ut</span>
+          <strong>Du godkjenner alt før innsending</strong>
+        </div>
+      </header>
+      {imageError&&<p role="alert" className="sell-flow-error mt-4 text-sm text-destructive">{imageError}</p>}
+      <div className="sell-progress-meta">
+        <span>Steg {step + 1} av {stepTitles.length}</span>
+        <span>{stepTitles[step]}</span>
+      </div>
+      <div className="sell-progress-track" aria-hidden="true"><span style={{ width: `${((step + 1) / stepTitles.length) * 100}%` }} /></div>
+      <div className="sell-stepper mt-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar" aria-label="Steg i annonsen">
         {stepTitles.map((t, i) => (
           <button
             key={t}
             onClick={() => i <= maxStep && setStep(i)}
             disabled={i > maxStep}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold glass disabled:opacity-40 ${
-              i === step ? "bg-brandink text-primary-foreground" : "bg-white/60"
-            }`}
+            aria-current={i === step ? "step" : undefined}
+            className={`sell-step-button ${i === step ? "is-current" : ""} ${i < step ? "is-complete" : ""}`}
           >
-            {i + 1}. {t}
+            <span>{i + 1}</span>{t}
           </button>
         ))}
       </div>
 
-      <section className="mt-4 space-y-4 rounded-3xl p-5 glass">
+      <div className="sell-flow-workspace">
+      <section className="sell-panel mt-5 space-y-5 rounded-3xl p-5 sm:p-7">
         {step === 0 && (
           <>
             <p className="font-display text-lg font-semibold">Last opp bilder</p>
@@ -356,7 +373,7 @@ function SellPage() {
                   <button
                     key={a.id}
                     onClick={() => setArtistName(a.name)}
-                    className="flex w-full items-center gap-2 rounded-2xl bg-white/70 px-3 py-2 text-left text-sm glass"
+                    className="flex w-full items-center gap-2 rounded-2xl bg-card/80 px-3 py-2 text-left text-sm glass"
                   >
                     <img src={a.avatar} alt="" className="size-8 rounded-full object-cover" />
                     {a.name}
@@ -371,7 +388,7 @@ function SellPage() {
                   <button
                     key={w.id}
                     onClick={() => setArtistName(w.label)}
-                    className="flex w-full flex-col rounded-2xl bg-white/70 px-3 py-2 text-left text-sm glass"
+                    className="flex w-full flex-col rounded-2xl bg-card/80 px-3 py-2 text-left text-sm glass"
                   >
                     <span className="font-semibold">{w.label}</span>
                     <span className="text-xs text-muted-foreground">{w.description}</span>
@@ -467,7 +484,7 @@ function SellPage() {
                   key={label}
                   onClick={() => setter(!value)}
                   className={`rounded-full px-4 py-2 text-xs font-semibold glass ${
-                    value ? "bg-mint/70 text-brandink" : "bg-white/60"
+                    value ? "bg-mint/70 text-brandink" : "bg-card/70"
                   }`}
                 >
                   {label}: {value ? "Ja" : "Nei"}
@@ -509,7 +526,7 @@ function SellPage() {
                   key={s}
                   onClick={() => setSaleType(s)}
                   className={`rounded-full px-4 py-2 text-xs font-semibold glass ${
-                    saleType === s ? "bg-brandink text-primary-foreground" : "bg-white/60"
+                    saleType === s ? "bg-brandink text-primary-foreground" : "bg-card/70"
                   }`}
                 >
                   {s}
@@ -529,7 +546,7 @@ function SellPage() {
               <PriceCalculator payout={Number(price) || 0} artFeeApplies={artFeeApplies} onArtFeeChange={setArtFeeApplies} />
               </>
             )}
-            <p className="rounded-2xl bg-white/70 p-3 text-xs text-ink/60 glass">
+            <p className="rounded-2xl bg-card/80 p-3 text-xs text-ink/60 glass">
               <Sparkles className="mr-1 inline size-3.5 text-brandink" />
               {priceHint}
             </p>
@@ -546,7 +563,7 @@ function SellPage() {
                   key={d}
                   onClick={() => setDelivery(d)}
                   className={`rounded-full px-4 py-2 text-xs font-semibold glass ${
-                    delivery === d ? "bg-brandink text-primary-foreground" : "bg-white/60"
+                    delivery === d ? "bg-brandink text-primary-foreground" : "bg-card/70"
                   }`}
                 >
                   {d}
@@ -585,7 +602,7 @@ function SellPage() {
           <button
             onClick={() => setStep((s) => Math.max(0, s - 1))}
             disabled={step === 0}
-            className="rounded-2xl bg-white/70 px-4 py-2.5 text-sm font-semibold text-brandink glass disabled:opacity-40"
+            className="rounded-2xl bg-card/80 px-4 py-2.5 text-sm font-semibold text-brandink glass disabled:opacity-40"
           >
             Tilbake
           </button>
