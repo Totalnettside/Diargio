@@ -273,8 +273,9 @@
 .home-description { margin-top:18px; font-size:16px; line-height:1.65; }
 .home-search { margin-top:22px; min-height:64px; padding:14px 22px; border-radius:999px; }
 .home-actions { margin-top:16px; }
-.home-actions .home-explore, .home-actions .home-sell { height:48px; padding:0 24px; border-radius:999px; color:var(--primary-foreground); background:transparent; box-shadow:none; }
-.home-actions .home-sell { border:1px solid color-mix(in oklab,var(--primary-foreground) 65%,transparent); }
+.home-actions .home-explore, .home-actions .home-sell { height:48px; padding:0 24px; border:1px solid color-mix(in oklab,var(--primary-foreground) 65%,transparent); border-radius:999px; color:var(--primary-foreground); background:transparent; box-shadow:none; }
+.home-actions .home-explore { background:var(--gronnlys); font-weight:600; }
+.home-actions .home-explore:hover { background:var(--gronn); border-color:var(--primary-foreground); }
 .home-actions .home-explore:hover, .home-actions .home-sell:hover { background:var(--gronnlys); color:var(--primary-foreground); }
 .home-art-composition { aspect-ratio: .98; width:100%; }
 .home-art-front { width:53%; left:25%; top:7%; z-index:20; }
