@@ -561,8 +561,13 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
 .messages-compose { background:var(--message-incoming); border-color:var(--background); }
 .messages-compose:focus-within { border-color:var(--primary); }
 @media(max-width:767px) {
-  .messages-list { max-height:240px; }
+  .messages-list { max-height:none; }
   .messages-chat { height:560px; border-radius:24px; }
+  .messages-page.messages-chat-open { padding-top:16px; padding-bottom:8px; }
+  .messages-page.messages-chat-open .messages-workspace { margin-top:12px; }
+  .messages-page.messages-chat-open .messages-chat { height:calc(100dvh - 188px); min-height:280px; max-height:none; }
+  .messages-compose { margin-inline:12px; margin-bottom:12px; }
+  .messages-thread { padding:16px; }
 }
 @media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } }
 @media(max-width:900px) { .gallery-preview-layout { grid-template-columns:minmax(0,1fr); } .gallery-preview-layout>section:last-child { border-left:0; } }
