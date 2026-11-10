@@ -155,6 +155,34 @@
       "when": 1794268621775,
       "tag": "0021_review_event_version_snapshots",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794294710083,
+      "tag": "0022_safe_listing_archival_and_account_moderation",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794294790433,
+      "tag": "0023_allow_safe_withdrawal_of_restricted_revisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794294925755,
+      "tag": "0024_owner_deletion_and_admin_reviewed_edits",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1794295048570,
+      "tag": "0025_safe_seller_notices_and_restricted_uploads",
+      "breakpoints": true
     }
   ]
 }

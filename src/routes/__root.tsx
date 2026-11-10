@@ -19,6 +19,7 @@ import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
+import { ActionDialogs } from '@/components/ActionDialogs';
 
 function NotFoundComponent() {
   return (
@@ -131,6 +132,7 @@ function RootComponent() {
       <AuthProvider>
       <StoreProvider>
       <ChatProvider>
+      <ActionDialogs>
         <div className="min-h-screen bg-mist pb-24 font-body text-ink md:pb-0">
           <TopBar />
           {/* Required: nested routes render here. */}
@@ -139,6 +141,7 @@ function RootComponent() {
           <BottomNav />
           <OnboardingDialog />
         </div>
+      </ActionDialogs>
       </ChatProvider>
       </StoreProvider>
       </AuthProvider>

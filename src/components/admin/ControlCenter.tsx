@@ -2,18 +2,22 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAdminOverview, setAdminRole, setVerified } from "@/lib/admin.functions";
+import { getAdminOverview, setAdminRole, setVerified, restrictProfile,adminEditProfile,adminEditListing } from "@/lib/admin.functions";
 import { adminDeleteUser } from "@/lib/account.functions";
 import { useStore } from "@/lib/store";
 import { breakdownFromTotal } from "@/lib/fees";
 import {ModerationQueue} from './ModerationQueue';
 import {Button} from '@/components/ui/button';
+import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
+import {changeListingVisibility} from '@/lib/moderation.functions';
+import {toast} from 'sonner';
+import {actionError} from '@/lib/action-errors';
 const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
 const TOTAL_FEE_RATE = feeShare(10000);
 const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
 const ART_FEE_RATE = breakdownFromTotal(10000).artFee / 10000;
 
-const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi"] as const;
+const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi", "Historikk"] as const;
 type Tab = (typeof tabs)[number];
 const kr = (n: number) => new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK", maximumFractionDigits: 0 }).format(n);
 const day = 86400000;
@@ -48,6 +52,7 @@ export function ControlCenter() {
         </button>
       </div>
       <Link to="/ordre" className="mt-4 inline-block text-sm font-semibold underline">Betalinger, leveranser og refusjoner</Link>
+      {tab==='Historikk'&&<section className="mt-5 space-y-3"><h2 className="font-display text-xl">Administrasjonshistorikk</h2>{data.history.map(h=><article key={h.id} className="border-b border-border py-3"><p className="font-semibold">{nameOf(data,h.actor_id)} · {h.action} · {h.target_type}</p><p className="text-sm">{new Date(h.created_at).toLocaleString('nb-NO')}</p>{h.reason&&<p>Beskjed til bruker: {h.reason}</p>}{h.internal_note&&<p>Internt notat: {h.internal_note}</p>}</article>)}</section>}
       <nav className="mt-5 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
         {tabs.map((t) => (
           <Button key={t} variant={tab===t?'default':'outline'} onClick={() => setTab(t)} className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold">
@@ -189,6 +194,9 @@ function Overview({ d, go }: { d: D; go: (t: Tab) => void }) {
 }
 
 function Users({ d, reload }: { d: D; reload: () => void }) {
+  const dialog=useActionDialog();
+  const restrict=useServerFn(restrictProfile);
+  const editProfile=useServerFn(adminEditProfile);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"alle" | "admin" | "selgere" | "ufullstendig">("alle");
   const del = useServerFn(adminDeleteUser);
@@ -200,7 +208,7 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
     .filter((u) => `${nameOf(d, u.id)} ${u.email ?? ""} ${u.location ?? ""} ${u.phone ?? ""}`.toLowerCase().includes(q.toLowerCase()))
     .sort((a, b) => b.created_at.localeCompare(a.created_at));
   const run = async (fn: () => Promise<unknown>) => {
-    try { await fn(); reload(); } catch (e) { alert((e as Error).message); }
+    try { await fn(); reload(); } catch (e) { toast.error(actionError(e),{id:'action-result'}); }
   };
   const exportCsv = () => {
     const lines = [["Navn", "E-post", "Telefon", "Sted", "Registrert", "Sist innlogget"].join(";"), ...rows.map((u) => [nameOf(d, u.id), u.email ?? "", u.phone ?? "", u.location ?? "", u.created_at.slice(0, 10), u.last_sign_in_at?.slice(0, 10) ?? ""].join(";"))];
@@ -238,8 +246,10 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
               <Link to="/selger/$id" params={{ id: u.id }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Profil</Link>
               {u.email && <a href={`mailto:${u.email}`} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">E-post</a>}
               <button disabled={!u.bankid_verified} onClick={() => run(() => verify({ data: { userId: u.id, verified: false } }))} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">{u.bankid_verified ? "Fjern verifisering" : "BankID kommer senere"}</button>
-              <button onClick={() => confirm(isAdmin ? "Fjerne admin-tilgang?" : "Gi admin-tilgang?") && run(() => role({ data: { userId: u.id, admin: !isAdmin } }))} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">{isAdmin ? "Fjern admin" : "Gjør til admin"}</button>
-              <button onClick={() => confirm("Slette brukeren og alt innholdet? Kan ikke angres.") && run(() => del({ data: { userId: u.id } }))} className="rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground">Slett</button>
+              <Button variant="outline" onClick={()=>dialog({title:'Endre profilnavn',description:`Profilen til ${nameOf(d,u.id)}.`,inputLabel:'Visningsnavn',initialValue:u.display_name??'',required:true,confirmLabel:'Lagre profil',success:'Profilen er lagret',action:async value=>{await editProfile({data:{userId:u.id,displayName:value}});reload();}})}>Rediger profil</Button>
+              <Button variant="outline" onClick={()=>dialog({title:isAdmin?'Fjerne admin-tilgang?':'Gi admin-tilgang?',description:'Tilgangen til kontrollsenteret blir endret.',confirmLabel:isAdmin?'Fjern admin':'Gi admin-tilgang',action:async()=>{await role({data:{userId:u.id,admin:!isAdmin}});reload();}})}>{isAdmin?'Fjern admin':'Gjør til admin'}</Button>
+              <Button variant={u.blocked?'outline':'destructive'} onClick={()=>dialog({title:u.blocked?'Oppheve sperringen?':'Sperre profilen?',description:u.blocked?'Annonser må sendes til godkjenning igjen før de vises offentlig.':'Profilen kan ikke publisere, kjøpe, gi bud eller sende nye meldinger. Annonser tas ut av salg. Pågående handler bevares.',inputLabel:'Begrunnelse til brukeren',required:!u.blocked,confirmLabel:u.blocked?'Opphev sperring':'Sperr profilen',destructive:!u.blocked,success:'Profilstatusen er oppdatert',action:async reason=>{await restrict({data:{userId:u.id,blocked:!u.blocked,reason}});reload();}})}>{u.blocked?'Opphev sperring':'Sperr profil'}</Button>
+              <Button variant="destructive" onClick={()=>dialog({title:'Slette profilen?',description:'Sletting stoppes dersom profilen har handels- eller samtalehistorikk som må bevares.',inputLabel:'Begrunnelse til brukeren',required:true,confirmLabel:'Slett profilen',busyLabel:'Sletter …',destructive:true,success:'Profilen er slettet',action:async reason=>{await del({data:{userId:u.id,reason}});reload();}})}>Slett profil</Button>
             </div>
           </div>
         );
@@ -249,7 +259,9 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
 }
 
 function Listings({ d, reload }: { d: D; reload: () => void }) {
-  const { deleteListing } = useStore();
+  const dialog=useActionDialog();
+  const visibility=useServerFn(changeListingVisibility);
+  const edit=useServerFn(adminEditListing);
   const [q, setQ] = useState("");
   const sold = new Set(d.purchases.map((p) => p.listing_id));
   const rows = d.listings.filter((l) => `${l.title} ${nameOf(d, l.user_id)} ${l.category}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => b.created_at.localeCompare(a.created_at));
@@ -268,13 +280,16 @@ function Listings({ d, reload }: { d: D; reload: () => void }) {
               </div>
               <div className="p-3">
                 <p className="truncate text-sm font-semibold">{l.title}</p>
+                <p className="text-xs text-primary">{l.deletedAt?'Slettet':l.blocked?'Sperret':l.status==='withdrawn'?'Avpublisert':l.status==='published'?'Publisert':l.status==='sold'?'Solgt':'Utkast'}</p>
                 <p className="text-xs text-muted-foreground">{nameOf(d, l.user_id)} · {ago(l.created_at)}</p>
                 <p className="mt-1 text-sm font-bold">{kr(l.price)}</p>
                 <p className="text-xs text-muted-foreground">{nb.length} bud{top ? ` · høyeste ${kr(top)}` : ""}</p>
+                {!l.deletedAt&&!l.blocked&&l.status!=='sold'&&<><Button variant="outline" size="sm" onClick={()=>dialog({title:'Rediger annonsetittel',description:'Endringen lagres som utkast og må godkjennes før offentlig visning.',inputLabel:'Annonsetittel',initialValue:l.title,required:true,confirmLabel:'Lagre utkast',success:'Endringen er lagret som utkast',action:async title=>{await edit({data:{id:l.id,title}});reload();}})}>Rediger annonse</Button><div className="mt-2 flex flex-wrap gap-2">{((l.content as {images?:string[];image?:string}).images??[l.image??'']).map((src,i)=><Button key={i} variant="ghost" size="sm" onClick={()=>dialog({title:'Slette bildet?',description:`Vil du fjerne bilde ${i+1} fra annonsen? Endringen må godkjennes før offentlig visning.`,confirmLabel:'Slett bildet',busyLabel:'Sletter …',destructive:true,success:'Bildet er slettet fra den nye versjonen',action:async()=>{await edit({data:{id:l.id,removeImage:i}});reload();}})}><img src={src} alt={`Bilde ${i+1}`} className="size-8 object-contain"/>Slett bilde {i+1}</Button>)}</div></>}
                 <div className="mt-2 flex gap-1.5">
                   <Link to="/kunst/$slug" params={{ slug: l.slug }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Vis</Link>
-                  <Button variant="destructive" onClick={async () => { if (confirm(`Trekke «${l.title}» fra markedsplassen?`)) {try{await deleteListing(l.id);reload();}catch(e){window.alert(e instanceof Error?e.message:'Kunne ikke trekke annonsen.');}} }} className="rounded-full px-3 py-1 text-xs font-semibold">Trekk</Button>
+                  <Button variant="outline" onClick={()=>dialog({title:'Avpublisere annonsen?',description:'Annonsen tas ut av offentlig visning og salg. Handelshistorikken bevares.',confirmLabel:'Avpubliser',success:'Annonsen er avpublisert',action:async()=>{await visibility({data:{id:l.id,action:'withdrawn'}});reload();}})}>Avpubliser</Button>
                 </div>
+                <div className="mt-2 flex flex-wrap gap-2">{(['block','delete','restore','unblock'] as const).filter(a=>a==='restore'?!!l.deletedAt:a==='unblock'?l.blocked:a==='delete'?!l.deletedAt:a==='block'?!l.blocked&&!l.deletedAt:false).map(a=><Button key={a} size="sm" variant={['block','delete'].includes(a)?'destructive':'outline'} onClick={()=>dialog({title:a==='delete'?'Slette annonsen?':a==='block'?'Sperre annonsen?':a==='restore'?'Gjenopprette annonsen?':'Oppheve sperringen?',description:a==='delete'?listingDeletionDescription(l.title):'Annonsen forblir ute av salg til en ny versjon er godkjent.',inputLabel:'Begrunnelse til brukeren',required:['block','delete'].includes(a),confirmLabel:a==='delete'?'Slett annonsen':a==='block'?'Sperr annonsen':a==='restore'?'Gjenopprett':'Opphev sperring',destructive:['block','delete'].includes(a),busyLabel:a==='delete'?'Sletter …':'Behandler …',success:'Annonsestatusen er oppdatert',action:async reason=>{await visibility({data:{id:l.id,action:a,reason}});reload();}})}>{a==='delete'?'Slett':a==='block'?'Sperr':a==='restore'?'Gjenopprett':'Opphev sperring'}</Button>)}</div>
               </div>
             </div>
           );

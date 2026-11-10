@@ -139,6 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .from("listings")
       .select("id,user_id,data,created_at,moderation_status")
       .eq('moderation_status','published')
+      .is('deleted_at',null).eq('blocked',false)
       .order("created_at", { ascending: false });
     if (error) console.error("listings", error);
     else {
@@ -150,17 +151,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const loadOwnListings = useCallback(async () => {
     if(!userId) {setOwnListings([]);setReviewNotifications([]);return;}
-    const [listings,revisions,events] = await Promise.all([
-      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId),
+    const [listings,revisions,events,adminNotices] = await Promise.all([
+      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId).is('deleted_at',null),
       supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
       supabase.from('listing_review_events').select('*').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
+      supabase.rpc('my_administrative_notices'),
     ]);
     setOwnListings((listings.data??[]).map(l=>{
       const rs=(revisions.data??[]).filter(r=>r.listing_id===l.id);
       const r=rs.find(r=>['draft','pending','changes_requested'].includes(r.status))??rs[0];
       return {...((r && !['published','withdrawn','sold'].includes(r.status)?r.data:l.data) as unknown as Artwork),id:l.id,sellerId:userId,moderationStatus:['sold','withdrawn'].includes(l.moderation_status)?l.moderation_status:r?.status??l.moderation_status,...(r?{sellerMessage:r.seller_message,revisionId:r.id,revisionVersion:r.version}:{})};
     }));
-    setReviewNotifications((events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()})));
+    setReviewNotifications([...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
   },[userId]);
   useEffect(()=>{void loadOwnListings();const t=setInterval(()=>void loadOwnListings(),15000);return()=>clearInterval(t);},[loadOwnListings]);
 
@@ -307,7 +309,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       submitListing:async(id)=>{const r=await submitListing({data:{id}});if(r.eventId){try{await sendReviewNotice({data:{eventId:r.eventId}});}catch{notify('E-postvarsel venter','Annonsen er sendt inn; e-postvarselet kan sendes på nytt.');}}notify('Sendt til godkjenning',submissionConfirmation);await loadOwnListings();},
       changeVisibility:async(id,action)=>{await changeListingVisibility({data:{id,action}});await Promise.all([loadListings(),loadOwnListings()]);},
       deleteListing: async (id) => {
-        await changeListingVisibility({data:{id,action:'withdrawn'}});await Promise.all([loadListings(),loadOwnListings()]);
+        await changeListingVisibility({data:{id,action:'delete'}});await Promise.all([loadListings(),loadOwnListings()]);
       },
     }),
     [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows,ownListings,reviewNotifications,loadOwnListings],

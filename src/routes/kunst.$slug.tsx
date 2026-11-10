@@ -18,6 +18,7 @@ import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useChat } from "@/hooks/useChat";
+import {toast} from 'sonner';
 
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
@@ -332,7 +333,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                     setMessage("");
                     setSent(true);
                   } else {
-                    alert(user ? "Du kan ikke sende melding til deg selv på denne annonsen." : "Logg inn for å sende melding.");
+                    toast.error(user ? "Du kan ikke sende melding til deg selv på denne annonsen." : "Logg inn for å sende melding.",{id:'action-result'});
                   }
                 });
               }}

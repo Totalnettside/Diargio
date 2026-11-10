@@ -18,6 +18,10 @@ import {Button} from '@/components/ui/button';
 import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {ListingDocumentation} from '@/components/ListingDocumentation';
 import {moderationLabels,submissionDisclosure} from '@/lib/moderation';
+import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
+import {toast} from 'sonner';
+import {actionError} from '@/lib/action-errors';
+import {removeListingImage,selectMainImage} from '@/lib/listing-images';
 
 export const Route = createFileRoute("/_authenticated/rediger/$slug")({
   head: () => ({
@@ -45,6 +49,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function EditListingPage() {
+  const dialog=useActionDialog();
+  const [saving,setSaving]=useState(false);
   const { slug } = Route.useParams();
   const { myListings, updateListing, deleteListing, submitListing, changeVisibility } = useStore();
   const navigate = useNavigate();
@@ -91,7 +97,9 @@ function EditListingPage() {
   }
 
   async function save(submit = false) {
-    if(!listing)return;
+    if(!listing||saving)return;
+    if(!title.trim()||!images.length){setSaveError('Legg til et bilde og fyll inn verkets navn før du lagrer.');return;}
+    setSaving(true);setSaveError('');
     try {await updateListing({
       ...listing,
       artistName,ownWork,sellerType,images,image:images[0]??listing.image,edition,
@@ -108,15 +116,14 @@ function EditListingPage() {
       description: description || listing.description,
     });
     if(submit)await submitListing(listing.id);
+    toast.success(submit?'Endringene er sendt til godkjenning':'Endringene er lagret',{id:'action-result'});
     await navigate({ to: "/min-side",search:{tab:'Mine annonser'} });
-    }catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke lagre");}
+    }catch(e){console.error('Listing save failed',e);setSaveError(actionError(e,'Endringene kunne ikke lagres. Prøv igjen.'));}finally{setSaving(false);}
   }
 
   async function remove() {
     if(!listing)return;
-    if (window.confirm(`Trekke «${listing.title}» fra markedsplassen?`)) {
-      try{await deleteListing(listing.id);await navigate({ to: "/min-side" });}catch(e){setSaveError(e instanceof Error?e.message:"Kunne ikke slette");}
-    }
+    dialog({title:'Slette annonsen?',description:listingDeletionDescription(listing.title),confirmLabel:'Slett annonsen',busyLabel:'Sletter …',destructive:true,success:'Annonsen er slettet',action:async()=>{await deleteListing(listing.id);await navigate({to:'/min-side',search:{tab:'Mine annonser'}});}});
   }
 
   return (
@@ -133,7 +140,8 @@ function EditListingPage() {
         <Field label="Selgertype"><select className={inputClass} value={sellerType} onChange={e=>setSellerType(e.target.value as typeof sellerType)}>{['Kunstner','Privat','Galleri','Kunsthandler'].map(t=><option key={t}>{t}</option>)}</select></Field>
         <Field label="Eget verk eller videresalg"><select className={inputClass} value={ownWork?'own':'resale'} onChange={e=>setOwnWork(e.target.value==='own')}><option value="own">Eget verk</option><option value="resale">Videresalg</option></select></Field>
         <Field label="Opplag"><input className={inputClass} value={edition} onChange={e=>setEdition(e.target.value)}/></Field>
-        <div className="grid grid-cols-3 gap-2">{images.map((src,i)=><div key={i}><ArtworkPreview image={src} alt={`Bilde ${i+1}`}/><Button variant="ghost" disabled={images.length<=1} onClick={()=>setImages(images.filter((_,n)=>n!==i))}>Fjern</Button></div>)}</div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{images.map((src,i)=><div key={src}><ArtworkPreview image={src} alt={`Bilde ${i+1}`}/><div className="flex flex-wrap gap-1"><Button variant="ghost" disabled={saving||listing.moderationStatus==='pending'||listing.moderationStatus==='sold'} onClick={()=>dialog({title:'Slette bildet?',description:'Vil du fjerne dette bildet fra annonsen? Endringen lagres som en ny versjon og må gjennom godkjenning før den vises offentlig.',confirmLabel:'Slett bildet',busyLabel:'Sletter …',destructive:true,success:'Bildet er slettet fra den lagrede versjonen',action:async()=>{const next=removeListingImage(images,i);await updateListing({...listing,...next});setImages(next.images);}})}>Slett bilde</Button><Button variant="outline" disabled={i===0||saving||listing.moderationStatus==='pending'||listing.moderationStatus==='sold'} onClick={async()=>{if(saving)return;setSaving(true);try{const next=selectMainImage(images,i);await updateListing({...listing,...next});setImages(next.images);toast.success('Hovedbildet er lagret i den nye versjonen',{id:'action-result'});}catch(e){setSaveError(actionError(e,'Hovedbildet kunne ikke lagres.'));}finally{setSaving(false);}}}>{i===0?'Hovedbilde':'Velg hovedbilde'}</Button></div></div>)}</div>
+        {images.length===1&&<p className="text-sm text-muted-foreground">Legg til et nytt bilde før du sletter det siste, eller trekk annonsen fra salg.</p>}
         <label className="block text-sm">Legg til bilder<input aria-label="Legg til annonsebilder" type="file" accept="image/*" multiple onChange={e=>{for(const file of Array.from(e.target.files??[]).slice(0,15-images.length)){if(file.size>2000000){setSaveError('Velg et bilde under 2 MB.');continue;}const reader=new FileReader();reader.onload=()=>{if(typeof reader.result==='string'){const src=reader.result;setImages(prev=>[...prev,src].slice(0,15));}};reader.readAsDataURL(file);}}}/></label>
         <Field label="Tittel">
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
@@ -220,20 +228,21 @@ function EditListingPage() {
       {preview&&<div className="mt-4 space-y-3"><ArtworkPreview image={images[0]??listing.image} alt={title}/><h2 className="font-display text-xl">{title}</h2><p>{artistName}</p><p>{description}</p><p>{formatPrice(priceFromPayout(Number(price),artFeeApplies).total)}</p></div>}
 
       <div className="mt-4 flex gap-2">
-        <Button disabled={listing.moderationStatus==='pending'||listing.moderationStatus==='sold'}
+        <Button disabled={saving||listing.moderationStatus==='pending'||listing.moderationStatus==='sold'}
           onClick={()=>void save()}
           className="flex-1 rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground"
         >
-          Lagre endringer
+          {saving?'Lagrer …':'Lagre endringer'}
         </Button>
-        <Button disabled={listing.moderationStatus==='pending'||listing.moderationStatus==='sold'} onClick={()=>void save(true)}>Send til godkjenning</Button>
-        <Button variant="outline"
+        <Button disabled={saving||listing.moderationStatus==='pending'||listing.moderationStatus==='sold'} onClick={()=>void save(true)}>Send til godkjenning</Button>
+        <Button variant="destructive"
           onClick={remove}
-          className="rounded-2xl bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 glass"
+          disabled={saving}
         >
-          Trekk annonsen
+          Slett annonse
         </Button>
       </div>
+      <Button variant="outline" className="mt-3" disabled={saving} onClick={()=>dialog({title:'Trekke annonsen fra salg?',description:'Annonsen blir skjult for kjøpere, men blir liggende under Mine annonser.',confirmLabel:'Trekk fra salg',success:'Annonsen er trukket fra salg',action:async()=>{await changeVisibility(listing.id,'withdrawn');await navigate({to:'/min-side',search:{tab:'Mine annonser'}});}})}>Trekk fra salg</Button>
     </main>
   );
 }
