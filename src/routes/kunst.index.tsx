@@ -284,7 +284,7 @@ function Marketplace() {
             {results.length === 0 ? (
               <p className="mt-6 rounded-md border border-border bg-card p-8 text-sm text-ink/60">Ingen treff. Prøv å fjerne noen filtre.</p>
             ) : view === "grid" ? (
-              <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3">
+              <div className="mt-6 grid grid-cols-2 items-start gap-x-4 gap-y-8 md:grid-cols-3">
                 {results.map((a) => <ArtworkCard key={a.id} artwork={a} />)}
               </div>
             ) : (
