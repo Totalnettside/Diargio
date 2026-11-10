@@ -778,6 +778,16 @@ export type Database = {
         Returns: undefined
       }
       mark_review_events_read: { Args: never; Returns: undefined }
+      my_administrative_notices: {
+        Args: never
+        Returns: {
+          action: string
+          created_at: string
+          id: string
+          reason: string
+          title: string
+        }[]
+      }
       profile_is_blocked: { Args: { _user: string }; Returns: boolean }
       reserve_art_order: {
         Args: {
