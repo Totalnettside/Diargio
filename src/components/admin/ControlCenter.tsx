@@ -12,6 +12,7 @@ import {useActionDialog,listingDeletionDescription} from '@/components/ActionDia
 import {changeListingVisibility} from '@/lib/moderation.functions';
 import {toast} from 'sonner';
 import {actionError} from '@/lib/action-errors';
+import {csvRow} from '@/lib/csv';
 const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
 const TOTAL_FEE_RATE = feeShare(10000);
 const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
@@ -211,11 +212,13 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
     try { await fn(); reload(); } catch (e) { toast.error(actionError(e),{id:'action-result'}); }
   };
   const exportCsv = () => {
-    const lines = [["Navn", "E-post", "Telefon", "Sted", "Registrert", "Sist innlogget"].join(";"), ...rows.map((u) => [nameOf(d, u.id), u.email ?? "", u.phone ?? "", u.location ?? "", u.created_at.slice(0, 10), u.last_sign_in_at?.slice(0, 10) ?? ""].join(";"))];
+    const lines = [csvRow(["Navn", "E-post", "Telefon", "Sted", "Registrert", "Sist innlogget"]), ...rows.map((u) => csvRow([nameOf(d, u.id), u.email ?? "", u.phone ?? "", u.location ?? "", u.created_at.slice(0, 10), u.last_sign_in_at?.slice(0, 10) ?? ""]))];
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv" }));
+    const url = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv" }));
+    a.href = url;
     a.download = "diargio-brukere.csv";
     a.click();
+    URL.revokeObjectURL(url);
   };
   return (
     <div className="space-y-3">

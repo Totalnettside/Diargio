@@ -32,12 +32,8 @@ export const getSharedWall = createServerFn({ method: 'GET' })
     const { data: wall, error } = await c.from('art_walls').select('id,name,layout').eq('id', data.id).eq('shared', true).maybeSingle();
     if (error || !wall) return null;
     const layout = wallLayoutSchema.parse(wall.layout);
-    let roomUrl: string | undefined;
-    if (layout.roomPath) {
-      const { data: signed } = await c.storage.from('art-wall-rooms').createSignedUrl(layout.roomPath, 3600);
-      roomUrl = signed?.signedUrl;
-    }
-    return { id: wall.id, name: wall.name, layout, roomUrl };
+    const roomUrl = layout.roomPath ? `/api/public/shared-wall-image/${wall.id}` : undefined;
+    return { id: wall.id, name: wall.name, layout: { ...layout, roomPath: undefined }, roomUrl };
   });
 
 export const saveArtWall = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])

@@ -183,6 +183,13 @@
       "when": 1794295048570,
       "tag": "0025_safe_seller_notices_and_restricted_uploads",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1794325299836,
+      "tag": "0026_scope_selected_profile_review_and_storage_access",
+      "breakpoints": true
     }
   ]
 }

@@ -38,6 +38,7 @@ import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
 import { Route as SelgerIdRouteImport } from './routes/selger.$id'
 import { Route as AuthenticatedRedigerSlugRouteImport } from './routes/_authenticated/rediger.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicSharedWallImageWallIdRouteImport } from './routes/api/public/shared-wall-image.$wallId'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -187,6 +188,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSharedWallImageWallIdRoute =
+  ApiPublicSharedWallImageWallIdRouteImport.update({
+    id: '/api/public/shared-wall-image/$wallId',
+    path: '/api/public/shared-wall-image/$wallId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -223,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/kunst/': typeof KunstIndexRoute
   '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/kunst': typeof KunstIndexRoute
   '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -287,6 +296,7 @@ export interface FileRoutesById {
   '/kunst/': typeof KunstIndexRoute
   '/_authenticated/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/kunst/'
     | '/rediger/$slug'
     | '/api/public/payments/webhook'
+    | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/kunst'
     | '/rediger/$slug'
     | '/api/public/payments/webhook'
+    | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/kunst/'
     | '/_authenticated/rediger/$slug'
     | '/api/public/payments/webhook'
+    | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -411,6 +424,7 @@ export interface RootRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicSharedWallImageWallIdRoute: typeof ApiPublicSharedWallImageWallIdRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -619,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/shared-wall-image/$wallId': {
+      id: '/api/public/shared-wall-image/$wallId'
+      path: '/api/public/shared-wall-image/$wallId'
+      fullPath: '/api/public/shared-wall-image/$wallId'
+      preLoaderRoute: typeof ApiPublicSharedWallImageWallIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -673,6 +694,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicSharedWallImageWallIdRoute: ApiPublicSharedWallImageWallIdRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
