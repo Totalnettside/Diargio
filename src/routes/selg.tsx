@@ -99,6 +99,12 @@ function SellPage() {
   const { user } = useAuth();
 
   const [step, setStep] = useState(0);
+  const stepperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const stepper = stepperRef.current;
+    const active = stepper?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (stepper && active) stepper.scrollTo({ left: active.offsetLeft - (stepper.clientWidth - active.clientWidth) / 2, behavior: "smooth" });
+  }, [step]);
   const [images, setImages] = useState<string[]>([]);
   const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [cropIndex, setCropIndex] = useState<number | null>(null);
