@@ -569,7 +569,139 @@ a:focus-visible .artwork-preview-gallery { opacity: 0; }
   .messages-compose { margin-inline:12px; margin-bottom:12px; }
   .messages-thread { padding:16px; }
 }
-@media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } }
+/* Min side: scoped dashboard presentation, without changing account or trade data. */
+.account-dashboard { --account-paper:var(--signature-white); --account-tint:var(--signature-tint); --account-green:var(--signature-green); --account-gold:var(--signature-highlight); --account-edge:color-mix(in oklab,var(--signature-edge) 48%,transparent); color:var(--signature-ink); }
+.account-hero { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:24px; overflow:hidden; padding:30px; border:1px solid color-mix(in oklab,var(--account-gold) 32%,transparent); border-radius:28px; background:var(--account-green); color:var(--signature-white); box-shadow:0 20px 45px -32px color-mix(in oklab,var(--account-green) 70%,transparent); }
+.account-hero::before { content:""; position:absolute; z-index:-1; width:360px; height:360px; right:-90px; top:-190px; border-radius:50%; background:radial-gradient(circle,color-mix(in oklab,var(--account-gold) 22%,transparent),transparent 68%); }
+.account-hero::after { content:""; position:absolute; z-index:-1; width:220px; height:220px; left:35%; bottom:-200px; border-radius:50%; background:radial-gradient(circle,color-mix(in oklab,var(--signature-white) 12%,transparent),transparent 70%); }
+.account-hero-content { min-width:0; }
+.account-eyebrow,.account-kicker { margin:0; color:var(--account-green); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.account-eyebrow { color:var(--account-gold); }
+.account-hero-title { margin-top:8px; font-family:var(--font-display-family); font-size:32px; font-weight:600; letter-spacing:-.035em; }
+.account-hero-description { max-width:520px; margin-top:8px; color:color-mix(in oklab,var(--signature-white) 76%,transparent); font-size:14px; line-height:1.6; }
+.account-hero-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
+.account-hero-button { height:42px; padding-inline:16px; border:1px solid color-mix(in oklab,var(--signature-white) 32%,transparent); border-radius:999px; background:transparent; color:var(--signature-white); font-size:12px; font-weight:600; }
+.account-hero-button:hover { border-color:var(--account-gold); background:color-mix(in oklab,var(--signature-white) 9%,transparent); color:var(--signature-white); }
+.account-hero-button-primary { border-color:var(--account-gold); background:var(--account-gold); color:var(--account-green); }
+.account-hero-button-primary:hover { border-color:var(--signature-white); background:var(--signature-white); color:var(--account-green); }
+.account-tabs { padding:6px; border:1px solid var(--account-edge); border-radius:18px; background:var(--account-paper); box-shadow:0 8px 24px -22px color-mix(in oklab,var(--account-green) 50%,transparent); }
+.account-tab { height:36px; padding-inline:14px; border-radius:12px; color:color-mix(in oklab,var(--signature-ink) 68%,var(--signature-white)); font-size:11px; font-weight:600; }
+.account-tab:hover { background:var(--account-tint); color:var(--account-green); }
+.account-tab.is-active { background:var(--account-green); color:var(--signature-white); box-shadow:0 6px 16px -10px var(--account-green); }
+.account-section { margin-top:26px; }
+.account-section-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:14px; }
+.account-section-heading h2 { margin-top:4px; font-family:var(--font-display-family); font-size:22px; font-weight:600; letter-spacing:-.025em; }
+.account-section-heading>p { max-width:260px; color:var(--muted-foreground); font-size:12px; text-align:right; }
+.account-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.account-metric { position:relative; min-width:0; overflow:hidden; padding:18px; border:1px solid var(--account-edge); border-radius:20px; background:var(--account-paper); box-shadow:0 10px 24px -24px color-mix(in oklab,var(--account-green) 60%,transparent); transition:transform .2s,border-color .2s,box-shadow .2s; }
+.account-metric::after { content:""; position:absolute; inset:auto 18px 0; height:2px; background:linear-gradient(90deg,var(--account-green),var(--account-gold),transparent); opacity:.55; }
+.account-metric:hover { transform:translateY(-2px); border-color:color-mix(in oklab,var(--account-green) 45%,var(--signature-edge)); box-shadow:0 16px 30px -24px color-mix(in oklab,var(--account-green) 65%,transparent); }
+.account-metric-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.account-metric-top>p { overflow:hidden; color:var(--muted-foreground); font-size:10px; font-weight:700; letter-spacing:.08em; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+.account-metric-icon { display:grid; flex-shrink:0; width:32px; height:32px; place-items:center; border-radius:10px; background:var(--account-tint); color:var(--account-green); }
+.account-metric-icon svg { width:15px; height:15px; }
+.account-metric-value { margin-top:8px; font-family:var(--font-display-family); font-size:28px; font-weight:600; letter-spacing:-.04em; }
+.account-metric-detail { margin-top:3px; overflow:hidden; color:var(--muted-foreground); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.account-overview-panels { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:14px; margin-top:14px; }
+.account-panel { min-width:0; padding:22px; border:1px solid var(--account-edge); border-radius:22px; background:var(--account-paper); box-shadow:0 10px 26px -25px color-mix(in oklab,var(--account-green) 55%,transparent); }
+.account-panel h3 { margin-top:5px; font-family:var(--font-display-family); font-size:19px; font-weight:600; letter-spacing:-.02em; }
+.account-bid-highlight { position:relative; overflow:hidden; background:var(--account-green); color:var(--signature-white); }
+.account-bid-highlight::after { content:""; position:absolute; width:190px; height:190px; right:-100px; bottom:-100px; border:1px solid color-mix(in oklab,var(--account-gold) 35%,transparent); border-radius:50%; box-shadow:0 0 0 30px color-mix(in oklab,var(--account-gold) 6%,transparent),0 0 0 60px color-mix(in oklab,var(--account-gold) 4%,transparent); pointer-events:none; }
+.account-bid-highlight .account-kicker { color:var(--account-gold); }
+.account-bid-highlight>p:not(.account-kicker) { max-width:330px; margin:9px 0 20px; color:color-mix(in oklab,var(--signature-white) 72%,transparent); font-size:12px; line-height:1.6; }
+.account-panel-icon { display:grid; float:right; width:40px; height:40px; place-items:center; border:1px solid color-mix(in oklab,var(--account-gold) 45%,transparent); border-radius:13px; color:var(--account-gold); }
+.account-panel-icon svg { width:19px; }
+.account-shortcut-list { display:grid; gap:4px; margin-top:12px; }
+.account-shortcut-list>a { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:12px; padding:9px; border-radius:14px; transition:background .2s; }
+.account-shortcut-list>a:hover { background:var(--account-tint); }
+.account-shortcut-list>a>svg { width:15px; color:var(--account-green); }
+.account-shortcut-icon { display:grid; width:34px; height:34px; place-items:center; border-radius:11px; background:var(--account-tint); color:var(--account-green); }
+.account-shortcut-icon svg { width:15px; }
+.account-shortcut-list strong,.account-shortcut-list small { display:block; }
+.account-shortcut-list strong { font-size:12px; }
+.account-shortcut-list small { margin-top:2px; color:var(--muted-foreground); font-size:10px; }
+.account-bid-section+.account-bid-section { margin-top:32px; }
+.account-bid-heading { align-items:center; padding-bottom:12px; border-bottom:1px solid var(--account-edge); }
+.account-bid-heading-title { display:flex; align-items:center; gap:12px; }
+.account-section-icon { display:grid; width:42px; height:42px; flex-shrink:0; place-items:center; border-radius:14px; background:var(--account-green); color:var(--account-gold); }
+.account-section-icon svg { width:18px; }
+.account-count { display:grid; min-width:32px; height:32px; padding-inline:8px; place-items:center; border:1px solid var(--account-edge); border-radius:999px; background:var(--account-tint); color:var(--account-green); font-size:12px; font-weight:700; }
+.account-empty { display:flex; align-items:center; gap:16px; padding:24px; border:1px dashed var(--account-edge); border-radius:20px; background:var(--account-tint); }
+.account-empty>svg { width:24px; color:var(--account-green); }
+.account-empty h3 { font-size:14px; font-weight:600; }
+.account-empty p { margin-top:3px; color:var(--muted-foreground); font-size:12px; }
+.account-bid-list { display:grid; gap:12px; }
+.account-bid-card { overflow:hidden; border:1px solid var(--account-edge); border-radius:22px; background:var(--account-paper); box-shadow:0 12px 28px -27px color-mix(in oklab,var(--account-green) 60%,transparent); }
+.account-bid-main { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:18px; padding:18px; }
+.account-bid-art { display:flex; width:76px; min-height:88px; align-items:center; overflow:hidden; border-radius:14px; background:var(--account-tint); }
+.account-bid-art>svg { width:24px; margin:auto; color:var(--account-green); }
+.account-bid-info { min-width:0; }
+.account-bid-title { display:block; width:fit-content; max-width:100%; margin-top:9px; overflow:hidden; font-family:var(--font-display-family); font-size:17px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+a.account-bid-title:hover { color:var(--account-green); text-decoration:underline; text-underline-offset:4px; }
+.account-bid-date { margin-top:4px; color:var(--muted-foreground); font-size:10px; }
+.account-bid-amount { min-width:130px; padding-left:20px; border-left:1px solid var(--account-edge); text-align:right; }
+.account-bid-amount span,.account-bid-amount strong { display:block; }
+.account-bid-amount span { color:var(--muted-foreground); font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+.account-bid-amount strong { margin-top:5px; color:var(--account-green); font-family:var(--font-display-family); font-size:23px; white-space:nowrap; }
+.account-status,.account-new-bid { display:inline-flex; align-items:center; min-height:24px; padding:4px 9px; border-radius:999px; background:var(--account-tint); color:var(--account-green); font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+.account-new-bid { background:var(--account-green); color:var(--account-gold); }
+.status-godtatt { background:color-mix(in oklab,var(--account-green) 12%,var(--signature-white)); }
+.status-avslatt { background:color-mix(in oklab,var(--destructive) 9%,var(--signature-white)); color:var(--destructive); }
+.account-bid-message { display:flex; gap:10px; margin:0 18px 18px; padding:13px 15px; border-left:2px solid var(--account-gold); border-radius:0 12px 12px 0; background:var(--account-tint); color:color-mix(in oklab,var(--signature-ink) 78%,var(--signature-white)); font-size:12px; line-height:1.6; }
+.account-bid-message svg { width:16px; flex-shrink:0; margin-top:2px; color:var(--account-green); }
+.account-bid-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 18px; border-top:1px solid var(--account-edge); background:color-mix(in oklab,var(--account-tint) 65%,var(--signature-white)); }
+.account-bid-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.account-conversation-link { margin-left:auto; color:var(--account-green); }
+.account-stats-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.account-stat-card .account-metric-value { font-size:24px; }
+.account-insight-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px; }
+.account-panel-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.account-panel-heading>svg { width:20px; color:var(--account-green); }
+.account-chart-empty { display:flex; min-height:170px; flex-direction:column; align-items:center; justify-content:center; margin-top:16px; border:1px dashed var(--account-edge); border-radius:16px; background:var(--account-tint); text-align:center; }
+.account-chart-empty>span { display:grid; width:42px; height:42px; place-items:center; border-radius:14px; background:var(--account-paper); color:var(--account-green); }
+.account-chart-empty p { margin-top:12px; font-size:12px; font-weight:600; }
+.account-chart-empty small { margin-top:4px; color:var(--muted-foreground); font-size:10px; }
+.account-ranking-list { display:grid; gap:4px; margin-top:14px; }
+.account-ranking-item { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:12px; padding:11px 8px; border-bottom:1px solid var(--account-edge); }
+.account-ranking-item:last-child { border-bottom:0; }
+.account-ranking-number { color:var(--signature-edge); font-family:var(--font-display-family); font-size:17px; }
+.account-ranking-copy { min-width:0; }
+.account-ranking-copy strong,.account-ranking-copy small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.account-ranking-copy strong { font-size:12px; }
+.account-ranking-copy small { margin-top:3px; color:var(--muted-foreground); font-size:10px; }
+.account-ranking-item>svg { width:14px; color:var(--account-green); }
+.account-ranking-empty { margin-top:20px; color:var(--muted-foreground); font-size:12px; }
+@media(max-width:900px) { .account-stats-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .account-hero { grid-template-columns:minmax(0,1fr); align-items:start; } .account-hero-actions { justify-content:flex-start; } }
+@media(max-width:640px) {
+  .account-hero { gap:20px; padding:22px; border-radius:22px; }
+  .account-hero-title { font-size:27px; }
+  .account-hero-actions { display:grid; grid-template-columns:minmax(0,1fr); width:100%; }
+  .account-hero-button { width:100%; }
+  .account-tabs { margin-inline:-5px; border-radius:15px; }
+  .account-section { margin-top:22px; }
+  .account-section-heading { align-items:flex-start; }
+  .account-section-heading>p { display:none; }
+  .account-section-heading h2 { font-size:19px; }
+  .account-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .account-metric { padding:14px; border-radius:17px; }
+  .account-metric-top { align-items:flex-start; }
+  .account-metric-top>p { padding-top:3px; font-size:9px; white-space:normal; }
+  .account-metric-icon { width:28px; height:28px; }
+  .account-metric-value { font-size:24px; }
+  .account-metric-detail { display:none; }
+  .account-overview-panels,.account-insight-grid { grid-template-columns:minmax(0,1fr); }
+  .account-panel { padding:18px; border-radius:19px; }
+  .account-bid-main { grid-template-columns:64px minmax(0,1fr); gap:13px; padding:15px; }
+  .account-bid-art { width:64px; min-height:78px; }
+  .account-bid-amount { grid-column:1/-1; display:flex; align-items:baseline; justify-content:space-between; min-width:0; padding:12px 0 0; border-top:1px solid var(--account-edge); border-left:0; text-align:left; }
+  .account-bid-amount strong { margin-top:0; font-size:22px; }
+  .account-bid-message { margin:0 15px 15px; }
+  .account-bid-footer { align-items:flex-start; flex-direction:column; padding:12px 15px; }
+  .account-bid-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; }
+  .account-bid-actions:has(>a:only-child) { grid-template-columns:minmax(0,1fr); }
+  .account-conversation-link { margin-left:0; }
+}
+@media(prefers-reduced-motion:reduce) { .messages-page * { transition:none; scroll-behavior:auto; } .account-dashboard * { transition:none; } }
 @media(max-width:900px) { .gallery-preview-layout { grid-template-columns:minmax(0,1fr); } .gallery-preview-layout>section:last-child { border-left:0; } }
 @media(max-width:600px) { .gallery-slot { padding:4px 6px; gap:3px; font-size:10px; } .gallery-slot-number { width:16px; height:16px; font-size:9px; } }
 
