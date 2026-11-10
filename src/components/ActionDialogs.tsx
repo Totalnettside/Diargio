@@ -40,7 +40,7 @@ export function ActionDialogs({ children }: { children: ReactNode }) {
         <DialogHeader><DialogTitle>{request?.title}</DialogTitle><DialogDescription>{request?.description}</DialogDescription></DialogHeader>
         {request?.inputLabel && <label className="space-y-2 text-sm"><span>{request.inputLabel}</span><textarea autoFocus rows={4} maxLength={4000} disabled={busy} value={value} onChange={e => setValue(e.target.value)} aria-invalid={!!error} aria-describedby={error ? 'action-error' : undefined} className="w-full rounded-md border border-input bg-background p-3 text-foreground" /></label>}
         {error && <p id="action-error" role="alert" className="text-sm text-destructive">{error}</p>}
-        <DialogFooter className="gap-2"><Button variant="outline" disabled={busy} onClick={close}>Avbryt</Button><Button variant={request?.destructive ? 'destructive' : 'default'} disabled={busy} onClick={() => void perform()}>{busy ? request?.busyLabel ?? 'Behandler …' : request?.confirmLabel}</Button></DialogFooter>
+        <DialogFooter className="gap-2"><Button className="min-h-11" variant="outline" disabled={busy} onClick={close}>Avbryt</Button><Button className="min-h-11 whitespace-normal" variant={request?.destructive ? 'destructive' : 'default'} disabled={busy} onClick={() => void perform()}>{busy ? request?.busyLabel ?? 'Behandler …' : request?.confirmLabel}</Button></DialogFooter>
       </DialogContent>
     </Dialog>
   </Context.Provider>;
