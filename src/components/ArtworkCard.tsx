@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 import { artistFor, formatPrice, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { ArtworkPreview } from "@/components/ArtworkPreview";
@@ -33,28 +33,33 @@ export function ArtworkCard({ artwork, large = false }: { artwork: Artwork; larg
           )}
         </div>
       </div>
-      <div className={large ? "px-1 py-4" : "px-1 py-3"}>
+      <div className={large ? "px-4 pb-5 pt-4" : "px-3 pb-4 pt-3"}>
         {artist.slug ? (
           <Link
             to="/kunstner/$slug"
             params={{ slug: artist.slug }}
-            className={`font-semibold text-brandink hover:text-foreground ${large ? "text-sm" : "text-xs"}`}
+            className={`block truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-brandink hover:text-foreground`}
           >
             {artist.name}
           </Link>
         ) : (
-          <span className={`font-semibold text-brandink ${large ? "text-sm" : "text-xs"}`}>{artist.name}</span>
+          <span className="block truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-brandink">{artist.name}</span>
         )}
         <Link to="/kunst/$slug" params={{ slug: artwork.slug }} className="block">
-          <p className={`truncate font-display font-medium ${large ? "text-xl" : "text-[13px]"}`}>{artwork.title}</p>
+          <p className={`mt-1 truncate font-display font-medium leading-snug ${large ? "text-xl" : "text-[15px]"}`}>{artwork.title}</p>
         </Link>
-        <div className="mt-1 flex items-baseline justify-between gap-2">
-          <span className={`font-bold ${large ? "text-base" : "text-sm"}`}>
+        <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/70 pt-3">
+          <span className={`shrink-0 font-semibold tabular-nums text-foreground ${large ? "text-base" : "text-sm"}`}>
             {artwork.saleType === "Pris på forespørsel"
               ? "Pris på forespørsel"
               : formatPrice(artwork.saleType === "Auksjon" ? (artwork.currentBid ?? artwork.price) : artwork.price)}
           </span>
-          <span className="text-[11px] text-ink/45">{artwork.location}</span>
+          {artwork.location && (
+            <span className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{artwork.location}</span>
+            </span>
+          )}
         </div>
         {artwork.saleType === "Auksjon" && (
           <p className="mt-1 text-[11px] font-semibold text-brandink">
