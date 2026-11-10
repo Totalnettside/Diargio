@@ -139,6 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .from("listings")
       .select("id,user_id,data,created_at,moderation_status")
       .eq('moderation_status','published')
+      .is('deleted_at',null).eq('blocked',false)
       .order("created_at", { ascending: false });
     if (error) console.error("listings", error);
     else {

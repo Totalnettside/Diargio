@@ -13,6 +13,7 @@ export function ActionDialogs({ children }: { children: ReactNode }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
+  const submitting = useRef(false);
   const trigger = useRef<HTMLElement | null>(null);
   const open = (r: Request) => {
     if (lock.current) return;
@@ -22,20 +23,20 @@ export function ActionDialogs({ children }: { children: ReactNode }) {
   };
   const close = () => { if (!busy) { lock.current = false; setRequest(null); } };
   const perform = async () => {
-    if (!request || busy) return;
+    if (!request || submitting.current) return;
     if (request.required && !value.trim()) { setError('Fyll inn en begrunnelse før du fortsetter.'); return; }
-    setBusy(true); setError('');
+    submitting.current=true;setBusy(true); setError('');
     try {
       await request.action(value.trim());
       if (request.success) toast.success(request.success, { id: 'action-result' });
       lock.current = false; setRequest(null);
     } catch (e) { console.error('Diargio action failed', e); setError(actionError(e)); }
-    finally { setBusy(false); }
+    finally { submitting.current=false;setBusy(false); }
   };
   return <Context.Provider value={open}>{children}
     <Toaster position="bottom-center" toastOptions={{ className: 'border-border bg-card text-foreground' }} />
     <Dialog open={!!request} onOpenChange={o => { if (!o) close(); }}>
-      <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg" onEscapeKeyDown={e => { if (busy) e.preventDefault(); }} onInteractOutside={e => e.preventDefault()} onCloseAutoFocus={e => { e.preventDefault(); if (trigger.current?.isConnected) trigger.current.focus(); }}>
+      <DialogContent className="max-h-[85dvh] w-[calc(100%_-_2rem)] overflow-y-auto rounded-lg" onEscapeKeyDown={e => { if (busy) e.preventDefault(); }} onInteractOutside={e => e.preventDefault()} onCloseAutoFocus={e => { e.preventDefault(); if (trigger.current?.isConnected) trigger.current.focus(); }}>
         <DialogHeader><DialogTitle>{request?.title}</DialogTitle><DialogDescription>{request?.description}</DialogDescription></DialogHeader>
         {request?.inputLabel && <label className="space-y-2 text-sm"><span>{request.inputLabel}</span><textarea autoFocus rows={4} maxLength={4000} disabled={busy} value={value} onChange={e => setValue(e.target.value)} aria-invalid={!!error} aria-describedby={error ? 'action-error' : undefined} className="w-full rounded-md border border-input bg-background p-3 text-foreground" /></label>}
         {error && <p id="action-error" role="alert" className="text-sm text-destructive">{error}</p>}

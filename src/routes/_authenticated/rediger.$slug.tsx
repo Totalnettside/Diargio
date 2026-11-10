@@ -21,6 +21,7 @@ import {moderationLabels,submissionDisclosure} from '@/lib/moderation';
 import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
 import {toast} from 'sonner';
 import {actionError} from '@/lib/action-errors';
+import {removeListingImage,selectMainImage} from '@/lib/listing-images';
 
 export const Route = createFileRoute("/_authenticated/rediger/$slug")({
   head: () => ({
