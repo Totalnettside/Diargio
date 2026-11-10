@@ -22,7 +22,7 @@ async function purgeUser(uid: string) {
   const walls=await a.from('art_walls').delete().eq('user_id',uid);if(walls.error)throw new Error('Kunstvegger kunne ikke slettes.');
   const library=await a.from('account_library').delete().eq('user_id',uid);if(library.error)throw new Error('Kontoens samlinger kunne ikke slettes.');
   const follows=await a.from('artist_follows').delete().or(`follower_id.eq.${uid},artist_id.eq.${uid}`);if(follows.error)throw new Error('Følgerdata kunne ikke slettes.');
-  const listings=await a.from('listings').delete().eq('user_id',uid);if(listings.error)throw new Error('Annonser kunne ikke slettes.');
+  const restriction=await a.from('profile_restrictions').delete().eq('user_id',uid);if(restriction.error)throw new Error('Profilstatusen kunne ikke fjernes.');
   const {error}=await a.auth.admin.deleteUser(uid);if(error)throw new Error('Kontoen kunne ikke slettes. Kontakt admin.');
 }
 
