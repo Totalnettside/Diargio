@@ -282,7 +282,7 @@ function SellPage() {
       <section className="sell-panel mt-5 space-y-5 rounded-3xl p-5 sm:p-7">
         {step === 0 && (
           <>
-            <p className="font-display text-lg font-semibold">Last opp bilder</p>
+            <div className="sell-step-heading"><span>01</span><h2 className="font-display text-2xl font-semibold">Last opp bilder</h2></div>
             <p className="text-sm text-ink/60">Dra og slipp eller velg opptil 15 bilder.</p>
             <div
               onDragOver={(e) => e.preventDefault()}
@@ -290,7 +290,7 @@ function SellPage() {
                 e.preventDefault();
                 void addImages(Array.from(e.dataTransfer.files));
               }}
-              className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-brand/40 bg-card/60 px-4 py-8 text-center text-sm text-muted-foreground"
+              className="sell-upload-zone flex flex-col items-center gap-4 rounded-2xl border border-dashed px-4 py-10 text-center text-sm"
             >
               <Upload className="size-5 text-brandink" />
               <span>Slipp bildene her</span>
@@ -360,7 +360,7 @@ function SellPage() {
 
         {step === 1 && (
           <>
-            <p className="font-display text-lg font-semibold">Hvem er kunstneren?</p>
+            <div className="sell-step-heading"><span>02</span><h2 className="font-display text-2xl font-semibold">Hvem er kunstneren?</h2></div>
             <input
               value={artistName}
               onChange={(e) => setArtistName(e.target.value)}
@@ -407,7 +407,7 @@ function SellPage() {
 
         {step === 2 && (
           <>
-            <p className="font-display text-lg font-semibold">Informasjon om verket</p>
+            <div className="sell-step-heading"><span>03</span><h2 className="font-display text-2xl font-semibold">Informasjon om verket</h2></div>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Selgertype"><select value={sellerType} onChange={e=>setSellerType(e.target.value as typeof sellerType)} className={inputClass}>{['Kunstner','Privat','Galleri'].map(t=><option key={t}>{t}</option>)}</select></Field>
               <Field label="Eget verk eller videresalg"><select value={ownWork?'own':'resale'} onChange={e=>setOwnWork(e.target.value==='own')} className={inputClass}><option value="own">Eget verk</option><option value="resale">Videresalg</option></select></Field>
@@ -496,7 +496,7 @@ function SellPage() {
 
         {step === 3 && (
           <>
-            <p className="font-display text-lg font-semibold">Beskrivelse</p>
+            <div className="sell-step-heading"><span>04</span><h2 className="font-display text-2xl font-semibold">Beskrivelse</h2></div>
             <textarea
               rows={6}
               value={description}
@@ -519,7 +519,7 @@ function SellPage() {
 
         {step === 4 && (
           <>
-            <p className="font-display text-lg font-semibold">Salgsform</p>
+            <div className="sell-step-heading"><span>05</span><h2 className="font-display text-2xl font-semibold">Salgsform</h2></div>
             <div className="flex flex-wrap gap-2">
               {saleTypes.map((s) => (
                 <button
@@ -555,7 +555,7 @@ function SellPage() {
 
         {step === 5 && (
           <>
-            <p className="font-display text-lg font-semibold">Levering</p>
+            <div className="sell-step-heading"><span>06</span><h2 className="font-display text-2xl font-semibold">Levering</h2></div>
             {delivery !== "Må hentes" && <Field label="Fraktpris (kr)"><input type="number" min="0" value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} className={inputClass}/></Field>}
             <div className="flex flex-wrap gap-2">
               {["Kan sendes", "Må hentes", "Begge deler"].map((d) => (
@@ -575,7 +575,7 @@ function SellPage() {
 
         {step === 6 && (
           <>
-            <p className="font-display text-lg font-semibold">Forhåndsvisning</p>
+            <div className="sell-step-heading"><span>07</span><h2 className="font-display text-2xl font-semibold">Forhåndsvisning</h2></div>
             <div className="overflow-hidden rounded-2xl glass">
               <img
                 src={images[0] ?? artImages[0]}
