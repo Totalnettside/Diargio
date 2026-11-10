@@ -1,5 +1,6 @@
 export function actionError(error: unknown, fallback = 'Handlingen kunne ikke gjennomføres. Prøv igjen.'): string {
   const message = error instanceof Error ? error.message : String(error);
+  if (/last_image/i.test(message)) return 'Legg til et nytt bilde før du sletter det siste, eller trekk annonsen fra salg.';
   if (/unauthorized|session|jwt|401/i.test(message)) return 'Økten din har utløpt. Logg inn på nytt.';
   if (/forbidden|permission|42501/i.test(message)) return 'Du har ikke tilgang til å endre eller slette dette innholdet.';
   if (/active order|aktiv ordre|pågående handel/i.test(message)) return 'Annonsen er knyttet til en pågående handel. Handelen må avklares før annonsen kan slettes.';

@@ -5,8 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import {useActionDialog} from '@/components/ActionDialogs';
 
 export function SavedWalls() {
+  const dialog=useActionDialog();
   const { user } = useAuth(); const cache = useQueryClient(); const [error, setError] = useState('');
   const walls = useQuery({ queryKey: ['my-art-walls', user?.id], enabled: !!user, queryFn: async () => {
     if (!user) return [];
@@ -17,6 +19,6 @@ export function SavedWalls() {
     {(walls.error || error) && <p role="alert" className="mt-3 text-sm text-destructive">{error || 'Kunstveggene kunne ikke lastes.'}</p>}
     {walls.isLoading && <p className="mt-4 text-sm text-muted-foreground">Laster kunstvegger…</p>}
     {walls.data?.length === 0 && <p className="mt-4 text-sm text-muted-foreground">Du har ingen lagrede kunstvegger ennå.</p>}
-    <div className="mt-4 grid gap-3 sm:grid-cols-2">{walls.data?.map((w) => <article key={w.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-4"><div><Link to="/kunstvegg" search={{ wall: w.id }} className="font-semibold underline-offset-4 hover:underline">{w.name}</Link><p className="mt-1 text-xs text-muted-foreground">{w.shared ? 'Delbar lenke aktiv' : 'Privat kunstvegg'}</p></div><Button variant="ghost" size="icon" aria-label={`Slett ${w.name}`} onClick={async () => { if (!window.confirm(`Slette «${w.name}»?`)) return; const { error } = await supabase.from('art_walls').delete().eq('id',w.id); if (error) setError('Kunne ikke slette kunstveggen.'); else await cache.invalidateQueries({ queryKey: ['my-art-walls'] }); }}><Trash2 /></Button></article>)}</div>
+    <div className="mt-4 grid gap-3 sm:grid-cols-2">{walls.data?.map((w) => <article key={w.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-4"><div><Link to="/kunstvegg" search={{ wall: w.id }} className="font-semibold underline-offset-4 hover:underline">{w.name}</Link><p className="mt-1 text-xs text-muted-foreground">{w.shared ? 'Delbar lenke aktiv' : 'Privat kunstvegg'}</p></div><Button variant="ghost" size="icon" aria-label={`Slett ${w.name}`} onClick={()=>dialog({title:'Slette kunstveggen?',description:`Vil du slette kunstveggen «${w.name}»? En delt lenke vil ikke lenger vise veggen.`,confirmLabel:'Slett kunstveggen',busyLabel:'Sletter …',destructive:true,success:'Kunstveggen er slettet',action:async()=>{const {data,error}=await supabase.from('art_walls').delete().eq('id',w.id).eq('user_id',user?.id??'').select('id');if(error||!data?.length)throw new Error('Wall removal failed');await cache.invalidateQueries({queryKey:['my-art-walls']});}})}><Trash2 /></Button></article>)}</div>
   </section>;
 }

@@ -22,6 +22,7 @@ import {
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { submissionDisclosure } from '@/lib/moderation';
+import {useActionDialog} from '@/components/ActionDialogs';
 
 export const Route = createFileRoute("/selg")({
   head: () => ({
@@ -69,6 +70,7 @@ function Field({
 const inputClass = "w-full rounded-2xl bg-white/70 px-3 py-2.5 text-sm outline-none glass";
 
 function SellPage() {
+  const dialog=useActionDialog();
   const { addListing } = useStore();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -177,9 +179,9 @@ function SellPage() {
   }
   async function publish(draft = false) {
     if(!user)return;
-    if (images.length === 0 || !title.trim()) { alert("Bilde og verkets navn må fylles inn."); return; }
+    if (images.length === 0 || !title.trim()) { setImageError('Last opp minst ett bilde og fyll inn verkets navn.'); return; }
     if (!draft && (!toCm(width) || !toCm(height))) {
-      alert("Fyll inn gyldig bredde og høyde (f.eks. 42,5).");
+      setImageError('Fyll inn gyldig bredde og høyde (f.eks. 42,5).');setStep(2);
       return;
     }
     const slug = `${(title || "nytt-verk")
@@ -309,10 +311,10 @@ function SellPage() {
                       type="button"
                       size="icon"
                       variant="outline"
-                      onClick={() => {
+                      onClick={() => dialog({title:'Slette bildet?',description:'Vil du fjerne dette bildet fra annonsen?',confirmLabel:'Slett bildet',destructive:true,action:() => {
                         setImages((prev) => prev.filter((_, idx) => idx !== i));
                         setOriginalImages((prev) => prev.filter((_, idx) => idx !== i));
-                      }}
+                      }})}
                       className="absolute right-1 top-1 size-7 rounded-full bg-card"
                       aria-label="Fjern bilde"
                     >
@@ -578,7 +580,7 @@ function SellPage() {
           </button>
           {step < stepTitles.length - 1 && (
             <button
-              onClick={() => step < maxStep ? setStep((s) => s + 1) : alert(images.length === 0 ? "Last opp minst ett bilde før du går videre." : "Skriv inn verkets navn før du går videre.")}
+              onClick={() => step < maxStep ? setStep((s) => s + 1) : setImageError(images.length === 0 ? "Last opp minst ett bilde før du går videre." : "Skriv inn verkets navn før du går videre.")}
               className="rounded-2xl bg-brandink px-6 py-2.5 text-sm font-semibold text-primary-foreground"
             >
               {step === 1 && !artistName.trim() ? "Hopp over" : "Neste"}
@@ -586,6 +588,7 @@ function SellPage() {
           )}
         </div>
       </section>
+      {imageError&&step!==0&&<p role="alert" className="mt-3 text-sm text-destructive">{imageError}</p>}
       <Button variant="outline" className="mt-4" disabled={publishing||!title.trim()||images.length===0} onClick={()=>void publish(true)}>Lagre utkast</Button>
       {cropIndex !== null && originalImages[cropIndex] && (
         <ImageCropDialog
