@@ -32,6 +32,45 @@ export type Database = {
         }
         Relationships: []
       }
+      administrative_actions: {
+        Row: {
+          action: string
+          actor_id: string
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string
+          id: string
+          internal_note: string | null
+          reason: string | null
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          id?: string
+          internal_note?: string | null
+          reason?: string | null
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          id?: string
+          internal_note?: string | null
+          reason?: string | null
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
       art_exhibitions: {
         Row: {
           created_at: string
@@ -434,24 +473,30 @@ export type Database = {
       }
       listings: {
         Row: {
+          blocked: boolean
           created_at: string
           data: Json
+          deleted_at: string | null
           id: string
           moderation_status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          blocked?: boolean
           created_at?: string
           data: Json
+          deleted_at?: string | null
           id: string
           moderation_status?: string
           updated_at?: string
           user_id?: string
         }
         Update: {
+          blocked?: boolean
           created_at?: string
           data?: Json
+          deleted_at?: string | null
           id?: string
           moderation_status?: string
           updated_at?: string
@@ -517,6 +562,35 @@ export type Database = {
           processing_until?: string | null
         }
         Relationships: []
+      }
+      profile_restrictions: {
+        Row: {
+          blocked: boolean
+          reason: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          blocked?: boolean
+          reason?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          blocked?: boolean
+          reason?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_restrictions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -686,7 +760,21 @@ export type Database = {
         Args: { _cid: string; _uid: string }
         Returns: boolean
       }
+      manage_listing_visibility: {
+        Args: { _action: string; _id: string; _note?: string; _reason?: string }
+        Returns: undefined
+      }
+      manage_profile_restriction: {
+        Args: {
+          _blocked: boolean
+          _note?: string
+          _reason: string
+          _user: string
+        }
+        Returns: undefined
+      }
       mark_review_events_read: { Args: never; Returns: undefined }
+      profile_is_blocked: { Args: { _user: string }; Returns: boolean }
       reserve_art_order: {
         Args: {
           _artwork: number

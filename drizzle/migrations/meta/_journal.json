@@ -155,6 +155,13 @@
       "when": 1794268621775,
       "tag": "0021_review_event_version_snapshots",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794294710083,
+      "tag": "0022_safe_listing_archival_and_account_moderation",
+      "breakpoints": true
     }
   ]
 }
