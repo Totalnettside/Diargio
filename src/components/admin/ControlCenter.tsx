@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAdminOverview, setAdminRole, setVerified, restrictProfile,adminEditProfile } from "@/lib/admin.functions";
+import { getAdminOverview, setAdminRole, setVerified, restrictProfile,adminEditProfile,adminEditListing } from "@/lib/admin.functions";
 import { adminDeleteUser } from "@/lib/account.functions";
 import { useStore } from "@/lib/store";
 import { breakdownFromTotal } from "@/lib/fees";
@@ -261,6 +261,7 @@ function Users({ d, reload }: { d: D; reload: () => void }) {
 function Listings({ d, reload }: { d: D; reload: () => void }) {
   const dialog=useActionDialog();
   const visibility=useServerFn(changeListingVisibility);
+  const edit=useServerFn(adminEditListing);
   const [q, setQ] = useState("");
   const sold = new Set(d.purchases.map((p) => p.listing_id));
   const rows = d.listings.filter((l) => `${l.title} ${nameOf(d, l.user_id)} ${l.category}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => b.created_at.localeCompare(a.created_at));
@@ -283,6 +284,7 @@ function Listings({ d, reload }: { d: D; reload: () => void }) {
                 <p className="text-xs text-muted-foreground">{nameOf(d, l.user_id)} · {ago(l.created_at)}</p>
                 <p className="mt-1 text-sm font-bold">{kr(l.price)}</p>
                 <p className="text-xs text-muted-foreground">{nb.length} bud{top ? ` · høyeste ${kr(top)}` : ""}</p>
+                {!l.deletedAt&&!l.blocked&&l.status!=='sold'&&<><Button variant="outline" size="sm" onClick={()=>dialog({title:'Rediger annonsetittel',description:'Endringen lagres som utkast og må godkjennes før offentlig visning.',inputLabel:'Annonsetittel',initialValue:l.title,required:true,confirmLabel:'Lagre utkast',success:'Endringen er lagret som utkast',action:async title=>{await edit({data:{id:l.id,title}});reload();}})}>Rediger annonse</Button><div className="mt-2 flex flex-wrap gap-2">{((l.content as {images?:string[];image?:string}).images??[l.image??'']).map((src,i)=><Button key={i} variant="ghost" size="sm" onClick={()=>dialog({title:'Slette bildet?',description:`Vil du fjerne bilde ${i+1} fra annonsen? Endringen må godkjennes før offentlig visning.`,confirmLabel:'Slett bildet',busyLabel:'Sletter …',destructive:true,success:'Bildet er slettet fra den nye versjonen',action:async()=>{await edit({data:{id:l.id,removeImage:i}});reload();}})}><img src={src} alt={`Bilde ${i+1}`} className="size-8 object-contain"/>Slett bilde {i+1}</Button>)}</div></>}
                 <div className="mt-2 flex gap-1.5">
                   <Link to="/kunst/$slug" params={{ slug: l.slug }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Vis</Link>
                   <Button variant="outline" onClick={()=>dialog({title:'Avpublisere annonsen?',description:'Annonsen tas ut av offentlig visning og salg. Handelshistorikken bevares.',confirmLabel:'Avpubliser',success:'Annonsen er avpublisert',action:async()=>{await visibility({data:{id:l.id,action:'withdrawn'}});reload();}})}>Avpubliser</Button>

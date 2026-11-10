@@ -40,6 +40,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         user_id: l.user_id,
         created_at: l.created_at,
         status:l.moderation_status,deletedAt:l.deleted_at,blocked:l.blocked,
+        content:l.data,
         title: String(d.title ?? "Uten tittel"),
         price: Number(d.price ?? 0) || 0,
         image: (Array.isArray(d.images) ? (d.images[0] as string) : (d.image as string)) ?? null,
@@ -67,6 +68,10 @@ export const getAdminOverview = createServerFn({ method: "GET" })
 export const restrictProfile=createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
  .inputValidator(d=>z.object({userId:z.string().uuid(),blocked:z.boolean(),reason:z.string().max(4000),note:z.string().max(4000).optional()}).parse(d))
  .handler(async({data,context})=>{const {error}=await context.supabase.rpc('manage_profile_restriction',{_user:data.userId,_blocked:data.blocked,_reason:data.reason,_note:data.note??''});if(error){console.error('Profile restriction failed',error);throw new Error(actionError(new Error(error.message),'Profilen kunne ikke endres.'));}return {ok:true};});
+
+export const adminEditListing=createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
+ .inputValidator(d=>z.object({id:z.string().min(1),title:z.string().trim().min(1).max(200).optional(),removeImage:z.number().int().nonnegative().optional(),reason:z.string().max(4000).optional()}).parse(d))
+ .handler(async({data,context})=>{await assertAdmin(context);const {data:row,error}=await context.supabase.from('listings').select('data').eq('id',data.id).single();if(error||!row)throw new Error('Annonsen kunne ikke hentes.');const content=row.data as Record<string,any>;let next={...content};if(data.title)next['title']=data.title;if(data.removeImage!==undefined){const {removeListingImage}=await import('./listing-images');next={...next,...removeListingImage(Array.isArray(content['images'])&&content['images'].length?content['images']:[content['image']],data.removeImage)};}const {error:saveError}=await context.supabase.rpc('admin_save_listing_revision',{_id:data.id,_data:next as never,_reason:data.reason??'',_note:''});if(saveError){console.error('Admin listing edit failed',saveError);throw new Error(actionError(new Error(saveError.message),'Annonsen kunne ikke lagres.'));}return {ok:true};});
 
 export const adminEditProfile=createServerFn({method:'POST'}).middleware([requireSupabaseAuth])
  .inputValidator(d=>z.object({userId:z.string().uuid(),displayName:z.string().trim().min(1).max(200),reason:z.string().max(4000).optional()}).parse(d))
