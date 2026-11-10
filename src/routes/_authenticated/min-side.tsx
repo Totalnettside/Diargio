@@ -243,36 +243,60 @@ function Dashboard() {
       )}
 
       {tab === "Bud" && (
-        <div className="mt-4 space-y-2">
-          {bidError && <p role="alert" className="text-sm text-destructive">{bidError}</p>}
-          {[["Mottatte bud", receivedBids], ["Mine bud", sentBids]].map(([label, list]) => (
-            <section key={String(label)} className="mb-6">
-            <h2 className="mb-3 font-semibold">{String(label)}</h2>
-            {(list as typeof bids).length === 0 && <p className="text-sm text-muted-foreground">Ingen bud ennå.</p>}
-            {(list as typeof bids).map((b) => {
-              const art = allArtworks.find((a) => a.id === b.artworkId);
-              return (
-                <div key={b.id} className="rounded-2xl p-4 text-sm glass">
-                  <p className="font-semibold">{art?.title}</p>
-                  <p className="text-ink/60">
-                    {formatPrice(b.amount)} {b.sellerId === user?.id && !b.read && <span className="font-semibold text-brandink">· Nytt bud</span>}
-                  </p>
-                  {b.message && <p className="mt-1">{b.message}</p>}
-                  <p className="mt-2 font-semibold">{b.status === "Sendt" ? "Venter på svar" : b.status === "Godtatt" ? "Godkjent · ikke betalt" : b.status}</p>
-                  {b.sellerId === user?.id && b.status === "Sendt" && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Button disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "accepted")}>Godkjenn bud</Button>
-                      <Button variant="outline" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "rejected")}>Avslå bud</Button>
-                    </div>
-                  )}
-                  <p className="mt-1 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
-                  {b.buyerId===user?.id&&b.status==="Godtatt"&&art&&<Button asChild className="mt-2"><Link to="/kjop/$slug" params={{slug:art.slug}} search={{bid:b.id}}>Betal godkjent bud</Link></Button>}
-                  {b.conversationId && <Button asChild variant="link" className="px-0"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}>Åpne samtale</Link></Button>}
+        <div className="account-section">
+          {bidError && <p role="alert" className="mb-4 text-sm text-destructive">{bidError}</p>}
+          {([["Mottatte bud", receivedBids], ["Mine bud", sentBids]] as const).map(([label, list]) => {
+            const SectionIcon = label === "Mottatte bud" ? Inbox : Send;
+            return (
+              <section key={label} className="account-bid-section" aria-labelledby={`bids-${label === "Mottatte bud" ? "received" : "sent"}`}>
+                <div className="account-section-heading account-bid-heading">
+                  <div className="account-bid-heading-title"><span className="account-section-icon"><SectionIcon /></span><div><p className="account-kicker">Forhandlinger</p><h2 id={`bids-${label === "Mottatte bud" ? "received" : "sent"}`}>{label}</h2></div></div>
+                  <span className="account-count">{list.length}</span>
                 </div>
-              );
-            })}
-            </section>
-          ))}
+                {list.length === 0 ? (
+                  <div className="account-empty"><Gavel /><div><h3>Ingen bud ennå</h3><p>{label === "Mottatte bud" ? "Nye bud fra kjøpere vises her." : "Bud du sender på kunst vises her."}</p></div></div>
+                ) : (
+                  <div className="account-bid-list">
+                    {list.map((b) => {
+                      const art = allArtworks.find((a) => a.id === b.artworkId);
+                      const statusLabel = b.status === "Sendt" ? "Venter på svar" : b.status === "Godtatt" ? "Godkjent · ikke betalt" : b.status;
+                      return (
+                        <article key={b.id} className="account-bid-card">
+                          <div className="account-bid-main">
+                            <div className="account-bid-art">
+                              {art ? <ArtworkPreview image={art.image} alt={art.title} /> : <Gavel />}
+                            </div>
+                            <div className="account-bid-info">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`account-status status-${b.status.toLowerCase().replace("å", "a")}`}>{statusLabel}</span>
+                                {b.sellerId === user?.id && !b.read && <span className="account-new-bid">Nytt bud</span>}
+                              </div>
+                              {art ? <Link to="/kunst/$slug" params={{ slug: art.slug }} className="account-bid-title">{art.title}</Link> : <h3 className="account-bid-title">Kunstverk</h3>}
+                              <p className="account-bid-date">{new Date(b.createdAt).toLocaleString("nb-NO")}</p>
+                            </div>
+                            <div className="account-bid-amount"><span>Budbeløp</span><strong>{formatPrice(b.amount)}</strong></div>
+                          </div>
+                          {b.message && <blockquote className="account-bid-message"><MessageSquareQuote /><p>{b.message}</p></blockquote>}
+                          {(b.sellerId === user?.id && b.status === "Sendt") || (b.buyerId === user?.id && b.status === "Godtatt" && art) || b.conversationId ? (
+                            <div className="account-bid-footer">
+                              <div className="account-bid-actions">
+                                {b.sellerId === user?.id && b.status === "Sendt" && <>
+                                  <Button size="sm" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "accepted")}>Godkjenn bud</Button>
+                                  <Button size="sm" variant="outline" disabled={decidingBid !== null} onClick={() => void handleDecision(b.id, "rejected")}>Avslå bud</Button>
+                                </>}
+                                {b.buyerId === user?.id && b.status === "Godtatt" && art && <Button asChild size="sm"><Link to="/kjop/$slug" params={{ slug: art.slug }} search={{ bid: b.id }}>Betal godkjent bud <ArrowRight /></Link></Button>}
+                              </div>
+                              {b.conversationId && <Button asChild variant="ghost" size="sm" className="account-conversation-link"><Link to="/meldinger" search={{ c: b.conversationId }} onClick={() => { if (b.sellerId === user?.id) void markBidRead(b.id); }}><MessageCircle /> Åpne samtale</Link></Button>}
+                            </div>
+                          ) : null}
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
       )}
 
