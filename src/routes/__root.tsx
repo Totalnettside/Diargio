@@ -20,6 +20,7 @@ import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { ActionDialogs } from '@/components/ActionDialogs';
+import { DEFAULT_TITLE, NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE, OG_IMAGE, isPrivatePath } from '@/lib/seo';
 
 function NotFoundComponent() {
   return (
@@ -80,30 +81,42 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Diargio – kjøp og selg kunst i Norge" },
-      {
-        name: "description",
-        content:
-          "Diargio er markedsplassen for kunst i Norge. Kjøp og selg originalkunst, trykk og fotografi.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap",
-      },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-    ],
-  }),
+  head: ({ matches }) => {
+    const path = [...matches].reverse().find((match) => match.pathname)?.pathname ?? "/";
+    const notFound = matches.some((match) => match._notFound || match.status === "notFound");
+    const privatePage = isPrivatePath(path);
+    const title = notFound ? NOT_FOUND_TITLE : DEFAULT_TITLE;
+    const description = notFound
+      ? NOT_FOUND_DESCRIPTION
+      : "Diargio er markedsplassen for kunst i Norge. Kjøp og selg originalkunst, trykk og fotografi.";
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:image", content: OG_IMAGE },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        ...((notFound || privatePage) ? [{ name: "robots", content: "noindex" }] : []),
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap",
+        },
+        { rel: "icon", href: "/favicon.ico", sizes: "any" },
+        { rel: "icon", href: "/favicon.png", type: "image/png" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

@@ -22,6 +22,7 @@ import { Route as AuthenticatedDiargioadmin007RouteImport } from './routes/_auth
 import { Route as AuthenticatedMeldingerRouteImport } from './routes/_authenticated/meldinger'
 import { Route as AuthenticatedMinSideRouteImport } from './routes/_authenticated/min-side'
 import { Route as AuthenticatedVarslerRouteImport } from './routes/_authenticated/varsler'
+import { Route as AnnonsebildeIdRouteImport } from './routes/annonsebilde.$id'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthRecoveryRouteImport } from './routes/auth.recovery'
@@ -103,6 +104,11 @@ const AuthenticatedVarslerRoute = AuthenticatedVarslerRouteImport.update({
   id: '/varsler',
   path: '/varsler',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AnnonsebildeIdRoute = AnnonsebildeIdRouteImport.update({
+  id: '/annonsebilde/$id',
+  path: '/annonsebilde/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/auth/',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/meldinger': typeof AuthenticatedMeldingerRoute
   '/min-side': typeof AuthenticatedMinSideRoute
   '/varsler': typeof AuthenticatedVarslerRoute
+  '/annonsebilde/$id': typeof AnnonsebildeIdRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/reset': typeof AuthResetRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/meldinger': typeof AuthenticatedMeldingerRoute
   '/min-side': typeof AuthenticatedMinSideRoute
   '/varsler': typeof AuthenticatedVarslerRoute
+  '/annonsebilde/$id': typeof AnnonsebildeIdRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/reset': typeof AuthResetRoute
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/_authenticated/meldinger': typeof AuthenticatedMeldingerRoute
   '/_authenticated/min-side': typeof AuthenticatedMinSideRoute
   '/_authenticated/varsler': typeof AuthenticatedVarslerRoute
+  '/annonsebilde/$id': typeof AnnonsebildeIdRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/reset': typeof AuthResetRoute
@@ -295,6 +304,7 @@ export interface FileRouteTypes {
     | '/meldinger'
     | '/min-side'
     | '/varsler'
+    | '/annonsebilde/$id'
     | '/auth/callback'
     | '/auth/recovery'
     | '/auth/reset'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/meldinger'
     | '/min-side'
     | '/varsler'
+    | '/annonsebilde/$id'
     | '/auth/callback'
     | '/auth/recovery'
     | '/auth/reset'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/_authenticated/meldinger'
     | '/_authenticated/min-side'
     | '/_authenticated/varsler'
+    | '/annonsebilde/$id'
     | '/auth/callback'
     | '/auth/recovery'
     | '/auth/reset'
@@ -384,6 +396,7 @@ export interface RootRouteChildren {
   SelgRoute: typeof SelgRoute
   SokRoute: typeof SokRoute
   UtstillingerRoute: typeof UtstillingerRoute
+  AnnonsebildeIdRoute: typeof AnnonsebildeIdRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthRecoveryRoute: typeof AuthRecoveryRoute
   AuthResetRoute: typeof AuthResetRoute
@@ -493,6 +506,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/varsler'
       preLoaderRoute: typeof AuthenticatedVarslerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/annonsebilde/$id': {
+      id: '/annonsebilde/$id'
+      path: '/annonsebilde/$id'
+      fullPath: '/annonsebilde/$id'
+      preLoaderRoute: typeof AnnonsebildeIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/': {
       id: '/auth/'
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   SelgRoute: SelgRoute,
   SokRoute: SokRoute,
   UtstillingerRoute: UtstillingerRoute,
+  AnnonsebildeIdRoute: AnnonsebildeIdRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthRecoveryRoute: AuthRecoveryRoute,
   AuthResetRoute: AuthResetRoute,

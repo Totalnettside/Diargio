@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
@@ -8,27 +8,31 @@ import { useRecent } from "@/lib/recent";
 import { investorArtworks } from '@/data/investor-art';
 import { InvestorArtCard } from '@/components/InvestorArt';
 import { Button } from '@/components/ui/button';
+import { pageHead } from '@/lib/seo';
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Diargio – et kunstunivers hvor alle har sin plass" },
-      {
-        name: "description",
-        content:
-          "Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere, gallerier og private selgere i Norge.",
-      },
-      { property: "og:title", content: "Diargio – markedsplassen for kunst i Norge" },
-      {
-        property: "og:description",
-        content: "Kjøp og selg kunst direkte fra kunstnere, gallerier og private selgere.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  head: () => pageHead({
+    title: "Diargio – et kunstunivers hvor alle har sin plass",
+    description: "Kjøp og selg originalkunst, trykk, fotografi og samleobjekter direkte fra kunstnere, gallerier og private selgere i Norge.",
+    path: "/",
   }),
   component: Index,
 });
+
+function WhenNear({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) setShow(true);
+    }, { rootMargin: "200px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref}>{show ? children : <div className="min-h-64" aria-hidden="true" />}</div>;
+}
 
 function Index() {
 
@@ -134,7 +138,8 @@ function Index() {
                         <img
                           src={a.image}
                           alt={a.title}
-                          loading={i === 0 ? "eager" : "lazy"}
+                          loading="eager"
+                          fetchPriority={i === 0 ? "high" : "auto"}
                           className="aspect-[3/4] w-full object-contain"
                         />
                         <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
@@ -151,7 +156,8 @@ function Index() {
                         <img
                           src={a.image}
                           alt={a.title}
-                          loading={i === 0 ? "eager" : "lazy"}
+                          loading="eager"
+                          fetchPriority={i === 0 ? "high" : "auto"}
                           className="aspect-[3/4] w-full object-contain"
                         />
                         <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
@@ -195,7 +201,7 @@ function Index() {
           <div><h2 className="font-display text-lg font-medium">Investorvisning — ti demoverk</h2><p className="mt-1 text-xs text-muted-foreground">AI-genererte illustrasjoner · Eksempelpriser · Ikke til salgs</p></div>
           <Button asChild variant="outline"><Link to="/utstillinger" search={{ investor: true }}>Se demoutstillingen</Link></Button>
         </div>
-        <div className="grid grid-cols-2 items-start gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div>
+        <WhenNear><div className="grid grid-cols-2 items-start gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div></WhenNear>
       </section>
 
       <div className="mt-6 flex items-center justify-between">

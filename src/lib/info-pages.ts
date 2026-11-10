@@ -1,10 +1,11 @@
 export type InfoSection = { h: string; p: string[] };
-export type InfoPage = { title: string; lead: string; intro?: string[]; sections: InfoSection[]; outro?: string; cta?: { label: string; to: "/selg" | "/kunst" } };
+export type InfoPage = { title: string; lead: string; description?: string; intro?: string[]; sections: InfoSection[]; outro?: string; cta?: { label: string; to: "/selg" | "/kunst" } };
 
 export const infoPages: Record<string, InfoPage> = {
   "om-oss": {
     title: "Om oss",
     lead: "Velkommen til et kunstunivers hvor alle har sin plass.",
+    description: "Diargio AS er markedsplassen der kunstnere, gallerier og private selgere kan vise frem og selge kunst.",
     sections: [
       {
         h: "Vår visjon",
@@ -45,6 +46,7 @@ export const infoPages: Record<string, InfoPage> = {
   "slik-fungerer-diargio": {
     title: "Slik fungerer Diargio",
     lead: "Et sted å vise frem, oppdage og handle kunst.",
+    description: "Slik kjøper og selger du kunst på Diargio, fra presentasjon av verket til bud, betaling og levering.",
     sections: [
       {
         h: "Et sted å vise frem, oppdage og handle kunst",
@@ -88,6 +90,7 @@ export const infoPages: Record<string, InfoPage> = {
   "trygg-kunsthandel": {
     title: "Trygg kunsthandel",
     lead: "Vi vil at både kjøper og selger skal føle seg trygge.",
+    description: "Betaling gjennom Diargio, registrerte brukere og tips for trygg handel mellom kjøper og selger.",
     sections: [
       { h: "Sikker betaling", p: ["Betaling skal gå gjennom Diargio med Stripe, slik at pengene ikke utveksles direkte mellom partene. Betalingsløsningen kobles på snart."] },
       { h: "Ekte brukere", p: ["Alle annonser kommer fra registrerte brukere. Kun de som har kjøpt av en selger kan skrive omtale."] },
@@ -97,6 +100,7 @@ export const infoPages: Record<string, InfoPage> = {
   "betaling-og-levering": {
     title: "Betaling og levering",
     lead: "Slik fungerer betaling og frakt.",
+    description: "Betaling gjennom Diargio og levering som kjøper og selger avtaler, med sending eller henting.",
     sections: [
       { h: "Betaling", p: ["Betaling skal skje trygt gjennom Diargio. Kortbetaling via Stripe er under oppkobling."] },
       { h: "Levering", p: ["Selger oppgir om verket kan sendes eller må hentes. Ved forsendelse avtaler partene transport, for eksempel med Posten eller Bring, og bør velge forsikring.", "For verdifull kunst anbefaler vi spesialisert kunsttransport."] },
@@ -140,6 +144,7 @@ export const infoPages: Record<string, InfoPage> = {
   "ofte-stilte-sporsmal": {
     title: "Ofte stilte spørsmål",
     lead: "Svar på det mange lurer på.",
+    description: "Svar om å legge ut kunst, gi bud, endre annonser og skrive omtale på Diargio.",
     sections: [
       { h: "Koster det noe å legge ut kunst?", p: ["Nei. Provisjon og eventuell kunstavgift er inkludert i annonseprisen og gjelder når verket selges."] },
       { h: "Hvordan gir jeg bud?", p: ["Åpne annonsen og trykk «Gi bud». Selger får varsel og kan godkjenne eller avslå."] },

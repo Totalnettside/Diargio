@@ -3,19 +3,13 @@ import { ControlCenter } from "@/components/admin/ControlCenter";
 import { Link } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Button } from "@/components/ui/button";
+import { privateHead, privatePageFor } from "@/lib/seo";
 
 export const Route = createFileRoute("/_authenticated/diargioadmin007")({
-  head: () => ({
-    meta: [
-      { title: "Kontrollsenter | Diargio" },
-      { name: "description", content: "Administrer brukere, annonser, transaksjoner og moderering." },
-      { property: "og:title", content: "Kontrollsenter | Diargio" },
-      { property: "og:description", content: "Administrer Diargios markedsplass." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/diargioadmin007");
+    return privateHead(page.title, page.description);
+  },
   component: AdminPage,
 });
 

@@ -1,14 +1,14 @@
 import type { Artwork } from '@/data/demo';
-import art01 from '@/assets/investor-art-01.jpg';
-import art02 from '@/assets/investor-art-02.jpg';
-import art03 from '@/assets/investor-art-03.jpg';
-import art04 from '@/assets/investor-art-04.jpg';
-import art05 from '@/assets/investor-art-05.jpg';
-import art06 from '@/assets/investor-art-06.jpg';
-import art07 from '@/assets/investor-art-07.jpg';
-import art08 from '@/assets/investor-art-08.jpg';
-import art09 from '@/assets/investor-art-09.jpg';
-import art10 from '@/assets/investor-art-10.jpg';
+import art01 from '@/assets/investor-art-01.webp';
+import art02 from '@/assets/investor-art-02.webp';
+import art03 from '@/assets/investor-art-03.webp';
+import art04 from '@/assets/investor-art-04.webp';
+import art05 from '@/assets/investor-art-05.webp';
+import art06 from '@/assets/investor-art-06.webp';
+import art07 from '@/assets/investor-art-07.webp';
+import art08 from '@/assets/investor-art-08.webp';
+import art09 from '@/assets/investor-art-09.webp';
+import art10 from '@/assets/investor-art-10.webp';
 
 const examples = [
   { title: 'Blå resonans', image: art01, price: 12000, widthCm: 60, heightCm: 80, category: 'Malerier' },

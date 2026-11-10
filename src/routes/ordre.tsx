@@ -9,7 +9,8 @@ import {useActionDialog} from '@/components/ActionDialogs';
 import {actionError} from '@/lib/action-errors';
 import {orderLabels} from '@/lib/commerce';
 import {formatPrice} from '@/data/demo';
-export const Route=createFileRoute('/ordre')({validateSearch:(s:Record<string,unknown>):{order?:string|undefined}=>({order:typeof s['order']==='string'?s['order']:undefined}),head:()=>({meta:[{title:'Ordre og oppgjør | Diargio'},{name:'description',content:'Dine kunstkjøp, leveranser og betalingsstatus.'},{property:'og:title',content:'Ordre og oppgjør | Diargio'},{property:'og:description',content:'Følg kunstkjøpet fra betaling til mottak.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}]}),component:Orders});
+import {privateHead,privatePageFor} from '@/lib/seo';
+export const Route=createFileRoute('/ordre')({validateSearch:(s:Record<string,unknown>):{order?:string|undefined}=>({order:typeof s['order']==='string'?s['order']:undefined}),head:()=>{const page=privatePageFor('/ordre');return privateHead(page.title,page.description);},component:Orders});
 function Orders(){const dialog=useActionDialog();const {user,loading}=useAuth();const {isAdmin}=useIsAdmin();const [error,setError]=useState('');const [busy,setBusy]=useState(false);
  const q=useQuery({queryKey:['art-orders',user?.id],queryFn:()=>listArtOrders(),enabled:!!user,refetchInterval:10000});
  async function action(fn:()=>Promise<unknown>){setBusy(true);setError('');try{const r=await fn();if(r&&typeof r==='object'&&'error'in r)throw new Error(String(r.error));await q.refetch();}catch(e){setError(actionError(e));throw e;}finally{setBusy(false);}}

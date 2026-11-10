@@ -1,6 +1,6 @@
 import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, Crop, Sparkles, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,24 +23,47 @@ import { useStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
 import { submissionDisclosure } from '@/lib/moderation';
 import {useActionDialog} from '@/components/ActionDialogs';
+import { pageHead } from '@/lib/seo';
 
 export const Route = createFileRoute("/selg")({
-  head: () => ({
-    meta: [
-      { title: "Legg ut kunst til salgs | Diargio" },
-      {
-        name: "description",
-        content:
-          "Last opp bilder, fyll inn informasjon om verket og publiser annonsen. Gratis for private selgere.",
-      },
-      { property: "og:title", content: "Selg kunst på Diargio" },
-      { property: "og:description", content: "Legg ut annonsen din på under to minutter." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  head: () => pageHead({
+    title: "Selg kunst på Diargio",
+    description: "Det koster ingenting å legge ut en annonse. Diargios provisjon er 20 % av verkets avtalte salgspris ved gjennomført salg.",
+    path: "/selg",
+    breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: "Selg kunst", path: "/selg" }],
   }),
   component: SellPage,
 });
+
+function SellLanding() {
+  return (
+    <article className="mx-auto max-w-2xl px-4 py-12">
+      <h1 className="text-3xl font-semibold">Selg kunst på Diargio</h1>
+      <p className="mt-3 text-lg text-ink/70">
+        Det koster ingenting å legge ut en annonse. Diargios provisjon er 20 % av verkets avtalte salgspris ved gjennomført salg.
+      </p>
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold">Slik selger du</h2>
+        <p className="mt-2 text-ink/80">Opprett en bruker og presenter verket med gode bilder, en beskrivelse og ønsket pris. Fortell om materialene, størrelsen og historien bak.</p>
+        <p className="mt-2 text-ink/80">Vi gjennomgår alle nye annonser før de publiseres, slik at opplysningene er tydelige og presentasjonen følger Diargios retningslinjer. Gjennomgangen innebærer ikke en verdivurdering eller bekreftelse av verkets ekthet.</p>
+        <p className="mt-2 text-ink/80">Du får varsel når noen sender en melding eller gir et bud. Du bestemmer selv hvilke bud du vil godta.</p>
+        <p className="mt-2 text-ink/80">Betalingen håndteres gjennom Stripe. Provisjonen trekkes fra selgerens oppgjør. Levering avtales med kjøperen.</p>
+      </section>
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold">Pris</h2>
+        <p className="mt-2 text-ink/80">Det koster ingenting å legge ut kunst. Provisjon og eventuell kunstavgift gjelder når verket selges.</p>
+        <p className="mt-2 text-ink/80">Provisjonen er 20 % av verkets avtalte salgspris og beregnes av salgsprisen før kunstavgift, frakt og eventuell transportforsikring.</p>
+        <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+          <Link to="/info/$page" params={{ page: "priser-og-gebyrer" }} className="underline">Priser og gebyrer</Link>
+          <Link to="/info/$page" params={{ page: "guide-til-a-selge-kunst" }} className="underline">Guide til å selge kunst</Link>
+        </p>
+      </section>
+      <Link to="/auth" className="mt-10 inline-block rounded-md bg-sage px-5 py-2.5 text-sm font-medium text-white hover:bg-sagelight">
+        Logg inn eller opprett konto
+      </Link>
+    </article>
+  );
+}
 
 const stepTitles = [
   "Bilder",
@@ -73,13 +96,7 @@ function SellPage() {
   const dialog=useActionDialog();
   const { addListing } = useStore();
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      void navigate({ to: "/auth" });
-    }
-  }, [loading, user, navigate]);
+  const { user } = useAuth();
 
   const [step, setStep] = useState(0);
   const [images, setImages] = useState<string[]>([]);
@@ -170,13 +187,7 @@ function SellPage() {
     );
   }
 
-  if (loading || !user) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-24 text-center text-ink/70">
-        Sender deg til innlogging …
-      </div>
-    );
-  }
+  if (!user) return <SellLanding />;
   async function publish(draft = false) {
     if(!user)return;
     if (images.length === 0 || !title.trim()) { setImageError('Last opp minst ett bilde og fyll inn verkets navn.'); return; }

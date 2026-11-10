@@ -6,27 +6,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Eye, EyeOff, LoaderCircle, LockKeyhole } from "lucide-react";
 import {safeDestination} from "@/lib/commerce";
-import galleryRoom from "@/assets/gallery-hall-1.jpg";
+import { privateHead, privatePageFor } from "@/lib/seo";
+import galleryRoom from "@/assets/gallery-hall-1.webp";
 
 export const Route = createFileRoute("/auth/")({
   validateSearch:(s:Record<string,unknown>):{next?:string} => typeof s["next"] === "string" ? {next:safeDestination(s["next"])} : {},
-  head: () => ({
-    meta: [
-      { title: "Logg inn – Diargio" },
-      {
-        name: "description",
-        content:
-          "Logg inn på Diargio med e-post eller Google for å kjøpe og selge kunst.",
-      },
-      { property: "og:title", content: "Logg inn – Diargio" },
-      {
-        property: "og:description",
-        content: "Logg inn med e-post eller Google på Diargio.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/auth");
+    return privateHead(page.title, page.description);
+  },
   component: AuthPage,
 });
 

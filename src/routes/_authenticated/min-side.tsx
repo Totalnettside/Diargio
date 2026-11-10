@@ -15,22 +15,14 @@ import {moderationLabels,submissionConfirmation} from '@/lib/moderation';
 import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
 import {useNavigate} from '@tanstack/react-router';
+import { privateHead, privatePageFor } from '@/lib/seo';
 
 export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
-  head: () => ({
-    meta: [
-      { title: "Min kunsthandel | Diargio" },
-      {
-        name: "description",
-        content: "Oversikt over annonser, bud, favoritter, lagrede søk, salg og statistikk.",
-      },
-      { property: "og:title", content: "Min kunsthandel | Diargio" },
-      { property: "og:description", content: "Dashboard for kjøp og salg av kunst." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/min-side");
+    return privateHead(page.title, page.description);
+  },
   component: Dashboard,
 });
 

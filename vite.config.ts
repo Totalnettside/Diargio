@@ -7,6 +7,17 @@
 import path from "node:path";
 import { loadEnv } from "vite";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { assertRouteSeo, writeSitemap } from "./src/lib/seo-guard";
+
+function diargioSeoPlugin() {
+  return {
+    name: "diargio-seo",
+    buildStart() {
+      assertRouteSeo(process.cwd());
+      writeSitemap(process.cwd());
+    },
+  };
+}
 
 // Load all env vars into process.env for server-side code only (not exposed to client).
 Object.assign(process.env, loadEnv(process.env["NODE_ENV"] ?? "development", process.cwd(), ""));
@@ -16,10 +27,14 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    build: { assetsInlineLimit: 0 },
+    plugins: [diargioSeoPlugin()],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(__dirname, "node_modules/entities/lib/decode.js"),
         "entities/lib/encode.js": path.resolve(__dirname, "node_modules/entities/lib/encode.js"),
+        "entities/decode": path.resolve(__dirname, "node_modules/entities/lib/esm/decode.js"),
+        "entities/escape": path.resolve(__dirname, "node_modules/entities/lib/esm/escape.js"),
         entities: path.resolve(__dirname, "node_modules/entities"),
       },
     },

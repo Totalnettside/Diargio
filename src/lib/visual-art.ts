@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import living from '@/assets/wall-living.jpg';
-import dining from '@/assets/wall-dining.jpg';
-import gallery from '@/assets/gallery-room.jpg';
-import hallway from '@/assets/wall-hallway.jpg';
+import living from '@/assets/wall-living.webp';
+import dining from '@/assets/wall-dining.webp';
+import gallery from '@/assets/gallery-room.webp';
+import hallway from '@/assets/wall-hallway.webp';
+import { pageHead } from '@/lib/seo';
 
 export const roomScenes = [
   { id: 'living', name: 'Lys stue', image: living },
@@ -41,6 +42,11 @@ export function sceneImage(id: string) { return wallRoomScenes.find((r) => r.id 
 export function newPlacement(artworkId: string, ratio: number, index: number): Placement {
   return { id: crypto.randomUUID(), artworkId, ratio: Math.max(0.05, Math.min(20, ratio || 1)), width: 0.18, x: 0.15 + (index % 3) * 0.24, y: 0.18 + (Math.floor(index / 3) % 2) * 0.2 };
 }
-export function visualHead(title: string, description: string) {
-  return { meta: [{ title: `${title} | Diargio` }, { name: 'description', content: description }, { property: 'og:title', content: `${title} | Diargio` }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] };
+export function visualHead(title: string, description: string, path: string) {
+  return pageHead({
+    title: `${title} | Diargio`,
+    description,
+    path,
+    breadcrumbs: [{ name: 'Forsiden', path: '/' }, { name: title, path }],
+  });
 }
