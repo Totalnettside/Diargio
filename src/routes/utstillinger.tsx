@@ -16,7 +16,7 @@ import { InvestorArtCard, InvestorArtDetails } from '@/components/InvestorArt';
 export const Route=createFileRoute('/utstillinger')({
   validateSearch: (search: Record<string, unknown>): { investor?: boolean } => search['investor'] === true || search['investor'] === 'true' ? { investor: true } : {},
   loader:({context})=>context.queryClient.ensureQueryData(visualArtOptions()),
-  head:()=>visualHead('Digital utstilling','Gå på kunstjakt gjennom Diargios digitale gallerirom med ekte kunstverk.'),
+  head:()=>visualHead('Digital utstilling','Gå på kunstjakt gjennom Diargios digitale gallerirom med ekte kunstverk.','/utstillinger'),
   component:ExhibitionsPage,errorComponent:VisualError,notFoundComponent:VisualError,
 });
 

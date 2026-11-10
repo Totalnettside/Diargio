@@ -3,13 +3,14 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { wallLayoutSchema, exhibitionRoomSchema } from './visual-art';
 import type { Artwork } from '@/data/demo';
+import { withPublicImages } from '@/lib/listing-image-url';
 import type { Json } from '@/integrations/supabase/types';
 
 export const getVisualArt = createServerFn({ method: 'GET' }).handler(async () => {
   const { publicArtClient } = await import('./visual-art-public.server');
   const c = publicArtClient();
   const [listings, exhibitions, unavailable] = await Promise.all([
-    c.from('listings').select('id,user_id,data').eq('moderation_status','published').order('created_at', { ascending: false }),
+    c.from('listings').select('id,user_id,data,updated_at').eq('moderation_status','published').order('created_at', { ascending: false }),
     c.from('art_exhibitions').select('id,title,rooms,published').eq('published', true).order('created_at'),
     c.rpc('unavailable_artwork_ids'),
   ]);
@@ -18,7 +19,7 @@ export const getVisualArt = createServerFn({ method: 'GET' }).handler(async () =
   const artworks = (listings.data ?? []).flatMap((l) => {
     const a = l.data as unknown as Artwork & { status?: string; available?: boolean; sold?: boolean };
     if (!a.image || sold.has(l.id) || a.sold || a.available === false || ['sold', 'Solgt', 'unavailable', 'archived'].includes(a.status ?? '')) return [];
-    return [{ ...a, id: l.id, sellerId: l.user_id }];
+    return [withPublicImages({ ...a, id: l.id, sellerId: l.user_id }, l.updated_at)];
   });
   return { artworks, exhibitions: (exhibitions.data ?? []).map((e) => ({ ...e, rooms: z.array(exhibitionRoomSchema).catch([]).parse(e.rooms) })) };
 });

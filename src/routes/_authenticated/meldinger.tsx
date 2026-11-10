@@ -7,20 +7,14 @@ import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, MessageCircle, Send } from "lucide-react";
+import { privateHead, privatePageFor } from "@/lib/seo";
 
 export const Route = createFileRoute("/_authenticated/meldinger")({
   validateSearch: (search: Record<string, unknown>): { c?: string } => typeof search["c"] === "string" ? { c: search["c"] } : {},
-  head: () => ({
-    links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" }],
-    meta: [
-      { title: "Meldinger | Diargio" },
-      { name: "description", content: "Samtaler med kjøpere og selgere, koblet til kunstverket." },
-      { property: "og:title", content: "Meldinger | Diargio" },
-      { property: "og:description", content: "Send meldinger direkte til kjøpere og selgere." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/meldinger");
+    return { ...privateHead(page.title, page.description), links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" }] };
+  },
   component: MessagesPage,
 });
 

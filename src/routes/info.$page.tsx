@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { infoPages } from "@/lib/info-pages";
+import { NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/info/$page")({
   loader: ({ params }) => {
@@ -7,16 +8,17 @@ export const Route = createFileRoute("/info/$page")({
     if (!page) throw notFound();
     return page;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.title ?? "Info"} | Diargio` },
-      { name: "description", content: loaderData?.lead ?? "Informasjon fra Diargio" },
-      { property: "og:title", content: `${loaderData?.title ?? "Info"} | Diargio` },
-      { property: "og:description", content: loaderData?.lead ?? "Informasjon fra Diargio" },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: ({ loaderData, params }) => {
+    const path = `/info/${params.page}`;
+    if (!loaderData) return pageHead({ title: NOT_FOUND_TITLE, description: NOT_FOUND_DESCRIPTION, path, noindex: true });
+    return pageHead({
+      title: `${loaderData.title} | Diargio`,
+      description: loaderData.description ?? loaderData.lead,
+      path,
+      ogType: "article",
+      breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: loaderData.title, path }],
+    });
+  },
   component: InfoPage,
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-4 py-16">

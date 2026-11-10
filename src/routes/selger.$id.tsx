@@ -5,17 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import type { Artwork } from "@/data/demo";
+import { pageHead } from "@/lib/seo";
+import { withPublicImages } from "@/lib/listing-image-url";
 
 export const Route = createFileRoute("/selger/$id")({
-  head: () => ({
-    meta: [
-      { title: "Kunstnerprofil | Diargio" },
-      { name: "description", content: "Se selgerens kunst, omtaler og vurderinger på Diargio." },
-      { property: "og:title", content: "Selgerprofil | Diargio" },
-      { property: "og:description", content: "Kunst, omtaler og stjerner fra kjøpere." },
-      { property: "og:type", content: "profile" },
-      { name: "twitter:card", content: "summary" },
-    ],
+  head: ({ params }) => pageHead({
+    title: "Selgerprofil | Diargio",
+    description: "Se selgerens kunst, omtaler og vurderinger på Diargio.",
+    path: `/selger/${params.id}`,
+    ogType: "profile",
+    breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: "Selger", path: `/selger/${params.id}` }],
   }),
   component: SellerPage,
 });
@@ -76,7 +75,7 @@ function SellerPage() {
   const load = useCallback(async () => {
     const [{ data: p }, { data: l }, { data: r }] = await Promise.all([
       supabase.from("profiles").select("id, display_name, avatar_url, bio, location, website, bankid_verified, created_at, story, techniques, studio_images").eq("id", id).maybeSingle(),
-      supabase.from("listings").select("id, data").eq("moderation_status","published").eq("user_id", id).order("created_at", { ascending: false }),
+      supabase.from("listings").select("id, data, updated_at").eq("moderation_status","published").eq("user_id", id).order("created_at", { ascending: false }),
       supabase.from("reviews").select("id, reviewer_id, rating, comment, created_at").eq("seller_id", id).order("created_at", { ascending: false }),
     ]);
     setProfile(p ?? null);
@@ -86,7 +85,7 @@ function SellerPage() {
     ]);
     setSoldIds(new Set((sold ?? []) as string[]));
     setFollowers(fc ?? 0);
-    setListings((l ?? []).map((x) => x.data as unknown as Artwork));
+    setListings((l ?? []).map((x) => withPublicImages({ ...(x.data as unknown as Artwork), id: x.id }, x.updated_at)));
     setReviews(r ?? []);
     const ids = [...new Set((r ?? []).map((x) => x.reviewer_id))];
     if (ids.length) {

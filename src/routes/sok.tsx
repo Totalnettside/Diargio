@@ -4,22 +4,16 @@ import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artists, artworks, sellers } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/sok")({
   validateSearch: (search: Record<string, unknown>): { q?: string } =>
     typeof search["q"] === "string" ? { q: search["q"] } : {},
-  head: () => ({
-    meta: [
-      { title: "Søk i kunst, kunstnere og gallerier | Diargio" },
-      {
-        name: "description",
-        content: "Søk blant tusenvis av kunstverk, kunstnere og gallerier på Diargio.",
-      },
-      { property: "og:title", content: "Søk på Diargio" },
-      { property: "og:description", content: "Finn kunstnere, verk, kategorier og gallerier." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  head: () => pageHead({
+    title: "Søk i kunst, kunstnere og gallerier | Diargio",
+    description: "Søk blant kunstverk, kunstnere og gallerier på Diargio.",
+    path: "/sok",
+    breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: "Søk", path: "/sok" }],
   }),
   component: SearchPage,
 });

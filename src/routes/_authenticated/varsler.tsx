@@ -1,18 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { privateHead, privatePageFor } from "@/lib/seo";
 
 export const Route = createFileRoute("/_authenticated/varsler")({
-  head: () => ({
-    meta: [
-      { title: "Varsler | Diargio" },
-      { name: "description", content: "Bud, meldinger, prisendringer og treff på lagrede søk." },
-      { property: "og:title", content: "Varsler | Diargio" },
-      { property: "og:description", content: "Alle varslene dine fra markedsplassen." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/varsler");
+    return privateHead(page.title, page.description);
+  },
   component: NotificationsPage,
 });
 

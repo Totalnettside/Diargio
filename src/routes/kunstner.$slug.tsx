@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artistBySlug, artworksByArtist } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/kunstner/$slug")({
   loader: ({ params }) => {
@@ -9,23 +10,20 @@ export const Route = createFileRoute("/kunstner/$slug")({
     if (!artist) throw notFound();
     return { artist };
   },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Kunstner ikke funnet | Diargio" }, { name: "robots", content: "noindex" }] };
-    }
+  head: ({ loaderData, params }) => {
+    const path = `/kunstner/${params.slug}`;
+    if (!loaderData) return pageHead({ title: NOT_FOUND_TITLE, description: NOT_FOUND_DESCRIPTION, path, noindex: true });
     const { artist } = loaderData;
     const title = `${artist.name} – verk til salgs | Diargio`;
     const description = `${artist.name}, ${artist.nationality.toLowerCase()} kunstner (${artist.born}). Se verk til salgs på Diargio.`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "profile" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
+    return pageHead({
+      title,
+      description,
+      path,
+      image: artist.avatar,
+      ogType: "profile",
+      breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: artist.name, path }],
+    });
   },
   component: ArtistPage,
 });

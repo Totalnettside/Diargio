@@ -4,6 +4,7 @@ import { submissionConfirmation } from './moderation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { artworks as demoArtworks } from "@/data/demo";
+import { withPublicImages } from "@/lib/listing-image-url";
 import { priceFromPayout } from "@/lib/fees";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -137,7 +138,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const loadListings = useCallback(async () => {
     const { data, error } = await supabase
       .from("listings")
-      .select("id,user_id,data,created_at,moderation_status")
+      .select("id,user_id,data,created_at,moderation_status,updated_at")
       .eq('moderation_status','published')
       .is('deleted_at',null).eq('blocked',false)
       .order("created_at", { ascending: false });
@@ -145,7 +146,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     else {
       const {data:sold}=await supabase.rpc('unavailable_artwork_ids');
       const unavailable=new Set(sold??[]);
-      setDbListings((data??[]).filter(l=>!unavailable.has(l.id)).map(l=>({...l,data:{...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id}})));
+      setDbListings((data??[]).filter(l=>!unavailable.has(l.id)).map(l=>({...l,data:withPublicImages({...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id},l.updated_at)})));
     }
   }, []);
 

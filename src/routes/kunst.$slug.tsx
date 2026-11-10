@@ -19,46 +19,45 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useChat } from "@/hooks/useChat";
 import {toast} from 'sonner';
+import { pageHead } from '@/lib/seo';
 
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
     const artwork = artworkBySlug(params.slug) ?? null;
     return { artwork, artistName: artwork ? artistFor(artwork).name : "" };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
+    const path = `/kunst/${params.slug}`;
     if (!loaderData?.artwork) {
-        return { meta: [{ title: "Kunstannonse | Diargio" }, {name:'description',content:'Oppdag kunstverket og kontakt selger på Diargio.'},{property:'og:title',content:'Kunstannonse | Diargio'},{property:'og:description',content:'Kunst fra kunstnere, gallerier og private selgere.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}, { name: "robots", content: "noindex" }] };
+      return pageHead({ title: "Kunstannonse | Diargio", description: "Oppdag kunstverket og kontakt selger på Diargio.", path, noindex: true });
     }
     const { artwork, artistName } = loaderData;
     const title = `${artistName} – ${artwork.title} til salgs | Diargio`;
     const description = `${artwork.title} av ${artistName}, ${artwork.technique.toLowerCase()}, ${artwork.widthCm} × ${artwork.heightCm} cm. ${formatPrice(artwork.price)} i ${artwork.location}.`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "product" },
-        { name: "twitter:card", content: "summary_large_image" },
+    return pageHead({
+      title,
+      description,
+      path,
+      ...(artwork.image.startsWith("data:") ? {} : { image: artwork.image }),
+      ogType: "product",
+      breadcrumbs: [
+        { name: "Forsiden", path: "/" },
+        { name: "Kunst", path: "/kunst" },
+        { name: artwork.title, path },
       ],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: artwork.title,
-            brand: artistName,
-            offers: {
-              "@type": "Offer",
-              price: artwork.price,
-              priceCurrency: "NOK",
-              availability: "https://schema.org/InStock",
-            },
-          }),
+      jsonLd: [{
+        "@type": "Product",
+        name: artwork.title,
+        brand: artistName,
+        ...(artwork.image.startsWith("data:") ? {} : { image: artwork.image }),
+        offers: {
+          "@type": "Offer",
+          price: artwork.price,
+          priceCurrency: "NOK",
+          availability: "https://schema.org/InStock",
         },
-      ],
-    };
+      }],
+    });
   },
   component: ArtworkPage,
 });

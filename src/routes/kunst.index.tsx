@@ -19,6 +19,7 @@ import {
   techniques,
 } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { pageHead } from "@/lib/seo";
 
 type KunstSearch = {
   kategori?: string;
@@ -30,22 +31,11 @@ export const Route = createFileRoute("/kunst/")({
     ...(typeof search["kategori"] === "string" ? { kategori: search["kategori"] } : {}),
     ...(typeof search["q"] === "string" ? { q: search["q"] } : {}),
   }),
-  head: () => ({
-    meta: [
-      { title: "Kunst til salgs i Norge | Diargio" },
-      {
-        name: "description",
-        content:
-          "Bla gjennom malerier, grafikk, fotografi, skulpturer og street art til salgs fra kunstnere, gallerier og private selgere.",
-      },
-      { property: "og:title", content: "Kunst til salgs | Diargio" },
-      {
-        property: "og:description",
-        content: "Filtrer på kategori, pris, stil, teknikk, selgertype og salgsform.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  head: () => pageHead({
+    title: "Kunst til salgs i Norge | Diargio",
+    description: "Bla gjennom malerier, grafikk, fotografi, skulpturer og street art til salgs fra kunstnere, gallerier og private selgere.",
+    path: "/kunst",
+    breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: "Kunst", path: "/kunst" }],
   }),
   component: Marketplace,
 });

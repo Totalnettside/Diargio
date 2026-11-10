@@ -18,7 +18,7 @@ import { formatPrice } from '@/data/demo';
 export const Route = createFileRoute('/galleriplass')({
   validateSearch: (s: Record<string, unknown>): { room?: number; slot?: string } => ({ room: Number(s['room']) === 3 ? 3 : 2, ...(typeof s['slot'] === 'string' ? { slot: s['slot'] } : {}) }),
   loader: ({ context }) => context.queryClient.ensureQueryData(visualArtOptions()),
-  head: () => visualHead('Still ut i galleriet', 'Velg en veggplass i Diargios digitale galleri og forhåndsvis ditt eget kunstverk.'),
+  head: () => visualHead('Still ut i galleriet', 'Velg en veggplass i Diargios digitale galleri og forhåndsvis ditt eget kunstverk.', '/galleriplass'),
   component: GalleryPreview, errorComponent: VisualError, notFoundComponent: VisualError,
 });
 

@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { artworksBySeller, reviews, sellerBySlug } from "@/data/demo";
 import { useStore } from "@/lib/store";
+import { NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/profil/$slug")({
   loader: ({ params }) => {
@@ -10,23 +11,20 @@ export const Route = createFileRoute("/profil/$slug")({
     if (!seller) throw notFound();
     return { seller };
   },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Profil ikke funnet | Diargio" }, { name: "robots", content: "noindex" }] };
-    }
+  head: ({ loaderData, params }) => {
+    const path = `/profil/${params.slug}`;
+    if (!loaderData) return pageHead({ title: NOT_FOUND_TITLE, description: NOT_FOUND_DESCRIPTION, path, noindex: true });
     const { seller } = loaderData;
     const title = `${seller.name} – ${seller.type.toLowerCase()} på Diargio`;
     const description = `${seller.name} i ${seller.location}. ${seller.rating} i vurdering, ${seller.sales} gjennomførte salg.`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "profile" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
+    return pageHead({
+      title,
+      description,
+      path,
+      image: seller.avatar,
+      ogType: "profile",
+      breadcrumbs: [{ name: "Forsiden", path: "/" }, { name: seller.name, path }],
+    });
   },
   component: ProfilePage,
 });

@@ -22,18 +22,13 @@ import {useActionDialog,listingDeletionDescription} from '@/components/ActionDia
 import {toast} from 'sonner';
 import {actionError} from '@/lib/action-errors';
 import {removeListingImage,selectMainImage} from '@/lib/listing-images';
+import { privateHead, privatePageFor } from '@/lib/seo';
 
 export const Route = createFileRoute("/_authenticated/rediger/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Endre annonse | Diargio" },
-      { name: "description", content: "Rediger eller slett annonsen din." },
-      { property: "og:title", content: "Endre annonse | Diargio" },
-      { property: "og:description", content: "Rediger eller slett annonsen din." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/rediger");
+    return privateHead(page.title, page.description);
+  },
   component: EditListingPage,
 });
 

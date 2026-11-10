@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { createArtCheckout } from '@/lib/payments.functions';
 import { getStripe, getStripeEnvironment } from '@/lib/stripe';
 import { formatPrice } from '@/data/demo';
+import { privateHead, privatePageFor } from '@/lib/seo';
 export const Route=createFileRoute('/kjop/$slug')({
  validateSearch:(s:Record<string,unknown>):{bid?:string|undefined}=>({bid:typeof s['bid']==='string'?s['bid']:undefined}),
- head:()=>({meta:[{title:'Kjøp kunst | Diargio'},{name:'description',content:'Kjøp kunst med én totalpris og frakt separat.'},{property:'og:title',content:'Kjøp kunst | Diargio'},{property:'og:description',content:'Sikker kortbetaling og oversikt over kunstkjøpet.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'},{name:'robots',content:'noindex'}]}),component:CheckoutPage});
+ head:()=>{const page=privatePageFor('/kjop');return privateHead(page.title,page.description);},component:CheckoutPage});
 function CheckoutPage(){
  const {slug}=Route.useParams();const {bid}=Route.useSearch();const {allArtworks,bids}=useStore();const {user,loading}=useAuth();
  const [pickup,setPickup]=useState(false);

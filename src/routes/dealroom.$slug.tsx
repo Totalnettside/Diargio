@@ -6,18 +6,13 @@ import { useStore } from "@/lib/store";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { privateHead, privatePageFor } from "@/lib/seo";
 
 export const Route = createFileRoute("/dealroom/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Dealroom | Diargio" },
-      { name: "description", content: "Virtuelt dealroom der kjøper og selger ser verket, chatter og gir bud." },
-      { property: "og:title", content: "Dealroom | Diargio" },
-      { property: "og:description", content: "Se verket tett på, chat og forhandle i samme rom." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const page = privatePageFor("/dealroom");
+    return privateHead(page.title, page.description);
+  },
   component: DealRoom,
 });
 

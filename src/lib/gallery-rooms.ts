@@ -1,6 +1,6 @@
-import hall1 from '@/assets/gallery-hall-1.jpg';
-import hall2 from '@/assets/gallery-hall-2.jpg';
-import hall3 from '@/assets/gallery-hall-3.jpg';
+import hall1 from '@/assets/gallery-hall-1.webp';
+import hall2 from '@/assets/gallery-hall-2.webp';
+import hall3 from '@/assets/gallery-hall-3.webp';
 import type { Placement } from './visual-art';
 
 export const GALLERY_ASPECT = 1600 / 912;

@@ -1,14 +1,14 @@
-import art1 from "@/assets/art-1.jpg";
-import art2 from "@/assets/art-2.jpg";
-import art3 from "@/assets/art-3.jpg";
-import art4 from "@/assets/art-4.jpg";
-import art5 from "@/assets/art-5.jpg";
-import art6 from "@/assets/art-6.jpg";
-import art7 from "@/assets/art-7.jpg";
-import art8 from "@/assets/art-8.jpg";
-import artist1 from "@/assets/artist-1.jpg";
-import artist2 from "@/assets/artist-2.jpg";
-import artist3 from "@/assets/artist-3.jpg";
+import art1 from "@/assets/art-1.webp";
+import art2 from "@/assets/art-2.webp";
+import art3 from "@/assets/art-3.webp";
+import art4 from "@/assets/art-4.webp";
+import art5 from "@/assets/art-5.webp";
+import art6 from "@/assets/art-6.webp";
+import art7 from "@/assets/art-7.webp";
+import art8 from "@/assets/art-8.webp";
+import artist1 from "@/assets/artist-1.webp";
+import artist2 from "@/assets/artist-2.webp";
+import artist3 from "@/assets/artist-3.webp";
 
 export const artImages = [art1, art2, art3, art4, art5, art6, art7, art8];
 export const portraits = [artist1, artist2, artist3];

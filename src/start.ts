@@ -1,7 +1,21 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { applyDocumentSeo } from "./lib/seo";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+
+const documentSeo = createMiddleware().server(async ({ next }) => {
+  const result = await next();
+  const response = result.response;
+  const type = response.headers.get("content-type") ?? "";
+  if (!type.includes("text/html")) return result;
+  const html = await response.text();
+  const nextHtml = applyDocumentSeo(html, { pathname: result.pathname, status: response.status });
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  headers.delete("content-encoding");
+  return new Response(nextHtml, { status: response.status, statusText: response.statusText, headers });
+});
 
 const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   if (new URL(request.url).pathname.startsWith("/lovable/")) {
@@ -30,5 +44,5 @@ const csrfMiddleware = createCsrfMiddleware({
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [documentSeo, errorMiddleware, csrfMiddleware],
 }));
