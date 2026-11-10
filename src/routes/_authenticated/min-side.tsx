@@ -16,6 +16,7 @@ import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
 import {useNavigate} from '@tanstack/react-router';
 import { privateHead, privatePageFor } from '@/lib/seo';
+import { ArrowRight, BarChart3, BadgeCheck, Clock3, Eye, Gavel, Heart, Inbox, LayoutGrid, MessageCircle, MessageSquareQuote, Palette, Plus, Send, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/min-side")({
   validateSearch: (s: Record<string, unknown>): { tab?: string } => (typeof s["tab"] === "string" ? { tab: s["tab"] } : {}),
@@ -79,63 +80,88 @@ function Dashboard() {
   const favoriteWorks = allArtworks.filter((a) => favorites.includes(a.id));
   const views = myActive.reduce((sum, a) => sum + a.views, 0);
 
-  const cards: Array<[string, string]> = [
-    ["Aktive annonser", String(myActive.length)],
-    ["Totale visninger", views.toLocaleString("nb-NO")],
-    ["Favoritter", String(favorites.length)],
-    ["Meldinger", String(conversations.length)],
-    ["Aktive bud", String(bids.length)],
-    ["Solgt", "0"],
+  const cards = [
+    { label: "Aktive annonser", value: String(myActive.length), detail: "Kunst du har lagt ut", icon: LayoutGrid },
+    { label: "Totale visninger", value: views.toLocaleString("nb-NO"), detail: "På dine annonser", icon: Eye },
+    { label: "Favoritter", value: String(favorites.length), detail: "Verk du har lagret", icon: Heart },
+    { label: "Meldinger", value: String(conversations.length), detail: "Samtaler med kjøpere og selgere", icon: MessageCircle },
+    { label: "Aktive bud", value: String(bids.length), detail: "Mottatte og sendte bud", icon: Gavel },
+    { label: "Solgt", value: "0", detail: "Registrerte salg", icon: BadgeCheck },
   ];
+  const statsCards = [
+    { label: "Visninger", value: views.toLocaleString("nb-NO"), icon: Eye },
+    { label: "Favoritter", value: String(myActive.reduce((s, a) => s + a.favorites, 0)), icon: Heart },
+    { label: "Henvendelser", value: String(conversations.length), icon: MessageCircle },
+    { label: "Konvertering", value: "0 %", icon: BarChart3 },
+    { label: "Bud", value: String(bids.length), icon: Gavel },
+    { label: "Salg", value: "0", icon: BadgeCheck },
+    { label: "Snitt salgstid", value: "–", icon: Clock3 },
+    { label: "Snitt salgspris", value: "–", icon: Sparkles },
+  ];
+  const mostViewed = [...myActive].sort((a, b) => b.views - a.views).slice(0, 3);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-5">
-      <h1 className="font-display text-2xl font-semibold">Min kunsthandel</h1>
-      <Button asChild variant="outline" className="mt-3 mr-3"><Link to="/ordre">Kjøp, salg og oppgjør</Link></Button>
-      <Button asChild variant="outline" className="mt-3"><Link to="/galleriplass" search={{ room: 2 }}>Still ut i galleriet</Link></Button>
+    <main className="account-dashboard mx-auto w-full max-w-6xl px-5 py-5">
+      <header className="account-hero">
+        <div className="account-hero-content">
+          <p className="account-eyebrow">Ditt Diargio</p>
+          <h1 className="account-hero-title">Min kunsthandel</h1>
+          <p className="account-hero-description">Annonser, bud og aktivitet – samlet på ett rolig sted.</p>
+        </div>
+        <div className="account-hero-actions">
+          <Button asChild variant="ghost" className="account-hero-button account-hero-button-primary"><Link to="/ordre">Kjøp, salg og oppgjør <ArrowRight /></Link></Button>
+          <Button asChild variant="ghost" className="account-hero-button"><Link to="/galleriplass" search={{ room: 2 }}><Palette /> Still ut i galleriet</Link></Button>
+        </div>
+      </header>
 
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <nav aria-label="Min side" className="account-tabs mt-5 flex gap-1 overflow-x-auto no-scrollbar">
         {tabs.map((t) => (
           <Button
             variant="ghost"
             key={t}
             onClick={() => setTab(t)}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold glass ${
-              tab === t ? "bg-brandink text-primary-foreground" : "bg-white/60"
-            }`}
+            aria-pressed={tab === t}
+            className={`account-tab shrink-0 ${tab === t ? "is-active" : ""}`}
           >
             {t}
             {t === "Bud" && <UnreadBadge count={unreadBids} />}
           </Button>
         ))}
-      </div>
+      </nav>
 
       {tab === "Oversikt" && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
-            {cards.map(([k, v]) => (
-              <div key={k} className="rounded-2xl p-4 glass">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">{k}</p>
-                <p className="font-display text-2xl font-semibold">{v}</p>
-              </div>
+        <section className="account-section" aria-labelledby="account-overview-title">
+          <div className="account-section-heading">
+            <div><p className="account-kicker">Din aktivitet</p><h2 id="account-overview-title">Et raskt overblikk</h2></div>
+            <p>Alt som skjer med kunsten din</p>
+          </div>
+          <div className="account-metrics">
+            {cards.map(({ label, value, detail, icon: Icon }) => (
+              <article key={label} className="account-metric">
+                <div className="account-metric-top"><p>{label}</p><span className="account-metric-icon"><Icon /></span></div>
+                <p className="account-metric-value">{value}</p>
+                <p className="account-metric-detail">{detail}</p>
+              </article>
             ))}
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {receivedBids.length > 0 && <Button onClick={() => setTab("Bud")} variant="outline">Mottatte bud ({receivedBids.length}) <UnreadBadge count={unreadBids} /></Button>}
-            <Link
-              to="/selg"
-              className="rounded-2xl bg-brandink px-5 py-3 text-sm font-semibold text-primary-foreground"
-            >
-              Legg ut kunst
-            </Link>
-            <Link to="/meldinger" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
-              Meldinger
-            </Link>
-            {isAdmin && <Link to="/diargioadmin007" className="rounded-2xl bg-white/70 px-5 py-3 text-sm font-semibold text-brandink glass">
-              Adminpanel
-            </Link>}
+          <div className="account-overview-panels">
+            <article className="account-panel account-bid-highlight">
+              <div className="account-panel-icon"><Gavel /></div>
+              <p className="account-kicker">Bud og forhandlinger</p>
+              <h3>{receivedBids.length} {receivedBids.length === 1 ? "mottatt bud" : "mottatte bud"}</h3>
+              <p>{unreadBids > 0 ? `${unreadBids} nye bud venter på deg.` : "Se status og svar på bud fra interesserte kjøpere."}</p>
+              <Button onClick={() => setTab("Bud")} variant="ghost" className="account-hero-button account-hero-button-primary">Gå til bud <ArrowRight /></Button>
+            </article>
+            <article className="account-panel account-shortcuts">
+              <p className="account-kicker">Snarveier</p><h3>Hva vil du gjøre nå?</h3>
+              <div className="account-shortcut-list">
+                <Link to="/selg"><span className="account-shortcut-icon"><Plus /></span><span><strong>Legg ut kunst</strong><small>Opprett en ny annonse</small></span><ArrowRight /></Link>
+                <Link to="/meldinger"><span className="account-shortcut-icon"><MessageCircle /></span><span><strong>Åpne meldinger</strong><small>Fortsett samtalene dine</small></span><ArrowRight /></Link>
+                {isAdmin && <Link to="/diargioadmin007"><span className="account-shortcut-icon"><LayoutGrid /></span><span><strong>Adminpanel</strong><small>Administrer Diargio</small></span><ArrowRight /></Link>}
+              </div>
+            </article>
           </div>
-        </>
+        </section>
       )}
 
       {tab === "Kunstvegger" && <SavedWalls />}
