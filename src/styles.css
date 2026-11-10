@@ -787,3 +787,131 @@ a.account-bid-title:hover { color:var(--account-green); text-decoration:underlin
   .topbar-account [aria-label="Velg språk"] { padding-inline:6px; }
 }
 @media (prefers-reduced-motion: reduce) { .topbar-gallery-light::before { animation:none; opacity:.2; transform:none; } }
+
+/* Listing creation: a layered gallery workspace, scoped away from commerce logic. */
+.sell-flow {
+  --sell-soft: color-mix(in oklab, var(--signature-tint) 78%, var(--signature-gold) 8%);
+  --sell-line: color-mix(in oklab, var(--signature-edge) 48%, transparent);
+}
+.sell-flow-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  overflow: hidden;
+  min-height: 230px;
+  padding: 36px 40px;
+  border: 1px solid color-mix(in oklab, var(--signature-highlight) 34%, transparent);
+  border-radius: 30px;
+  color: var(--primary-foreground);
+  background:
+    radial-gradient(circle at 82% 15%, color-mix(in oklab, var(--signature-highlight) 25%, transparent), transparent 32%),
+    linear-gradient(125deg, var(--signature-green-deep), var(--signature-green) 58%, var(--signature-green-hover));
+  box-shadow: 0 24px 50px -36px color-mix(in oklab, var(--signature-green) 80%, transparent);
+}
+.sell-flow-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -70px;
+  bottom: -150px;
+  width: 340px;
+  height: 340px;
+  border: 1px solid color-mix(in oklab, var(--signature-highlight) 30%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 44px color-mix(in oklab, var(--signature-highlight) 5%, transparent), 0 0 0 88px color-mix(in oklab, var(--signature-highlight) 4%, transparent);
+}
+.sell-flow-eyebrow {
+  color: var(--signature-highlight);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.sell-flow-hero-note {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 245px;
+  padding: 16px 20px;
+  border: 1px solid color-mix(in oklab, var(--signature-highlight) 45%, transparent);
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--signature-green-deep) 68%, transparent);
+  backdrop-filter: blur(8px);
+}
+.sell-flow-hero-note span { color: var(--signature-highlight); font-size: 12px; font-weight: 700; }
+.sell-flow-hero-note strong { font-size: 12px; font-weight: 500; line-height: 1.5; }
+.sell-progress-meta { display: flex; justify-content: space-between; margin-top: 24px; color: var(--brandink); font-size: 12px; font-weight: 700; }
+.sell-progress-meta span:last-child { color: var(--muted-foreground); font-weight: 600; }
+.sell-progress-track { height: 3px; margin-top: 9px; overflow: hidden; border-radius: 999px; background: var(--sell-soft); }
+.sell-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--signature-gold), var(--signature-green)); transition: width .3s ease; }
+.sell-step-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px 8px 8px;
+  border: 1px solid var(--sell-line);
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  background: var(--sell-soft);
+  font-size: 12px;
+  font-weight: 700;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.sell-step-button > span { display: grid; width: 25px; height: 25px; place-items: center; border-radius: 50%; color: var(--brandink); background: var(--card); font-size: 11px; }
+.sell-step-button.is-current { border-color: var(--signature-green); color: var(--primary-foreground); background: var(--signature-green); }
+.sell-step-button.is-current > span { color: var(--signature-green); background: var(--signature-highlight); }
+.sell-step-button.is-complete:not(.is-current) { border-color: color-mix(in oklab, var(--signature-green) 35%, transparent); color: var(--brandink); }
+.sell-step-button:disabled { cursor: not-allowed; opacity: .42; }
+.sell-flow-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: start; gap: 24px; }
+.sell-panel {
+  position: relative;
+  border: 1px solid var(--sell-line);
+  background: linear-gradient(145deg, var(--sell-soft), color-mix(in oklab, var(--card) 88%, var(--signature-tint)));
+  box-shadow: 0 18px 45px -38px color-mix(in oklab, var(--signature-green) 70%, transparent);
+}
+.sell-panel .glass { border: 1px solid color-mix(in oklab, var(--signature-edge) 32%, transparent); background: color-mix(in oklab, var(--card) 90%, var(--signature-tint)); box-shadow: none; }
+.sell-panel button.bg-brandink { background: var(--brandink); }
+.sell-step-heading { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--sell-line); color: var(--brandink); }
+.sell-step-heading > span { display: grid; flex: 0 0 auto; width: 42px; height: 42px; place-items: center; border: 1px solid color-mix(in oklab, var(--signature-gold) 70%, transparent); border-radius: 50%; color: var(--signature-green); background: color-mix(in oklab, var(--signature-gold) 22%, var(--card)); font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+.sell-input { min-height: 48px; border: 1px solid color-mix(in oklab, var(--signature-edge) 65%, transparent); color: var(--foreground); background: var(--card); box-shadow: 0 3px 12px -10px color-mix(in oklab, var(--signature-green) 60%, transparent); transition: border-color .2s, box-shadow .2s; }
+.sell-input:focus { border-color: var(--signature-green); box-shadow: 0 0 0 3px color-mix(in oklab, var(--signature-green) 10%, transparent); }
+.sell-panel label > span { color: var(--brandink); letter-spacing: .08em; }
+.sell-upload-zone { border-color: color-mix(in oklab, var(--signature-green) 45%, transparent); color: var(--brandink); background: radial-gradient(circle at 50% 0, color-mix(in oklab, var(--signature-gold) 22%, transparent), transparent 55%), color-mix(in oklab, var(--signature-tint) 85%, var(--card)); }
+.sell-upload-zone > svg { width: 34px; height: 34px; padding: 7px; border-radius: 50%; color: var(--signature-green); background: color-mix(in oklab, var(--signature-gold) 30%, var(--card)); }
+.sell-live-preview { position: sticky; top: 112px; margin-top: 20px; overflow: hidden; padding: 22px; border: 1px solid color-mix(in oklab, var(--signature-highlight) 35%, transparent); border-radius: 26px; color: var(--primary-foreground); background: linear-gradient(155deg, var(--signature-green), var(--signature-green-deep)); box-shadow: 0 22px 45px -34px color-mix(in oklab, var(--signature-green) 85%, transparent); }
+.sell-live-image { display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 4.4; margin-top: 18px; overflow: hidden; border: 1px solid color-mix(in oklab, var(--signature-highlight) 35%, transparent); border-radius: 16px; color: var(--signature-highlight); background: color-mix(in oklab, var(--signature-white) 8%, transparent); }
+.sell-live-image img { width: 100%; height: 100%; object-fit: contain; background: var(--signature-tint); }
+.sell-live-image > svg { width: 28px; height: 28px; margin-right: 9px; }
+.sell-live-image > span { font-size: 12px; }
+.sell-live-copy { padding: 18px 2px 16px; border-bottom: 1px solid color-mix(in oklab, var(--signature-highlight) 25%, transparent); }
+.sell-live-copy p { color: var(--signature-highlight); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.sell-live-copy h2 { margin-top: 5px; font-family: var(--font-display-family); font-size: 20px; font-weight: 600; overflow-wrap: anywhere; }
+.sell-live-copy strong { display: block; margin-top: 9px; color: var(--signature-highlight); font-size: 18px; }
+.sell-live-checklist { display: grid; gap: 10px; padding: 18px 0; }
+.sell-live-checklist span { position: relative; padding-left: 20px; color: color-mix(in oklab, var(--primary-foreground) 58%, transparent); font-size: 11px; }
+.sell-live-checklist span::before { content: ""; position: absolute; top: 4px; left: 1px; width: 8px; height: 8px; border: 1px solid currentColor; border-radius: 50%; }
+.sell-live-checklist span.is-done { color: var(--primary-foreground); }
+.sell-live-checklist span.is-done::before { border-color: var(--signature-highlight); background: var(--signature-highlight); box-shadow: inset 0 0 0 2px var(--signature-green); }
+.sell-live-footnote { display: flex; gap: 8px; padding-top: 15px; border-top: 1px solid color-mix(in oklab, var(--signature-highlight) 25%, transparent); color: color-mix(in oklab, var(--primary-foreground) 68%, transparent); font-size: 11px; line-height: 1.6; }
+.sell-live-footnote svg { flex: 0 0 auto; width: 15px; color: var(--signature-highlight); }
+.sell-draft-button { border-color: var(--sell-line); background: var(--sell-soft); }
+.sell-flow-error { padding: 12px 16px; border: 1px solid color-mix(in oklab, var(--destructive) 35%, transparent); border-radius: 14px; background: color-mix(in oklab, var(--destructive) 6%, var(--card)); }
+@media(max-width: 900px) {
+  .sell-flow-workspace { grid-template-columns: minmax(0, 1fr); }
+  .sell-live-preview { display: none; }
+}
+@media(max-width: 640px) {
+  .sell-flow { padding: 16px 14px 28px; }
+  .sell-flow-hero { min-height: 0; padding: 26px 24px; border-radius: 24px; }
+  .sell-flow-hero-note { display: none; }
+  .sell-panel { padding: 20px 16px; border-radius: 22px; }
+  .sell-step-heading { gap: 11px; padding-bottom: 15px; }
+  .sell-step-heading > span { width: 36px; height: 36px; }
+  .sell-step-heading h2 { font-size: 20px; }
+}
+@media(prefers-reduced-motion: reduce) { .sell-progress-track span, .sell-step-button, .sell-input { transition: none; } }
