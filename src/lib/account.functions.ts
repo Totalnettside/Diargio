@@ -32,11 +32,13 @@ export const deleteOwnAccount = createServerFn({ method: "POST" })
 
 export const adminDeleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ userId: z.string().uuid() }).parse(d))
+  .inputValidator((d) => z.object({ userId: z.string().uuid(),reason:z.string().trim().min(1).max(4000) }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden");
     if (data.userId === context.userId) throw new Error("Du kan ikke slette deg selv her");
     await purgeUser(data.userId);
+    const {supabaseAdmin:a}=await import('@/integrations/supabase/client.server');
+    await a.from('administrative_actions').insert({actor_id:context.userId,target_type:'profile',target_id:data.userId,action:'delete',reason:data.reason});
     return { ok: true };
   });
