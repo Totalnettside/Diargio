@@ -381,7 +381,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
       {others.length > 0 && (
         <section className="mt-8">
           <h2 className="text-sm font-bold">Flere annonser fra {seller.name}</h2>
-          <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+          <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
             {others.map((a) => (
               <ArtworkCard key={a.id} artwork={a} />
             ))}

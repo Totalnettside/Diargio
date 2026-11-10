@@ -195,14 +195,14 @@ function Index() {
           <div><h2 className="font-display text-lg font-medium">Investorvisning — ti demoverk</h2><p className="mt-1 text-xs text-muted-foreground">AI-genererte illustrasjoner · Eksempelpriser · Ikke til salgs</p></div>
           <Button asChild variant="outline"><Link to="/utstillinger" search={{ investor: true }}>Se demoutstillingen</Link></Button>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div>
+        <div className="grid grid-cols-2 items-start gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div>
       </section>
 
       <div className="mt-6 flex items-center justify-between">
         <h2 className="text-sm font-bold">Fremhevede annonser</h2>
         <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
         {featuredArtworks.length === 0 ? (
           <p className="text-xs text-ink/50">Ingen annonser lagt ut ennå – bli den første!</p>
         ) : (
@@ -233,7 +233,7 @@ function Index() {
           Se alle
         </Link>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
         {nyeste.map((a) => (
           <ArtworkCard key={a.id} artwork={a} />
         ))}

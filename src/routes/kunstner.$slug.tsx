@@ -71,7 +71,7 @@ function ArtistPage() {
           Ingen aktive annonser akkurat nå. Følg kunstneren for å få varsel ved nye verk.
         </p>
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+        <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
           {works.map((a) => (
             <ArtworkCard key={a.id} artwork={a} />
           ))}
