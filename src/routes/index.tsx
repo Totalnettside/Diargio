@@ -187,7 +187,7 @@ function Index() {
             key={c}
             to="/kunst"
             search={{ kategori: c }}
-            className={`shrink-0 whitespace-nowrap rounded-full ${c === 'Fotografi' ? 'bg-gronn text-primary-foreground' : c === 'Skulpturer' || c === 'Tegninger' ? 'bg-sort text-primary-foreground' : 'bg-card text-brandink'} px-4 py-2 text-xs font-semibold tracking-wide glass transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:bg-gronn hover:text-primary-foreground hover:shadow-md active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center`}
+            className="shrink-0 whitespace-nowrap rounded-full border border-border/60 bg-card px-4 py-2 text-xs font-semibold tracking-wide text-brandink transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.04] hover:border-gronn hover:bg-gronn hover:text-primary-foreground hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gronn focus-visible:ring-offset-2 active:scale-100 md:min-w-0 md:flex-1 md:px-2 md:text-center"
           >
 
 
