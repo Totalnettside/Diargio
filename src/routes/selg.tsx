@@ -270,7 +270,7 @@ function SellPage() {
         <span>{stepTitles[step]}</span>
       </div>
       <div className="sell-progress-track" aria-hidden="true"><span style={{ width: `${((step + 1) / stepTitles.length) * 100}%` }} /></div>
-      <div className="sell-stepper mt-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar" aria-label="Steg i annonsen">
+      <div ref={stepperRef} className="sell-stepper mt-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar" aria-label="Steg i annonsen">
         {stepTitles.map((t, i) => (
           <button
             key={t}
