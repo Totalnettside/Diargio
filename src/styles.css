@@ -278,7 +278,7 @@
 .home-actions .home-explore:hover { background:var(--gronn); border-color:var(--primary-foreground); }
 .home-actions .home-explore:hover, .home-actions .home-sell:hover { background:var(--gronnlys); color:var(--primary-foreground); }
 .home-art-composition { aspect-ratio: .98; width:100%; }
-.home-art-front { width:53%; left:25%; top:7%; z-index:20; }
+.home-art-front { width:53%; left:25%; top:50%; translate:0 -50%; z-index:20; }
 .home-art-back { width:36%; left:7%; top:0; z-index:10; }
 .home-art-right { width:38%; right:0; bottom:0; z-index:10; }
 .home-art-card { padding:0; box-shadow:var(--shadow-lift); }
