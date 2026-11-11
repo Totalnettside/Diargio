@@ -50,8 +50,13 @@ function Index() {
 
 
   const heroRef = useRef<HTMLElement>(null);
-  // Heroen skal alltid vise tre fremhevede bilder – fyll opp med demoverk om det trengs.
-  const heroFrames = [...featuredArtworks, ...investorArtworks].slice(0, 3);
+  // «Speil i Nidelva» er det midterste bildet; fyll opp med andre fremhevede verk.
+  const nidelva = featuredArtworks.find((a) => a.title.toLowerCase() === "speil i nidelva");
+  const heroFrames = [
+    ...(nidelva ? [nidelva] : []),
+    ...featuredArtworks.filter((a) => a.id !== nidelva?.id),
+    ...investorArtworks,
+  ].slice(0, 3);
 
   const onHeroMove = (e: React.MouseEvent) => {
     const el = heroRef.current;
