@@ -22,6 +22,7 @@ function AuthPage() {
   const [mode, setMode] = useState<"inn" | "ny">("inn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,7 @@ function AuthPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "ny" && password !== password2) { setMsg("Passordene er ikke like."); return; }
     setBusy(true);
     setMsg(null);
     if (mode === "inn") {
@@ -99,6 +101,12 @@ function AuthPage() {
                 <Button type="button" variant="ghost" size="icon" className="absolute right-2 top-1.5 text-muted-foreground hover:bg-transparent hover:text-gronn" title={showPassword ? "Skjul passord" : "Vis passord"} aria-label={showPassword ? "Skjul passord" : "Vis passord"} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff /> : <Eye />}</Button>
               </div>
             </div>
+            {mode === "ny" && (
+              <div>
+                <label htmlFor="auth-password2" className="mb-2 block text-xs font-semibold">Gjenta passord</label>
+                <input id="auth-password2" name="password2" type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={6} value={password2} onChange={(e) => setPassword2(e.target.value)} placeholder="Skriv passordet på nytt" className="auth-input" />
+              </div>
+            )}
             <Button type="submit" disabled={busy} className="h-12 w-full justify-between rounded-md bg-gronn px-5 font-semibold text-primary-foreground shadow-none hover:bg-gronnmork">
               {busy ? "Vennligst vent …" : mode === "inn" ? "Logg inn" : "Opprett konto"}{busy ? <LoaderCircle className="animate-spin motion-reduce:animate-none" /> : <ArrowRight />}
             </Button>
