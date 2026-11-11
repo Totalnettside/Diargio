@@ -190,7 +190,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                     : formatPrice(artwork.price)}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Inkl. provisjon og eventuell kunstavgift. Frakt kommer i tillegg.
+                  Eventuell kunstavgift er inkludert. Frakt kommer i tillegg.
                 </p>
                 <p className="mt-1 text-sm text-ink/60">{artwork.saleType}</p>
               </>
