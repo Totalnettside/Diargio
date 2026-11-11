@@ -42,3 +42,5 @@
 
 - [x] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.
 - [x] Fjern den separate gullfargede navigasjonsraden; samle logo, riktige brukerlenker og kontovalg i én kompakt grønn toppmeny. Kontrollert utlogget ved 390/768/861/1280 px og innlogget ved 861/1080/1280 px uten overlapp eller nettleserfeil.
+- [ ] Legg til Microsoft- og Apple-innlogging på innlogging og kontooppretting, og kontroller knappene og oppstartsflyten.
+- [ ] Flytt hele forsidenteksten og søkefeltet litt opp uten å endre kunstplasseringene.
