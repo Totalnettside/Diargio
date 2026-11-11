@@ -133,7 +133,7 @@ function Index() {
                       <Link
                         to="/utstillinger"
                         search={{ investor: true }}
-                        className="hero-frame home-art-card block bg-card text-card-foreground"
+                        className="hero-frame home-art-card relative block"
                       >
                         <img
                           src={a.image}
@@ -151,7 +151,7 @@ function Index() {
                       <Link
                         to="/kunst/$slug"
                         params={{ slug: a.slug }}
-                        className="hero-frame home-art-card block bg-card text-card-foreground"
+                        className="hero-frame home-art-card relative block"
                       >
                         <img
                           src={a.image}

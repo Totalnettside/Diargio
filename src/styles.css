@@ -281,7 +281,7 @@
 .home-art-front { width:53%; left:25%; top:7%; z-index:20; }
 .home-art-back { width:36%; left:7%; top:0; z-index:10; }
 .home-art-right { width:38%; right:0; bottom:0; z-index:10; }
-.home-art-card { padding:12px; box-shadow:var(--shadow-lift); }
+.home-art-card { padding:0; box-shadow:var(--shadow-lift); }
 .home-new-badge { bottom:10%; right:-2%; box-shadow:var(--shadow-lift); }
 @media(min-width:1280px) { .home-hero-grid { padding:56px; } .home-heading { font-size:52px; } }
 @media(max-width:1099px) {
