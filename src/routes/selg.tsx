@@ -24,6 +24,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { submissionDisclosure } from '@/lib/moderation';
 import {useActionDialog} from '@/components/ActionDialogs';
 import { pageHead } from '@/lib/seo';
+import { clearResolvedTitleError, missingTitleMessage } from '@/lib/sell-validation';
 
 export const Route = createFileRoute("/selg")({
   head: () => pageHead({
@@ -418,7 +419,11 @@ function SellPage() {
               <Field label="Selgertype"><select value={sellerType} onChange={e=>setSellerType(e.target.value as typeof sellerType)} className={inputClass}>{['Kunstner','Privat','Galleri'].map(t=><option key={t}>{t}</option>)}</select></Field>
               <Field label="Eget verk eller videresalg"><select value={ownWork?'own':'resale'} onChange={e=>setOwnWork(e.target.value==='own')} className={inputClass}><option value="own">Eget verk</option><option value="resale">Videresalg</option></select></Field>
               <Field label="Verkets navn *">
-                <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
+                <input value={title} onChange={(e) => {
+                  const value = e.target.value;
+                  setTitle(value);
+                  setImageError((error) => clearResolvedTitleError(error, value));
+                }} className={inputClass} />
               </Field>
               <Field label="År">
                 <input value={year} onChange={(e) => setYear(e.target.value)} className={inputClass} />
@@ -614,7 +619,7 @@ function SellPage() {
           </button>
           {step < stepTitles.length - 1 && (
             <button
-              onClick={() => step < maxStep ? setStep((s) => s + 1) : setImageError(images.length === 0 ? "Last opp minst ett bilde før du går videre." : "Skriv inn verkets navn før du går videre.")}
+              onClick={() => step < maxStep ? setStep((s) => s + 1) : setImageError(images.length === 0 ? "Last opp minst ett bilde før du går videre." : missingTitleMessage)}
               className="rounded-2xl bg-brandink px-6 py-2.5 text-sm font-semibold text-primary-foreground"
             >
               {step === 1 && !artistName.trim() ? "Hopp over" : "Neste"}
