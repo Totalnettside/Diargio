@@ -52,13 +52,22 @@ function AuthPage() {
     setBusy(false);
   };
 
-  const google = async () => {
+  const socialSignIn = async (provider: "google" | "microsoft" | "apple") => {
+    setBusy(true);
     setMsg(null);
     sessionStorage.setItem("auth-next",safeDestination(next));
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) setMsg("Google-innlogging feilet.");
+    const label = provider === "google" ? "Google" : provider === "microsoft" ? "Microsoft" : "Apple";
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.redirected) return;
+      if (result.error) setMsg(`${label}-innlogging feilet. Prøv igjen.`);
+      setBusy(false);
+    } catch {
+      setMsg(`${label}-innlogging feilet. Prøv igjen.`);
+      setBusy(false);
+    }
   };
 
   return (
