@@ -116,7 +116,6 @@ function Index() {
             </form>
             <div className="hero-rise home-actions flex items-center gap-4" style={{ animationDelay: "360ms" }}>
               <Button asChild variant="ghost" className="home-explore"><Link to="/kunst">Utforsk kunst</Link></Button>
-              <Button asChild variant="outline" className="home-sell"><Link to="/selg">Selg kunst</Link></Button>
             </div>
           </div>
 
