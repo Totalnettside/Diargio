@@ -42,5 +42,5 @@
 
 - [x] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.
 - [x] Fjern den separate gullfargede navigasjonsraden; samle logo, riktige brukerlenker og kontovalg i én kompakt grønn toppmeny. Kontrollert utlogget ved 390/768/861/1280 px og innlogget ved 861/1080/1280 px uten overlapp eller nettleserfeil.
-- [ ] Fjern Microsoft- og Apple-innlogging og behold kun Google som sosial innloggingsmetode.
+- [x] Fjern Microsoft- og Apple-innlogging og behold kun Google som sosial innloggingsmetode; kontrollert på begge faner, 69 tester består.
 - [x] Flytt hele forsidenteksten og søkefeltet litt opp uten å endre kunstplasseringene; visuelt kontrollert.
