@@ -142,7 +142,7 @@ function Index() {
                           fetchPriority={i === 0 ? "high" : "auto"}
                           className="block h-auto w-full object-contain"
                         />
-                        <span className="absolute bottom-2 right-2 rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]">
+                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
                           {formatPrice(a.price)}
                         </span>
                       </Link>
@@ -159,7 +159,7 @@ function Index() {
                           fetchPriority={i === 0 ? "high" : "auto"}
                           className="block h-auto w-full object-contain"
                         />
-                        <span className="absolute bottom-2 right-2 rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]">
+                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
                           {formatPrice(a.price)}
                         </span>
                       </Link>
