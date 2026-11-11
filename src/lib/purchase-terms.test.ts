@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { infoPages } from "./info-pages";
+import { infoPages, type InfoPage } from "./info-pages";
 import { publicSitemapPaths } from "./seo-guard";
 import { KUNSTVEGG_ENABLED } from "./features";
+
+function page(slug: string): InfoPage {
+  const found = infoPages[slug];
+  if (!found) throw new Error(`Info-side mangler: ${slug}`);
+  return found;
+}
+
+function section(terms: InfoPage, heading: string): string {
+  const found = terms.sections.find((s) => s.h === heading);
+  if (!found) throw new Error(`Seksjon mangler: ${heading}`);
+  return found.p.join(" ");
+}
 
 describe("launch scope", () => {
   it("keeps the art wall out of the public site until it is launched", () => {
@@ -11,7 +23,7 @@ describe("launch scope", () => {
 });
 
 describe("purchase terms", () => {
-  const terms = infoPages.kjopsvilkaar;
+  const terms = page("kjopsvilkaar");
 
   it("publishes the purchase terms page with every section", () => {
     expect(terms.title).toBe("Kjøpsvilkår");
@@ -26,12 +38,12 @@ describe("purchase terms", () => {
   });
 
   it("names the seller, the company details and the art fee threshold", () => {
-    const who = terms.sections[0].p.join(" ");
+    const who = section(terms, "Hvem du handler med");
     expect(who).toContain("Diargio AS er selger");
     expect(who).toContain("938 724 148");
     expect(who).toContain("post@diargio.com");
     expect(who).toContain("Magnus Lagabøters veg 8, 7047 Trondheim");
-    expect(terms.sections[3].p.join(" ")).toContain("2 000 kr");
+    expect(section(terms, "Pris, avgifter og levering")).toContain("2 000 kr");
   });
 
   it("offers a withdrawer-of-angrerett message to copy", () => {
