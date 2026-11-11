@@ -2,11 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
-import { artists, artworksByArtist, categories, formatPrice } from "@/data/demo";
+import { artists, artworksByArtist, categories, formatPrice, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
 import { investorArtworks } from '@/data/investor-art';
-import { InvestorArtCard } from '@/components/InvestorArt';
+import { InvestorArtCard, InvestorArtDetails } from '@/components/InvestorArt';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { pageHead } from '@/lib/seo';
 
@@ -38,6 +39,7 @@ function Index() {
 
 
   const [q, setQ] = useState("");
+  const [heroDemo, setHeroDemo] = useState<Artwork | null>(null);
   const navigate = useNavigate();
   const { allArtworks, toggleFollowArtist, followedArtists } = useStore();
   const artworks = allArtworks;
@@ -135,10 +137,11 @@ function Index() {
                     style={{ animationDelay: `${i * 1.2}s`, ["--r" as string]: `${[-1.5, -6, 3][i]}deg` }}
                   >
                     {a.id.startsWith("investor-demo") ? (
-                      <Link
-                        to="/utstillinger"
-                        search={{ investor: true }}
-                        className="hero-frame home-art-card relative block"
+                      <button
+                        type="button"
+                        aria-label={`Se demoverk ${a.title}`}
+                        onClick={() => setHeroDemo(a)}
+                        className="hero-frame home-art-card relative block w-full text-left"
                       >
                         <img
                           src={a.image}
@@ -150,7 +153,7 @@ function Index() {
                         <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
                           {formatPrice(a.price)}
                         </span>
-                      </Link>
+                      </button>
                     ) : (
                       <Link
                         to="/kunst/$slug"
@@ -182,6 +185,13 @@ function Index() {
           </div>
         </div>
       </section>
+
+      <Dialog open={Boolean(heroDemo)} onOpenChange={(open) => { if (!open) setHeroDemo(null); }}>
+        <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+          <DialogHeader><DialogTitle>Investorvisning</DialogTitle><DialogDescription>Fiktivt eksempel, ikke en salgsannonse.</DialogDescription></DialogHeader>
+          {heroDemo && <InvestorArtDetails artwork={heroDemo} />}
+        </DialogContent>
+      </Dialog>
 
       <p className="mb-3 mt-6 text-sm font-bold">Utforsk kunst</p>
       <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar md:flex-nowrap">
