@@ -1,5 +1,5 @@
 export type InfoSection = { h: string; p: string[] };
-export type InfoPage = { title: string; lead: string; description?: string; intro?: string[]; sections: InfoSection[]; outro?: string; cta?: { label: string; to: "/selg" | "/kunst" } };
+export type InfoPage = { title: string; lead: string; description?: string; intro?: string[]; sections: InfoSection[]; outro?: string; cta?: { label: string; to: "/selg" | "/kunst" }; template?: { h: string; lines: string[] }; sources?: { label: string; href: string }[] };
 
 export const infoPages: Record<string, InfoPage> = {
   "om-oss": {
@@ -340,5 +340,78 @@ export const infoPages: Record<string, InfoPage> = {
       },
     ],
     cta: { label: "Legg ut kunst", to: "/selg" },
+  },
+  kjopsvilkaar: {
+    title: "Kjøpsvilkår",
+    lead: "Kjøpsvilkår og rettigheter ved kjøp av kunst.",
+    description:
+      "Kjøpsvilkår for Diargio: hvem du handler med, hva annonsen dekker, bud og avtale, pris og levering, hva som gjelder hvis verket ikke er som avtalt, og angrerett ved kjøp fra privatperson eller næringsdrivende.",
+    sections: [
+      {
+        h: "Hvem du handler med",
+        p: [
+          "Diargio er en markedsplass som formidler kontakt mellom kjøpere og selgere av kunst. Selgeren som er oppgitt i annonsen, er avtalepart for kjøpet, med mindre det uttrykkelig står at Diargio AS er selger.",
+          "Før kjøpet skal det fremgå om selgeren opptrer som privatperson eller næringsdrivende. Dette er viktig fordi angrerett og andre rettigheter avhenger av hvem du handler med.",
+          "Diargio AS",
+          "Org.nr. 938 724 148",
+          "E-post: post@diargio.com",
+          "Postadresse: Magnus Lagabøters veg 8, 7047 Trondheim",
+        ],
+      },
+      {
+        h: "Om verket og annonsen",
+        p: [
+          "Kunstverk kan være brukt, ha tegn på alder eller ha andre forhold som påvirker tilstanden. Les annonsen nøye, og spør selgeren om det du lurer på før kjøpet.",
+          "Annonsen bør beskrive verkets kunstner, teknikk, mål, tilstand og eventuell dokumentasjon så godt selger kjenner til dette. Eventuelle skader, slitasje, reparasjoner eller usikkerhet rundt opphav og dokumentasjon bør oppgis tydelig.",
+          "Selger er ansvarlig for at opplysningene i annonsen og dialogen med kjøper er riktige. Bilder kan gjengi farger noe annerledes enn verket ser ut i virkeligheten.",
+        ],
+      },
+      {
+        h: "Bud og avtale",
+        p: [
+          "Et bud er et tilbud til selgeren. Selgeren kan godta eller avslå budet. Når selger godtar budet, eller kjøper bekrefter et kjøp til oppgitt pris, inngås en bindende avtale mellom kjøper og selger.",
+          "Annonsen og meldingene mellom partene inngår i avtalegrunnlaget. Ta vare på dem til handelen er fullført.",
+        ],
+      },
+      {
+        h: "Pris, avgifter og levering",
+        p: [
+          "Prisen som vises i annonsen, er det samlede kjøpesummen for deg som kjøper. Den inkluderer Diargios provisjon og eventuell kunstavgift, og provisjonen trekkes derfor fra selgerens oppgjør i stedet for å komme som et eget gebyr til kjøper. Kunstavgift kommer i tillegg for verk over 2 000 kr.",
+          "Eventuell kunstavgift, frakt og transportforsikring skal opplyses før kjøpet bekreftes.",
+          "Kjøper og selger avtaler om verket skal sendes, hentes eller overleveres personlig. De skal også avklare fraktkostnad og eventuell forsikring før handelen fullføres. Ved sending bør verket pakkes forsvarlig og sendes sporbart. For verdifulle eller skjøre verk bør partene vurdere transportforsikring eller spesialisert kunsttransport.",
+        ],
+      },
+      {
+        h: "Hvis verket ikke er som avtalt",
+        p: [
+          "Hvis verket avviker fra annonsen eller avtalen, bør kjøper først kontakte selger skriftlig og forklare hva avviket gjelder. Legg gjerne ved bilder. Kjøper kan også kontakte Diargio på post@diargio.com for hjelp med å komme i kontakt med selgeren.",
+          "Mulig løsning avhenger av hva som er avtalt, hvor stort avviket er, og om selger er privatperson eller næringsdrivende. Partene kan for eksempel bli enige om et passende prisavslag eller en retur. For et unikt kunstverk er det ikke alltid mulig å bytte det mot et tilsvarende verk. Heving av kjøpet kan være aktuelt dersom vilkårene i loven er oppfylt.",
+          "Hvis kjøper og selger avtaler en frivillig retur, bør de skriftlig avklare hvem som betaler returfrakten og hvordan verket skal sendes. Lovfestede rettigheter gjelder uansett og begrenses ikke av disse vilkårene.",
+        ],
+      },
+      {
+        h: "Angrerett",
+        p: [
+          "Kjøp fra privatperson: Lovbestemt angrerett gjelder normalt ikke ved kjøp fra en privat selger. Kjøper kan derfor ikke returnere verket bare fordi kjøper ombestemmer seg, ikke liker det hjemme eller forventet at det skulle se annerledes ut, når annonsen beskrev det korrekt. Kjøper og selger kan likevel avtale retur eller åpent kjøp. Forbrukerrådet bekrefter at kjøpsloven regulerer kjøp mellom privatpersoner, og at slike nettkjøp normalt ikke gir angrerett.",
+          "Kjøp fra næringsdrivende: Når en forbruker kjøper på nett fra en næringsdrivende, gjelder som hovedregel 14 dagers angrerett. Fristen regnes vanligvis fra dagen etter at kjøper mottar verket. Kjøper må gi selger tydelig beskjed innen fristen og returnere verket innen 14 dager etter at beskjed er gitt. Kjøper kan måtte betale returfrakten dersom dette ble opplyst før kjøpet. Loven har enkelte unntak, blant annet for varer som er laget spesielt etter kjøperens ønsker.",
+          "Send melding om angrerett til selger via kontaktinformasjonen i kjøpsbekreftelsen eller Diargios meldingsfunksjon. Du kan også sende kopi til post@diargio.com.",
+        ],
+      },
+    ],
+    template: {
+      h: "Slik kan du melde fra om angrerett",
+      lines: [
+        "Jeg gir beskjed om at jeg ønsker å benytte angreretten for kjøpet av [verkets navn].",
+        "Bestilt: [dato]",
+        "Mottatt: [dato]",
+        "Navn: [navn]",
+        "Adresse: [adresse]",
+        "Dato: [dato]",
+      ],
+    },
+    sources: [
+      { label: "Forbrukerrådet", href: "https://www.forbrukerradet.no" },
+      { label: "Forbrukertilsynet", href: "https://www.forbrukertilsynet.no" },
+    ],
   },
 };

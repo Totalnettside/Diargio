@@ -1,11 +1,20 @@
 import fs from "node:fs";
 import path from "node:path";
 import { infoPages } from "./info-pages";
+import { KUNSTVEGG_ENABLED } from "./features";
 import { SITE_ORIGIN } from "./seo";
 
 const PRIVATE_FILES = new Set(["ordre.tsx", "kjop.$slug.tsx", "kunstneroppgjor.tsx", "dealroom.$slug.tsx"]);
 
-export const STATIC_PUBLIC_PATHS = ["/", "/kunst", "/sok", "/selg", "/utstillinger", "/kunstvegg", "/galleriplass"];
+export const STATIC_PUBLIC_PATHS = [
+  "/",
+  "/kunst",
+  "/sok",
+  "/selg",
+  "/utstillinger",
+  "/galleriplass",
+  ...(KUNSTVEGG_ENABLED ? ["/kunstvegg"] : []),
+];
 
 export function publicSitemapPaths() {
   return [...STATIC_PUBLIC_PATHS, ...Object.keys(infoPages).sort().map((page) => `/info/${page}`)];
