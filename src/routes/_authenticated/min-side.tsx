@@ -16,6 +16,7 @@ import {ArtworkPreview} from '@/components/ArtworkPreview';
 import {useActionDialog,listingDeletionDescription} from '@/components/ActionDialogs';
 import {useNavigate} from '@tanstack/react-router';
 import { privateHead, privatePageFor } from '@/lib/seo';
+import { KUNSTVEGG_ENABLED } from '@/lib/features';
 import { ArrowRight, BarChart3, BadgeCheck, Clock3, Eye, Gavel, Heart, Inbox, LayoutGrid, MessageCircle, MessageSquareQuote, Palette, Plus, Send, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/min-side")({
@@ -39,6 +40,8 @@ const tabs = [
   "Statistikk",
   "Vurderinger",
 ] as const;
+
+const visibleTabs = KUNSTVEGG_ENABLED ? tabs : tabs.filter((t) => t !== "Kunstvegger");
 
 function Dashboard() {
   const dialog=useActionDialog();
@@ -64,7 +67,7 @@ function Dashboard() {
   const sentBids = bids.filter((b) => b.buyerId === user?.id);
   const unreadBids = receivedBids.filter((b) => !b.read).length;
   const initialTab = Route.useSearch().tab;
-  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = initialTab; return (tabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
+  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = initialTab; return (visibleTabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
   const [decidingBid, setDecidingBid] = useState<string | null>(null);
   const [bidError, setBidError] = useState("");
   const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
@@ -115,7 +118,7 @@ function Dashboard() {
       </header>
 
       <nav aria-label="Min side" className="account-tabs mt-5 flex gap-1 overflow-x-auto no-scrollbar">
-        {tabs.map((t) => (
+        {visibleTabs.map((t) => (
           <Button
             variant="ghost"
             key={t}
@@ -164,7 +167,7 @@ function Dashboard() {
         </section>
       )}
 
-      {tab === "Kunstvegger" && <SavedWalls />}
+      {KUNSTVEGG_ENABLED && tab === "Kunstvegger" && <SavedWalls />}
       {tab === "Min profil" && (
         <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
           <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ImagePlus, Plus, Save, Share2, Trash2 } from 'lucide-react';
@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { visualArtOptions } from '@/lib/visual-art-query';
 import { getSharedWall, saveArtWall } from '@/lib/visual-art.functions';
 import { emptyWall, newPlacement, wallRoomScenes, sceneImage, wallLayoutSchema, visualHead, type WallLayout } from '@/lib/visual-art';
+import { pageHead } from '@/lib/seo';
+import { KUNSTVEGG_ENABLED } from '@/lib/features';
 import { ArtStage } from '@/components/visual/ArtStage';
 import { WallColorPicker } from '@/components/visual/WallColorPicker';
 import { ArtDetails } from '@/components/visual/ArtDetails';
@@ -19,10 +21,13 @@ export const Route = createFileRoute('/kunstvegg')({
   validateSearch: (s: Record<string, unknown>): { wall?: string } => typeof s['wall'] === 'string' && /^[0-9a-f-]{36}$/i.test(s['wall']) ? { wall: s['wall'] } : {},
   loaderDeps: ({ search }) => ({ wall: search.wall }),
   loader: async ({ context, deps }) => {
+    if (!KUNSTVEGG_ENABLED) throw notFound();
     const [, shared] = await Promise.all([context.queryClient.ensureQueryData(visualArtOptions()), deps.wall ? getSharedWall({ data: { id: deps.wall } }) : Promise.resolve(null)]);
     return { shared };
   },
-  head: () => visualHead('Din kunstvegg', 'Prøv ekte kunstverk i et rom, bygg din kunstvegg og lagre eller del den på Diargio.', '/kunstvegg'),
+  head: () => KUNSTVEGG_ENABLED
+    ? visualHead('Din kunstvegg', 'Prøv ekte kunstverk i et rom, bygg din kunstvegg og lagre eller del den på Diargio.', '/kunstvegg')
+    : pageHead({ title: 'Din kunstvegg | Diargio', description: 'Din kunstvegg er ikke åpnet ennå.', path: '/kunstvegg', noindex: true }),
   component: ArtWallPage, errorComponent: VisualError, notFoundComponent: VisualError,
 });
 
