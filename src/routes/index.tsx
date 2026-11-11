@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
+import { AnimatedSearchInput } from "@/components/AnimatedSearchInput";
 import { artists, artworksByArtist, categories, formatPrice, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
@@ -106,13 +107,7 @@ function Index() {
               }}
             >
               <Search className="size-5 shrink-0 opacity-60" />
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Søk etter kunstner, verk, stil eller kategori"
-                aria-label="Søk etter kunstner, verk, stil eller kategori"
-                className="min-w-0 w-full bg-transparent text-sm outline-none placeholder:text-ink/80"
-              />
+              <AnimatedSearchInput value={q} onChange={(e) => setQ(e.target.value)} />
             </form>
             <div className="hero-rise home-actions flex items-center gap-4" style={{ animationDelay: "360ms" }}>
               <Button asChild variant="ghost" className="home-explore"><Link to="/kunst">Utforsk kunst</Link></Button>
