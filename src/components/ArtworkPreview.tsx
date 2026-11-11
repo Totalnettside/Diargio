@@ -5,6 +5,7 @@ export function ArtworkPreview({ image, alt }: { image: string; alt: string; lar
         src={image}
         alt={alt}
         loading="lazy"
+        decoding="async"
         className="block h-auto w-full transition-transform duration-500 ease-out group-hover/preview:scale-[1.06]"
       />
     </div>

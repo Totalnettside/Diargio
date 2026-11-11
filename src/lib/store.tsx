@@ -99,7 +99,7 @@ const StoreContext = g.__diargioStoreCtx ?? (g.__diargioStoreCtx = createContext
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState);
-  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork; moderation_status: string; created_at?: string }[]>([]);
+  const [dbListings, setDbListings] = useState<{ id: string; user_id: string; data: Artwork; moderation_status: string; created_at?: string; updated_at?: string }[]>([]);
   const [ownListings, setOwnListings] = useState<Artwork[]>([]);
   const [reviewNotifications, setReviewNotifications] = useState<AppNotification[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
