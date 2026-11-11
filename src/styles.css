@@ -298,6 +298,7 @@
   .home-main { padding:var(--site-top-space) var(--site-gutter) 0; }
   .home-hero { border-radius:28px; }
   .home-hero-grid { grid-template-columns:minmax(0,1fr); padding:28px 24px; gap:32px; }
+  .home-hero-copy { translate:0 -12px; }
   .home-heading { font-size:34px; line-height:1.12; }
   .home-heading-line { display:inline; }
   .home-search { min-height:56px; padding:12px 16px; }
