@@ -30,7 +30,12 @@ export function Footer() {
     <footer className="no-print mt-12 border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="max-w-xl">
-          <img src={logo.url} alt="Diargio" className="h-10 w-auto" />
+          <span
+            className="footer-logo-link"
+            style={{ ["--logo-source" as string]: `url("${logo.url}")` }}
+          >
+            <img src={logo.url} alt="Diargio" className="footer-logo h-10 w-auto" />
+          </span>
           <p className="mt-3 text-sm text-ink/70">
             Diargio er en markedsplass som formidler kjøp og salg av kunst fra kunstnere, gallerier og private selgere.
           </p>
