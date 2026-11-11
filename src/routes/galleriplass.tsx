@@ -48,7 +48,7 @@ function GalleryPreview() {
     <header className="visual-page-heading"><div><Button asChild variant="link" className="mb-2 px-0"><Link to="/utstillinger"><ArrowLeft />Til galleriet</Link></Button><h1 className="text-2xl font-medium">Gi kunsten din en plass i Diargios digitale galleri</h1><p className="mt-2 text-sm text-muted-foreground">Velg veggplass og periode. La besøkende oppdage kunsten din og kjøpe direkte gjennom Diargio.</p></div></header>
     <div className="gallery-preview-layout">
       <section className="min-w-0">
-        <ArtStage background={room.image} aspect={GALLERY_ASPECT} placements={placement ? [placement] : []} artworks={ownArt} selected={null} onSelect={() => {}}>
+        <ArtStage background={room.image} aspect={GALLERY_ASPECT} color={roomNumber === 2 ? 'sage' : 'clay'} placements={placement ? [placement] : []} artworks={ownArt} selected={null} onSelect={() => {}}>
           <GallerySlots slots={room.slots.filter((s) => !placement || s.id !== placement.id)} selected={slotId} onSelect={(s) => setSlotId(s.id)} />
         </ArtStage>
         <div className="border-b border-border px-5 py-4"><h2 className="font-medium">Rom {roomNumber} — {room.name}</h2><p className="mt-1 text-sm text-muted-foreground">Gratis forhåndsvisning · Ingen plass er reservert</p><div className="mt-3 flex flex-wrap gap-2">{room.slots.map((s, i) => <Button key={s.id} variant={s.id === slotId ? 'default' : 'outline'} onClick={() => setSlotId(s.id)}>Plass {i + 1} · Ledig</Button>)}</div></div>
