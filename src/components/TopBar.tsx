@@ -9,6 +9,7 @@ import { useChat } from "@/hooks/useChat";
 import { UnreadBadge } from "@/components/UnreadBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { KUNSTVEGG_ENABLED } from "@/lib/features";
 
 export function TopBar() {
   const { user, signOut } = useAuth();
@@ -49,7 +50,7 @@ export function TopBar() {
           <Link to="/kunst" className="transition-colors hover:text-primary-foreground">
             Kunst
           </Link>
-          <Link to="/kunstvegg" className="whitespace-nowrap transition-colors hover:text-primary-foreground">Din kunstvegg</Link>
+          {KUNSTVEGG_ENABLED && <Link to="/kunstvegg" className="whitespace-nowrap transition-colors hover:text-primary-foreground">Din kunstvegg</Link>}
           <Link to="/utstillinger" className="transition-colors hover:text-primary-foreground">Utstillinger</Link>
           <Link to="/selg" className="transition-colors hover:text-primary-foreground">
             Selg kunst
@@ -114,7 +115,7 @@ export function TopBar() {
       {menuOpen && (
         <nav id="topbar-expanded-menu" aria-label="Alle menypunkter" className="topbar-expanded-menu" onClick={() => setMenuOpen(false)}>
           <Link to="/kunst">Kunst</Link>
-          <Link to="/kunstvegg">Din kunstvegg</Link>
+          {KUNSTVEGG_ENABLED && <Link to="/kunstvegg">Din kunstvegg</Link>}
           <Link to="/utstillinger">Utstillinger</Link>
           <Link to="/selg">Selg kunst</Link>
           {user && (
