@@ -173,8 +173,6 @@
 .auth-input::placeholder { color:var(--muted-foreground); opacity:.7; }
 .auth-input:focus { border-color:var(--gronn); box-shadow:0 0 0 3px color-mix(in oklab,var(--gronn) 12%,transparent); }
 .auth-google:hover { background:var(--card); border-color:var(--gronn); color:var(--gronn); }
-.auth-apple { font-size:20px; }
-.auth-apple:hover { background:var(--card); border-color:var(--gronn); color:var(--foreground); }
 @media(max-width:767px) {
   .auth-page { grid-template-columns:minmax(0,1fr); min-height:0; }
   .auth-gallery { min-height:180px; }
