@@ -398,17 +398,6 @@ export const infoPages: Record<string, InfoPage> = {
         ],
       },
     ],
-    template: {
-      h: "Slik kan du melde fra om angrerett",
-      lines: [
-        "Jeg gir beskjed om at jeg ønsker å benytte angreretten for kjøpet av [verkets navn].",
-        "Bestilt: [dato]",
-        "Mottatt: [dato]",
-        "Navn: [navn]",
-        "Adresse: [adresse]",
-        "Dato: [dato]",
-      ],
-    },
     sources: [
       { label: "Forbrukerrådet", href: "https://www.forbrukerradet.no" },
       { label: "Forbrukertilsynet", href: "https://www.forbrukertilsynet.no" },

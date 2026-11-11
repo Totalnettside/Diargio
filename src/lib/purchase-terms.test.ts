@@ -45,9 +45,4 @@ describe("purchase terms", () => {
     expect(who).toContain("Magnus Lagabøters veg 8, 7047 Trondheim");
     expect(section(terms, "Pris, avgifter og levering")).toContain("2 000 kr");
   });
-
-  it("offers a withdrawer-of-angrerett message to copy", () => {
-    expect(terms.template?.lines[0]).toBe("Jeg gir beskjed om at jeg ønsker å benytte angreretten for kjøpet av [verkets navn].");
-    expect(terms.template?.lines).toContain("Mottatt: [dato]");
-  });
 });
