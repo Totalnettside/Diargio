@@ -27,11 +27,11 @@ export const GALLERY_ROOMS = [
     { id: '2-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
     { id: '2-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'entrance' },
   ] },
-  { name: 'Den lange gangen', text: 'Gå videre innover og oppdag flere verk.', image: hall3, slots: [
-    { id: '3-1', cx: .14, cy: .33, w: .16, h: .32, tier: 'entrance' },
-    { id: '3-2', cx: .87, cy: .33, w: .15, h: .32, tier: 'prominent' },
-    { id: '3-3', cx: .44, cy: .34, w: .08, h: .18, tier: 'standard' },
-    { id: '3-4', cx: .7, cy: .35, w: .05, h: .12, tier: 'standard' },
+  { name: 'Den lange gangen', text: 'Gå videre og oppdag fire nye veggplasser.', image: galleryWall, slots: [
+    { id: '3-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'entrance' },
+    { id: '3-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '3-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
+    { id: '3-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'standard' },
   ] },
 ] satisfies { name: string; text: string; image: string; slots: GallerySlot[] }[];
 
