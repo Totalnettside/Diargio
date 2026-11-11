@@ -21,11 +21,11 @@ export const GALLERY_ROOMS = [
     { id: '1-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
     { id: '1-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'standard' },
   ] },
-  { name: 'Stille rom', text: 'Et rolig rom under takvinduet.', image: hall2, slots: [
-    { id: '2-1', cx: .36, cy: .36, w: .15, h: .26, tier: 'prominent' },
-    { id: '2-2', cx: .64, cy: .36, w: .15, h: .26, tier: 'prominent' },
-    { id: '2-3', cx: .12, cy: .33, w: .13, h: .3, tier: 'standard' },
-    { id: '2-4', cx: .88, cy: .33, w: .13, h: .3, tier: 'entrance' },
+  { name: 'Stille rom', text: 'En rolig vegg med fire ledige kunstplasser.', image: galleryWall, slots: [
+    { id: '2-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '2-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '2-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
+    { id: '2-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'entrance' },
   ] },
   { name: 'Den lange gangen', text: 'Gå videre innover og oppdag flere verk.', image: hall3, slots: [
     { id: '3-1', cx: .14, cy: .33, w: .16, h: .32, tier: 'entrance' },
