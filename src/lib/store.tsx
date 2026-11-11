@@ -146,26 +146,49 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     else {
       const {data:sold}=await supabase.rpc('unavailable_artwork_ids');
       const unavailable=new Set(sold??[]);
-      setDbListings((data??[]).filter(l=>!unavailable.has(l.id)).map(l=>({...l,data:withPublicImages({...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id},l.updated_at)})));
+      const visible=(data??[]).filter(l=>!unavailable.has(l.id));
+      setDbListings(current=>{
+        const next=visible.map(l=>{
+          const previous=current.find(item=>item.id===l.id);
+          if(previous?.updated_at===l.updated_at)return previous;
+          return {...l,data:withPublicImages({...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id},l.updated_at)};
+        });
+        const unchanged=current.length===next.length&&next.every((item,index)=>item===current[index]);
+        return unchanged?current:next;
+      });
     }
   }, []);
 
-  const loadOwnListings = useCallback(async () => {
-    if(!userId) {setOwnListings([]);setReviewNotifications([]);return;}
-    const [listings,revisions,events,adminNotices] = await Promise.all([
-      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId).is('deleted_at',null),
-      supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
+  const loadReviewNotifications = useCallback(async () => {
+    if(!userId){setReviewNotifications([]);return;}
+    const [events,adminNotices] = await Promise.all([
       supabase.from('listing_review_events').select('*').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
       supabase.rpc('my_administrative_notices'),
+    ]);
+    setReviewNotifications([...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
+  },[userId]);
+  const loadOwnListings = useCallback(async () => {
+    if(!userId) {setOwnListings([]);return;}
+    const [listings,revisions] = await Promise.all([
+      supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId).is('deleted_at',null),
+      supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
     ]);
     setOwnListings((listings.data??[]).map(l=>{
       const rs=(revisions.data??[]).filter(r=>r.listing_id===l.id);
       const r=rs.find(r=>['draft','pending','changes_requested'].includes(r.status))??rs[0];
       return {...((r && !['published','withdrawn','sold'].includes(r.status)?r.data:l.data) as unknown as Artwork),id:l.id,sellerId:userId,moderationStatus:['sold','withdrawn'].includes(l.moderation_status)?l.moderation_status:r?.status??l.moderation_status,...(r?{sellerMessage:r.seller_message,revisionId:r.id,revisionVersion:r.version}:{})};
     }));
-    setReviewNotifications([...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
   },[userId]);
-  useEffect(()=>{void loadOwnListings();const t=setInterval(()=>void loadOwnListings(),15000);return()=>clearInterval(t);},[loadOwnListings]);
+  useEffect(()=>{
+    void loadOwnListings();
+    void loadReviewNotifications();
+    const t=setInterval(()=>{
+      if(document.visibilityState!=='visible')return;
+      void loadReviewNotifications();
+      if(window.location.pathname!=='/')void loadOwnListings();
+    },15000);
+    return()=>clearInterval(t);
+  },[loadOwnListings,loadReviewNotifications]);
 
   useEffect(() => {
     void loadListings();
@@ -291,7 +314,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         notify("Søk lagret", `Du finner «${label}» under lagrede søk.`);
       },
       markAllRead: () => {
-        void supabase.rpc('mark_review_events_read').then(()=>loadOwnListings());
+        void supabase.rpc('mark_review_events_read').then(()=>loadReviewNotifications());
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
         if (userId) void supabase.from("artist_follows").update({ last_seen_at: new Date().toISOString() }).eq("follower_id", userId).then(() => loadFollows());
         if (userId) void supabase.from("bids").update({ read_at: new Date().toISOString() }).eq("seller_id", userId).is("read_at", null).then(() => loadBids());
@@ -313,7 +336,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         await changeListingVisibility({data:{id,action:'delete'}});await Promise.all([loadListings(),loadOwnListings()]);
       },
     }),
-    [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows,ownListings,reviewNotifications,loadOwnListings],
+    [state, notify, dbListings, dbBids, userId, loadListings, loadBids, follows, loadFollows,ownListings,reviewNotifications,loadOwnListings,loadReviewNotifications],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
