@@ -368,7 +368,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
           <div className="rounded-3xl p-5 glass">
             <p className="text-sm font-bold">Trygg kunsthandel</p>
             <p className="mt-1 text-xs leading-relaxed text-ink/60">
-              Betal gjennom Diargio. Pengene holdes tilbake til du har bekreftet mottak. Totalt 25 % gebyr tilkommer: 20 % Diargio-gebyr og 5 % kunstavgift.
+              Betal gjennom Diargio. Pengene holdes tilbake til du har bekreftet mottak. Eventuell kunstavgift er inkludert i prisen. Frakt kommer i tillegg.
             </p>
             <div className="mt-3">
               <StripeBadge />
