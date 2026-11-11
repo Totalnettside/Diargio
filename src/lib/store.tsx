@@ -150,7 +150,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setDbListings(current=>{
         const next=visible.map(l=>{
           const previous=current.find(item=>item.id===l.id);
-          if(previous?.updated_at===l.updated_at)return previous;
+          if(previous&&previous.updated_at===l.updated_at)return previous;
           return {...l,data:withPublicImages({...(l.data as unknown as Artwork),id:l.id,sellerId:l.user_id},l.updated_at)};
         });
         const unchanged=current.length===next.length&&next.every((item,index)=>item===current[index]);
