@@ -1,6 +1,4 @@
-import hall1 from '@/assets/gallery-hall-1.webp';
-import hall2 from '@/assets/gallery-hall-2.webp';
-import hall3 from '@/assets/gallery-hall-3.webp';
+import galleryWall from '@/assets/gallery-flat-wall.webp';
 import type { Placement } from './visual-art';
 
 export const GALLERY_ASPECT = 1600 / 912;
@@ -13,24 +11,27 @@ export const GALLERY_PREVIEW_PRICES: Record<GalleryTier, Record<7 | 14 | 30, num
   prominent: { 7: 499, 14: 799, 30: 1299 },
   entrance: { 7: 799, 14: 1299, 30: 1999 },
 };
+// The photograph's baseboard starts at 72%; keep every artwork above 70%.
+export const GALLERY_WALL_BOTTOM = 0.7;
+
 export const GALLERY_ROOMS = [
-  { name: 'Nye perspektiver', text: 'Lyse vegger og naturlig lys.', image: hall1, slots: [
-    { id: '1-1', cx: .36, cy: .33, w: .2, h: .3, tier: 'entrance' },
-    { id: '1-2', cx: .87, cy: .33, w: .12, h: .32, tier: 'prominent' },
-    { id: '1-3', cx: .6, cy: .37, w: .07, h: .12, tier: 'standard' },
-    { id: '1-4', cx: .18, cy: .3, w: .05, h: .2, tier: 'standard' },
+  { name: 'Nye perspektiver', text: 'Fire verk på én lys, åpen gallerivegg.', image: galleryWall, slots: [
+    { id: '1-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'entrance' },
+    { id: '1-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '1-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
+    { id: '1-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'standard' },
   ] },
-  { name: 'Stille rom', text: 'Et rolig rom under takvinduet.', image: hall2, slots: [
-    { id: '2-1', cx: .36, cy: .36, w: .15, h: .26, tier: 'prominent' },
-    { id: '2-2', cx: .64, cy: .36, w: .15, h: .26, tier: 'prominent' },
-    { id: '2-3', cx: .12, cy: .33, w: .13, h: .3, tier: 'standard' },
-    { id: '2-4', cx: .88, cy: .33, w: .13, h: .3, tier: 'entrance' },
+  { name: 'Stille rom', text: 'En rolig vegg med fire ledige kunstplasser.', image: galleryWall, slots: [
+    { id: '2-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '2-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '2-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
+    { id: '2-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'entrance' },
   ] },
-  { name: 'Den lange gangen', text: 'Gå videre innover og oppdag flere verk.', image: hall3, slots: [
-    { id: '3-1', cx: .14, cy: .33, w: .16, h: .32, tier: 'entrance' },
-    { id: '3-2', cx: .87, cy: .33, w: .15, h: .32, tier: 'prominent' },
-    { id: '3-3', cx: .44, cy: .34, w: .08, h: .18, tier: 'standard' },
-    { id: '3-4', cx: .7, cy: .35, w: .05, h: .12, tier: 'standard' },
+  { name: 'Den lange gangen', text: 'Gå videre og oppdag fire nye veggplasser.', image: galleryWall, slots: [
+    { id: '3-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'entrance' },
+    { id: '3-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
+    { id: '3-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },
+    { id: '3-4', cx: .86, cy: .38, w: .18, h: .4, tier: 'standard' },
   ] },
 ] satisfies { name: string; text: string; image: string; slots: GallerySlot[] }[];
 
