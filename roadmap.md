@@ -45,3 +45,4 @@
 - [x] Fjern Microsoft- og Apple-innlogging og behold kun Google som sosial innloggingsmetode; kontrollert på begge faner, 69 tester består.
 - [x] Flytt hele forsidenteksten og søkefeltet litt opp uten å endre kunstplasseringene; visuelt kontrollert.
 - [x] Animer kjente malerier i forsidens søkefelt, med pause ved fokus og støtte for redusert bevegelse; skriving, sletting, neste verk og søk kontrollert, 69 tester består.
+- [x] Bruk tilfeldige titler fra nettstedets faktiske verk i søkefeltanimasjonen; tilfeldig forslag kontrollert mot faktisk søketreff, 69 tester består.
