@@ -72,6 +72,7 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               <li><Link to="/info/$page" params={{ page: "slik-fungerer-diargio" }} className={linkCls}>Slik fungerer Diargio</Link></li>
               <li><Link to="/info/$page" params={{ page: "trygg-kunsthandel" }} className={linkCls}>Trygg kunsthandel</Link></li>
+              <li><Link to="/info/$page" params={{ page: "kjopsvilkaar" }} className={linkCls}>Kjøpsvilkår</Link></li>
               <li><Link to="/info/$page" params={{ page: "betaling-og-levering" }} className={linkCls}>Betaling og levering</Link></li>
               <li><Link to="/info/$page" params={{ page: "priser-og-gebyrer" }} className={linkCls}>Priser og gebyrer</Link></li>
               <li><Link to="/info/$page" params={{ page: "ofte-stilte-sporsmal" }} className={linkCls}>Ofte stilte spørsmål</Link></li>
@@ -134,7 +135,10 @@ export function Footer() {
 
         <div className="mt-10 space-y-2 border-t border-border pt-6 text-xs text-ink/60">
           <p>© 2026 Diargio · Diargio AS · Org.nr. 938724148</p>
-          <p>Brukervilkår · Personvern · Innstillinger for informasjonskapsler</p>
+          <p>
+            <Link to="/info/$page" params={{ page: "kjopsvilkaar" }} className="font-semibold hover:underline">Kjøpsvilkår</Link>
+            {" · Brukervilkår · Personvern · Innstillinger for informasjonskapsler"}
+          </p>
           <p>
             Kontakt:{" "}
             <a href="mailto:post@diargio.com" className="font-semibold hover:underline">post@diargio.com</a>

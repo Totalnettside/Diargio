@@ -45,6 +45,30 @@ function InfoPage() {
           ))}
         </section>
       ))}
+      {page.template && (
+        <section className="mt-8 rounded-lg border border-border bg-card p-5">
+          <h2 className="text-lg font-semibold">{page.template.h}</h2>
+          <div className="mt-3 space-y-1 text-sm text-ink/80">
+            {page.template.lines.map((t) => (
+              <p key={t}>{t}</p>
+            ))}
+          </div>
+        </section>
+      )}
+      {page.sources?.length ? (
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold">Kilder</h2>
+          <ul className="mt-2 space-y-1 text-sm text-ink/80">
+            {page.sources.map((s) => (
+              <li key={s.href}>
+                <a href={s.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-ink">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {page.outro && <p className="mt-8 font-medium text-ink">{page.outro}</p>}
       {page.cta && (
         <Link to={page.cta.to} className="mt-10 inline-block rounded-md bg-sage px-5 py-2.5 text-sm font-medium text-white hover:bg-sagelight">
