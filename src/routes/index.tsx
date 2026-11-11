@@ -51,11 +51,11 @@ function Index() {
 
   const heroRef = useRef<HTMLElement>(null);
   // «Speil i Nidelva» er det midterste bildet; fyll opp med andre fremhevede verk.
-  const nidelva = featuredArtworks.find((a) => a.title.toLowerCase() === "speil i nidelva");
+  const heroCandidates = [...featuredArtworks, ...investorArtworks];
+  const nidelva = heroCandidates.find((a) => a.title.toLowerCase() === "speil i nidelva");
   const heroFrames = [
     ...(nidelva ? [nidelva] : []),
-    ...featuredArtworks.filter((a) => a.id !== nidelva?.id),
-    ...investorArtworks,
+    ...heroCandidates.filter((a) => a.id !== nidelva?.id),
   ].slice(0, 3);
 
   const onHeroMove = (e: React.MouseEvent) => {
