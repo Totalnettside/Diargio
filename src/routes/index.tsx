@@ -133,37 +133,35 @@ function Index() {
                       <Link
                         to="/utstillinger"
                         search={{ investor: true }}
-                        className="hero-frame home-art-card block bg-card text-card-foreground"
+                        className="hero-frame home-art-card relative block"
                       >
                         <img
                           src={a.image}
                           alt={a.title}
                           loading="eager"
                           fetchPriority={i === 0 ? "high" : "auto"}
-                          className="aspect-[3/4] w-full object-contain"
+                          className="block h-auto w-full object-contain"
                         />
-                        <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
-                          <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
-                          <p className="shrink-0 text-[10px] font-bold text-brand">{formatPrice(a.price)}</p>
-                        </div>
+                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
+                          {formatPrice(a.price)}
+                        </span>
                       </Link>
                     ) : (
                       <Link
                         to="/kunst/$slug"
                         params={{ slug: a.slug }}
-                        className="hero-frame home-art-card block bg-card text-card-foreground"
+                        className="hero-frame home-art-card relative block"
                       >
                         <img
                           src={a.image}
                           alt={a.title}
                           loading="eager"
                           fetchPriority={i === 0 ? "high" : "auto"}
-                          className="aspect-[3/4] w-full object-contain"
+                          className="block h-auto w-full object-contain"
                         />
-                        <div className="flex items-baseline justify-between gap-2 px-1 pt-2">
-                          <p className="truncate text-[10px] font-semibold sm:text-[11px]">{a.title}</p>
-                          <p className="shrink-0 text-[10px] font-bold text-brand">{formatPrice(a.price)}</p>
-                        </div>
+                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
+                          {formatPrice(a.price)}
+                        </span>
                       </Link>
                     )}
                   </div>
