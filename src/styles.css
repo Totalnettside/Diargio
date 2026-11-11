@@ -710,6 +710,11 @@ a.account-bid-title:hover { color:var(--account-green); text-decoration:underlin
 .signature-logo-link .signature-logo { opacity:0; }
 .signature-logo-link::after { content:""; position:absolute; inset:0; background:var(--signature-highlight); mask-image:var(--logo-source); mask-repeat:no-repeat; mask-size:100% 100%; pointer-events:none; }
 
+/* Footer: same wordmark, dark on white so it stays readable */
+.footer-logo-link { position:relative; display:inline-block; }
+.footer-logo-link .footer-logo { opacity:0; }
+.footer-logo-link::after { content:""; position:absolute; inset:0; background:var(--signature-ink); mask-image:var(--logo-source); mask-repeat:no-repeat; mask-size:100% 100%; pointer-events:none; }
+
 /* Mykt gallerilys: decorative, clipped layer behind topbar content */
 .topbar-gallery-light { position:absolute; inset:0; z-index:-1; overflow:hidden; pointer-events:none; border-radius:inherit; }
 .topbar-gallery-light::before {
