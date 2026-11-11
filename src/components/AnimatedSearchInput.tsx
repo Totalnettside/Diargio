@@ -1,14 +1,14 @@
 import { useEffect, useState, type ChangeEventHandler } from "react";
 
 const DEFAULT_PLACEHOLDER = "Søk etter kunstner, verk, stil eller kategori";
-const PAINTINGS = ["Mona Lisa", "Stjernenatt", "Skrik", "Solsikker", "Jenta med perleøreringen"];
 
 type AnimatedSearchInputProps = {
   value: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
+  titles: string[];
 };
 
-export function AnimatedSearchInput({ value, onChange }: AnimatedSearchInputProps) {
+export function AnimatedSearchInput({ value, onChange, titles }: AnimatedSearchInputProps) {
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
   const [focused, setFocused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -22,18 +22,19 @@ export function AnimatedSearchInput({ value, onChange }: AnimatedSearchInputProp
   }, []);
 
   useEffect(() => {
-    if (focused || value || reducedMotion) {
+    const availableTitles = Array.from(new Set(titles.map((title) => title.trim()).filter(Boolean)));
+    if (focused || value || reducedMotion || availableTitles.length === 0) {
       setPlaceholder(DEFAULT_PLACEHOLDER);
       return;
     }
 
-    let paintingIndex = 0;
+    let paintingIndex = Math.floor(Math.random() * availableTitles.length);
     let characterIndex = 0;
     let deleting = false;
     let timer: ReturnType<typeof setTimeout>;
 
     const animate = () => {
-      const text = `Søk etter ${PAINTINGS[paintingIndex]}`;
+      const text = `Søk etter ${availableTitles[paintingIndex]}`;
 
       if (!deleting) {
         characterIndex += 1;
@@ -49,7 +50,10 @@ export function AnimatedSearchInput({ value, onChange }: AnimatedSearchInputProp
         setPlaceholder(text.slice(0, characterIndex));
         if (characterIndex === 0) {
           deleting = false;
-          paintingIndex = (paintingIndex + 1) % PAINTINGS.length;
+          if (availableTitles.length > 1) {
+            const previousIndex = paintingIndex;
+            while (paintingIndex === previousIndex) paintingIndex = Math.floor(Math.random() * availableTitles.length);
+          }
           timer = setTimeout(animate, 400);
         } else {
           timer = setTimeout(animate, 35);
@@ -59,7 +63,7 @@ export function AnimatedSearchInput({ value, onChange }: AnimatedSearchInputProp
 
     timer = setTimeout(animate, 700);
     return () => clearTimeout(timer);
-  }, [focused, reducedMotion, value]);
+  }, [focused, reducedMotion, titles, value]);
 
   return (
     <input

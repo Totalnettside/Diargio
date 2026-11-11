@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { AnimatedSearchInput } from "@/components/AnimatedSearchInput";
@@ -44,6 +44,7 @@ function Index() {
   const navigate = useNavigate();
   const { allArtworks, toggleFollowArtist, followedArtists } = useStore();
   const artworks = allArtworks;
+  const searchTitles = useMemo(() => artworks.map((artwork) => artwork.title), [artworks]);
   // I starten fremheves all kunst som legges ut, så alt kommer på forsiden.
   const featuredArtworks = artworks;
   const nyeste = [...artworks].sort((a, b) => a.createdDaysAgo - b.createdDaysAgo).slice(0, 9);
@@ -107,7 +108,7 @@ function Index() {
               }}
             >
               <Search className="size-5 shrink-0 opacity-60" />
-              <AnimatedSearchInput value={q} onChange={(e) => setQ(e.target.value)} />
+              <AnimatedSearchInput value={q} onChange={(e) => setQ(e.target.value)} titles={searchTitles} />
             </form>
             <div className="hero-rise home-actions flex items-center gap-4" style={{ animationDelay: "360ms" }}>
               <Button asChild variant="ghost" className="home-explore"><Link to="/kunst">Utforsk kunst</Link></Button>
