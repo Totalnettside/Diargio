@@ -18,7 +18,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const a = await assertAdmin(context);
     const [profiles, listings, bids, purchases, messages, follows, reviews, roles, authUsers, orders, pending] = await Promise.all([
       a.from("profiles").select("id,display_name,first_name,last_name,avatar_url,location,phone,created_at,onboarded,bankid_verified"),
-      a.from("listings").select("id,user_id,data,created_at,moderation_status,deleted_at,blocked"),
+      a.from("listings").select("id,user_id,data:catalog_data,created_at,moderation_status,deleted_at,blocked"),
       a.from("bids").select("id,listing_id,buyer_id,seller_id,amount,status,created_at"),
       a.from("purchases").select("id,listing_id,buyer_id,seller_id,created_at"),
       a.from("messages").select("id,created_at").order("created_at", { ascending: false }).limit(1000),
