@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Grid2X2, PanelsTopLeft } from 'lucide-react';
@@ -18,6 +18,7 @@ export const Route=createFileRoute('/utstillinger')({
 });
 
 function ExhibitionsPage(){
+  const navigate=useNavigate();
   const {data}=useSuspenseQuery(visualArtOptions());
   const [roomIndex,setRoomIndex]=useState(0); const [mode,setMode]=useState<'gallery'|'list'>('gallery'); const [selected,setSelected]=useState<string|null>(null);
   const displayedArt=data.artworks;
@@ -31,7 +32,7 @@ function ExhibitionsPage(){
   const nav=<div className="mt-3 flex items-center gap-2"><Button variant="outline" disabled={idx===0} onClick={()=>go(-1)}><ArrowLeft />Forrige rom</Button><Button disabled={idx>=rooms.length-1} onClick={()=>go(1)}>Neste rom<ArrowRight /></Button></div>;
   return <main className="visual-page"><div className="visual-page-heading"><div><p className="visual-eyebrow">DIARGIO / DIGITAL UTSTILLING</p><h1 className="text-2xl font-medium">Still ut kunsten din her</h1><p className="text-sm text-muted-foreground">Alle 12 veggplasser er ledige. Klikk på en ledig plass for å annonsere verket ditt i galleriet.</p></div><div className="flex flex-wrap items-center gap-2"><Button asChild><Link to="/galleriplass" search={{room:1}}>Annonser ditt verk her</Link></Button><div className="flex border border-border p-1" role="group" aria-label="Utstillingsvisning"><Button variant={mode==='gallery'?'default':'ghost'} aria-pressed={mode==='gallery'} onClick={()=>setMode('gallery')}><PanelsTopLeft />Galleri</Button><Button variant={mode==='list'?'default':'ghost'} aria-pressed={mode==='list'} onClick={()=>setMode('list')}><Grid2X2 />Liste</Button></div></div></div>
     <div className="mx-6 mb-4 border border-primary/40 bg-primary/10 px-4 py-3 text-sm"><strong>Ledige galleriplasser:</strong> Velg en tom ramme på veggen, velg ditt kunstverk og periode – så vises verket ditt for alle besøkende.</div>{mode==='gallery'?<div className="exhibition-space"><ArtStage background={room.hall.image} aspect={GALLERY_ASPECT} color={idx===1?'sage':idx===2?'clay':'original'} placements={room.placements} artworks={displayedArt} selected={selected} onSelect={setSelected} >
-        <GallerySlots slots={room.hall.slots} onSelect={(slot)=>{window.location.assign(`/galleriplass?room=${idx+1}&slot=${slot.id}`);}} />
+        <GallerySlots slots={room.hall.slots} onSelect={(slot)=>{void navigate({to:'/galleriplass',search:{room:idx+1,slot:slot.id}});}} />
       </ArtStage>
       
       {art&&<ArtDetails artwork={art} onClose={()=>setSelected(null)} />}
