@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useChat } from "@/hooks/useChat";
 import {toast} from 'sonner';
 import { pageHead } from '@/lib/seo';
+import { sellerFirstName } from '@/lib/seller-name';
 
 export const Route = createFileRoute("/kunst/$slug")({
   loader: ({ params }) => {
@@ -85,6 +86,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
   const { user } = useAuth();
   const { startConversation } = useChat();
   const [owner, setOwner] = useState<{ id: string; name: string; avatar: string | null } | null>(null);
+  const sellerLabel = sellerFirstName(owner?.name ?? seller.name);
   useEffect(() => {
     let alive = true;
     void (async () => {
@@ -285,7 +287,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
               {(owner?.avatar ?? seller.avatar) ? (
                 <img
                   src={owner?.avatar ?? seller.avatar}
-                  alt={owner?.name ?? seller.name}
+                  alt={sellerLabel}
                   loading="lazy"
                   width={512}
                   height={512}
@@ -293,11 +295,11 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
                 />
               ) : (
                 <div className="grid size-12 place-items-center rounded-full bg-secondary font-display text-lg font-semibold text-brandink">
-                  {(owner?.name ?? seller.name).slice(0, 1).toUpperCase()}
+                  {sellerLabel.slice(0, 1).toUpperCase()}
                 </div>
               )}
               <div>
-                <p className="text-sm font-semibold">{owner?.name ?? seller.name}</p>
+                <p className="text-sm font-semibold">{sellerLabel}</p>
                 {seller.verified && (
                   <p className="text-xs font-semibold text-brandink">✓ Verifisert {seller.type.toLowerCase()}</p>
                 )}
@@ -379,7 +381,7 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
 
       {others.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-sm font-bold">Flere annonser fra {seller.name}</h2>
+          <h2 className="text-sm font-bold">Flere annonser fra {sellerLabel}</h2>
           <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
             {others.map((a) => (
               <ArtworkCard key={a.id} artwork={a} />

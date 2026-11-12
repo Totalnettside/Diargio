@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Reuse ArtworkPreview for marketplace cards; display the complete original uploaded image without composited scenes or frames.
+- Format public listing seller labels through the shared seller-name helper; keep stored profile names and artist attribution unchanged.
 - Bid decisions use a seller-authorized transactional RPC with pending-only transitions and a buyer chat message; acceptance never records payment or purchase.
 - Submit bids through the authenticated database RPC and transactional message trigger; seller notifications and bid dashboards read the same RLS-protected persistent bids, never local browser bids.
 - Visual art experiences use normalized 2D placements over room photographs in a shared ArtStage, keeping geometry consistent on all viewport sizes.
