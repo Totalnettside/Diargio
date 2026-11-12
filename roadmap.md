@@ -1,5 +1,6 @@
 # Budvarsler
-- [ ] Rett tidsavbrudd ved annonsehenting og godkjenningskø; kontroller innlogget uten å endre ekte annonser.
+- [x] Reduser annonseoversikt fra 4,8 MB til 14 KB uten å endre originalbilder; filtrer godkjenningskø og unngå blokkert oppfriskning. 75 tester og bygg OK.
+- [ ] Sluttkontroll av treghet/godkjenningskø: Lovable Cloud omstart er fortsatt under oppstart; siste ekte ventende annonse bekreftet publisert uten endring fra testen. Ny godkjenningsbeslutning ikke utført på ekte annonser.
 - [x] Lanseringsrydding: tre fiktive annonser, tre testbud og én refundert testordre fjernet; fire ekte annonser beholdt. Kun tre faste forsideillustrasjoner; ingen investorutstilling. 71 tester og nettleserkontroll på mobil/pc; skjermbilde levert.
 - [x] Rett egne annonse-/bildeslettinger, skill arkivering fra trekking, erstatt nettleserdialoger; adminstatus/historikk, 31 tester og innlogget mobilkontroll. Se deletion-verification.md.
 - [ ] Komplett adminredigering av alle annonse-/profilfelter og separat felt for interne notater per handling — gjenstår utover tittel/profilnavn og bildehandlinger.
