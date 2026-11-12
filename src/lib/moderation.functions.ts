@@ -31,13 +31,14 @@ export const getModerationQueue = createServerFn({method:'GET'}).middleware([req
   .handler(async({data,context}) => {
     const {data:admin} = await context.supabase.rpc('has_role',{_user_id:context.userId,_role:'admin'});
     if(!admin) throw new Error('Ingen administratortilgang.');
-    let revisionQuery=context.supabase.from('listing_revisions').select('*').order('submitted_at',{ascending:true,nullsFirst:false});
+    const {supabaseAdmin:a}=await import('@/integrations/supabase/client.server');
+    let revisionQuery=a.from('listing_revisions').select('*').order('submitted_at',{ascending:true,nullsFirst:false});
     if(data.status!=='all')revisionQuery=revisionQuery.eq('status',data.status);
     const [revisions,profiles,events,notes] = await Promise.all([
       revisionQuery,
-      context.supabase.from('profiles').select('id,display_name'),
-      context.supabase.from('listing_review_events').select('*').order('created_at',{ascending:false}),
-      context.supabase.from('listing_review_notes').select('*'),
+      a.from('profiles').select('id,display_name'),
+      a.from('listing_review_events').select('*').order('created_at',{ascending:false}),
+      a.from('listing_review_notes').select('*'),
     ]);
     if([revisions,profiles,events,notes].some(r=>r.error)) {console.error('Moderation queue failed', [revisions,profiles,events,notes].map(r=>r.error?.code));throw new Error('Godkjenningskøen kunne ikke lastes. Prøv å oppdatere.');}
     return {revisions:revisions.data??[],profiles:profiles.data??[],events:events.data??[],notes:notes.data??[]};
