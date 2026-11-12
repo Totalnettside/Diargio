@@ -7,7 +7,7 @@ import { artists, artworksByArtist, categories, type Artwork } from "@/data/demo
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
 import { heroArtworks } from '@/data/hero-art';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { pageHead } from '@/lib/seo';
 
