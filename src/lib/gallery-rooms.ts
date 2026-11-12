@@ -6,11 +6,15 @@ export const WALL_CATEGORIES = new Set(['Malerier', 'Grafikk & trykk', 'Fotograf
 export type GalleryTier = 'standard' | 'prominent' | 'entrance';
 export type GallerySlot = { id: string; cx: number; cy: number; w: number; h: number; tier: GalleryTier };
 export const GALLERY_TIERS: Record<GalleryTier, string> = { standard: 'Standard veggplass', prominent: 'Fremtredende veggplass', entrance: 'Hovedplass ved inngangen' };
-export const GALLERY_PREVIEW_PRICES: Record<GalleryTier, Record<7 | 14 | 30, number>> = {
-  standard: { 7: 299, 14: 499, 30: 799 },
-  prominent: { 7: 499, 14: 799, 30: 1299 },
-  entrance: { 7: 799, 14: 1299, 30: 1999 },
+export const GALLERY_PREVIEW_PRICES: Record<1 | 2 | 3, Record<7 | 14 | 30, number>> = {
+  1: { 7: 399, 14: 699, 30: 1099 },
+  2: { 7: 249, 14: 449, 30: 749 },
+  3: { 7: 149, 14: 249, 30: 399 },
 };
+export function galleryPreviewPrice(room: number, days: 7 | 14 | 30): number {
+  if (room !== 1 && room !== 2 && room !== 3) throw new Error('Ugyldig gallerirom');
+  return GALLERY_PREVIEW_PRICES[room][days];
+}
 // The photograph's baseboard starts at 72%; keep every artwork above 70%.
 export const GALLERY_WALL_BOTTOM = 0.7;
 
