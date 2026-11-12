@@ -4,7 +4,8 @@ import { renderErrorPage } from "./lib/error-page";
 import { applyDocumentSeo } from "./lib/seo";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
-const documentSeo = createMiddleware().server(async ({ next }) => {
+const documentSeo = createMiddleware().server(async ({ next, request }) => {
+  if (new URL(request.url).pathname.startsWith('/lovable/')) return next();
   const result = await next();
   const response = result.response;
   const type = response.headers.get("content-type") ?? "";

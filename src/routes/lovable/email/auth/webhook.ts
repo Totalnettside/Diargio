@@ -26,9 +26,10 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           from: { name: SITE_NAME, address: `noreply@${FROM_DOMAIN}` },
           senderDomain: SENDER_DOMAIN,
           sendUrl: process.env['LOVABLE_SEND_URL'],
+          replyTo: 'post@diargio.com',
           emails: {
             signup: {
-              subject: 'Confirm your email',
+              subject: 'Aktiver kontoen din hos Diargio',
               render: (data) =>
                 React.createElement(SignupEmail, {
                   siteName: SITE_NAME,
