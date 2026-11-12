@@ -15,7 +15,7 @@ export const GALLERY_PREVIEW_PRICES: Record<GalleryTier, Record<7 | 14 | 30, num
 export const GALLERY_WALL_BOTTOM = 0.7;
 
 export const GALLERY_ROOMS = [
-  { name: 'Nye perspektiver', text: 'Fire verk på én lys, åpen gallerivegg.', image: galleryWall, slots: [
+  { name: 'Nye perspektiver', text: 'Fire ledige plasser på én lys, åpen gallerivegg.', image: galleryWall, slots: [
     { id: '1-1', cx: .14, cy: .38, w: .18, h: .4, tier: 'entrance' },
     { id: '1-2', cx: .38, cy: .38, w: .18, h: .4, tier: 'prominent' },
     { id: '1-3', cx: .62, cy: .38, w: .18, h: .4, tier: 'standard' },

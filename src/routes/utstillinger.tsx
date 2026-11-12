@@ -21,8 +21,8 @@ function ExhibitionsPage(){
   const {data}=useSuspenseQuery(visualArtOptions());
   const [roomIndex,setRoomIndex]=useState(0); const [mode,setMode]=useState<'gallery'|'list'>('gallery'); const [selected,setSelected]=useState<string|null>(null);
   const displayedArt=data.artworks;
-  const wallArt=displayedArt.filter((a)=>WALL_CATEGORIES.has(a.category));
-  const rooms=GALLERY_ROOMS.map((hall,r)=>({hall,placements:[] as ReturnType<typeof fitGalleryArt>[]}));
+  
+  const rooms=GALLERY_ROOMS.map((hall)=>({hall,placements:[] as ReturnType<typeof fitGalleryArt>[]}));
   const idx=Math.min(roomIndex,rooms.length-1); const room=rooms[idx];
   if(!room) return <VisualError />;
   const arts=displayedArt.filter((a)=>room.placements.some((p)=>p.artworkId===a.id));
