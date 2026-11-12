@@ -1,4 +1,5 @@
 # Budvarsler
+- [ ] Lanseringsrydding: fjern fiktive annonser og investorvisning; behold tre faste illustrasjoner kun øverst på forsiden, slett bekreftede testbud/testhandler og lever skjermbilde.
 - [x] Rett egne annonse-/bildeslettinger, skill arkivering fra trekking, erstatt nettleserdialoger; adminstatus/historikk, 31 tester og innlogget mobilkontroll. Se deletion-verification.md.
 - [ ] Komplett adminredigering av alle annonse-/profilfelter og separat felt for interne notater per handling — gjenstår utover tittel/profilnavn og bildehandlinger.
 - [ ] Fysisk iPhone/Safari og full nettleserkontroll med separat vanlig bruker — krever enhet og godkjent testkonto; databasetilgang kontrollert i tilbakerullede transaksjoner.
