@@ -474,6 +474,7 @@ export type Database = {
       listings: {
         Row: {
           blocked: boolean
+          catalog_data: Json | null
           created_at: string
           data: Json
           deleted_at: string | null
@@ -484,6 +485,7 @@ export type Database = {
         }
         Insert: {
           blocked?: boolean
+          catalog_data?: Json | null
           created_at?: string
           data: Json
           deleted_at?: string | null
@@ -494,6 +496,7 @@ export type Database = {
         }
         Update: {
           blocked?: boolean
+          catalog_data?: Json | null
           created_at?: string
           data?: Json
           deleted_at?: string | null
@@ -763,6 +766,10 @@ export type Database = {
       is_conversation_member: {
         Args: { _cid: string; _uid: string }
         Returns: boolean
+      }
+      listing_catalog_data: {
+        Args: { _data: Json; _id: string }
+        Returns: Json
       }
       manage_listing_visibility: {
         Args: { _action: string; _id: string; _note?: string; _reason?: string }

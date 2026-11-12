@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION public.listing_catalog_data(_id text,_data jsonb) RETURNS jsonb LANGUAGE sql IMMUTABLE SET search_path=public AS $$ SELECT CASE WHEN coalesce(_data->>'image','') LIKE 'data:image/%' OR EXISTS(SELECT 1 FROM jsonb_array_elements_text(CASE WHEN jsonb_typeof(_data->'images')='array' THEN _data->'images' ELSE '[]'::jsonb END) s WHERE s LIKE 'data:image/%') THEN jsonb_set(jsonb_set(_data,'{image}',to_jsonb(CASE WHEN _data->>'image' LIKE 'data:image/%' THEN '/annonsebilde/'||_id||'?v='||md5(_data->>'image') ELSE _data->>'image' END)),'{images}',coalesce((SELECT jsonb_agg(CASE WHEN value LIKE 'data:image/%' THEN '/annonsebilde/'||_id||'?i='||(ordinality-1)::text||'&v='||md5(value) ELSE value END ORDER BY ordinality) FROM jsonb_array_elements_text(CASE WHEN jsonb_typeof(_data->'images')='array' THEN _data->'images' ELSE '[]'::jsonb END) WITH ORDINALITY),'[]'::jsonb)) ELSE _data END $$;
+REVOKE ALL ON FUNCTION public.listing_catalog_data(text,jsonb) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.listing_catalog_data(text,jsonb) TO anon,authenticated,service_role;
+ALTER TABLE public.listings ADD COLUMN catalog_data jsonb GENERATED ALWAYS AS (public.listing_catalog_data(id,data)) STORED;
+COMMENT ON COLUMN public.listings.catalog_data IS 'Read-only catalog projection: original inline images remain in data, served separately by annonsebilde.';
+ALTER POLICY "Owner or admin reads revisions" ON public.listing_revisions USING(user_id=(SELECT auth.uid()) OR (SELECT public.has_role(auth.uid(),'admin')));
+ALTER POLICY "Owner or admin reads review events" ON public.listing_review_events USING(user_id=(SELECT auth.uid()) OR (SELECT public.has_role(auth.uid(),'admin')));
+ALTER POLICY "Only admins read internal notes" ON public.listing_review_notes USING((SELECT public.has_role(auth.uid(),'admin')));
+ALTER POLICY "Admins read hidden listings" ON public.listings USING((SELECT public.has_role(auth.uid(),'admin')));
+ALTER POLICY "Owners read hidden listings" ON public.listings USING(user_id=(SELECT auth.uid()));
