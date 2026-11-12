@@ -12,8 +12,8 @@ export function ModerationQueue() {
   const fetchQueue=useServerFn(getModerationQueue);
   const decide=useServerFn(reviewListing);
   const send=useServerFn(sendReviewNotice);
-  const {data,error,isLoading,refetch}=useQuery({queryKey:['moderation-queue'],queryFn:()=>fetchQueue(),refetchInterval:15000});
-  const [filter,setFilter]=useState('pending');
+  const [filter,setFilter]=useState<'all'|'draft'|'pending'|'changes_requested'|'published'|'rejected'|'withdrawn'|'sold'>('pending');
+  const {data,error,isLoading,refetch}=useQuery({queryKey:['moderation-queue',filter],queryFn:()=>fetchQueue({data:{status:filter}}),refetchInterval:30000,staleTime:15000});
   const [search,setSearch]=useState('');
   const [selected,setSelected]=useState<string|null>(null);
   const [reason,setReason]=useState('');
@@ -21,7 +21,7 @@ export function ModerationQueue() {
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
   if(isLoading)return <p>Laster annonser til godkjenning …</p>;
-  if(error||!data)return <p role="alert" className="text-destructive">Kunne ikke laste godkjenningskøen.</p>;
+  if(error||!data)return <div><p role="alert" className="text-destructive">Kunne ikke laste godkjenningskøen.</p><Button variant="outline" onClick={()=>void refetch()}>Prøv igjen</Button></div>;
   const name=(id:string)=>data.profiles.find(p=>p.id===id)?.display_name??'Selger';
   const rows=data.revisions.filter(r=>(filter==='all'||r.status===filter)&&`${(r.data as unknown as Artwork).title} ${name(r.user_id)} ${r.listing_id}`.toLowerCase().includes(search.toLowerCase()));
   const revision=data.revisions.find(r=>r.id===selected);
@@ -35,7 +35,7 @@ export function ModerationQueue() {
       if(result.eventId){try{const delivery=await send({data:{eventId:result.eventId}});setMessage(delivery.status==='sent'?'Beslutningen er lagret, og e-postvarselet er sendt.':delivery.status==='suppressed'?'Beslutningen er lagret. E-post er blokkert for mottakeren.':'Beslutningen er lagret. E-postvarselet venter; prøv igjen nedenfor.');}catch{setMessage('Beslutningen er lagret. E-postvarselet venter; prøv igjen nedenfor.');}}
       setSelected(null);setReason('');setNote('');
     }catch(e){setMessage(e instanceof Error?e.message:'Kunne ikke behandle annonsen.');}
-    finally{await refetch();setBusy(false);}
+    finally{setBusy(false);void refetch();}
   }
   return <section className="space-y-5"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl font-semibold">Annonser til godkjenning <span className="text-primary">({data.revisions.filter(r=>r.status==='pending').length})</span></h2><Button variant="outline" onClick={()=>void refetch()}>Oppdater</Button></div>
     <div className="flex flex-wrap gap-3"><input aria-label="Søk i godkjenningskøen" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tittel, selger eller annonse-ID" className="min-w-0 flex-1 rounded-md border border-input bg-background p-2 text-sm"/><select aria-label="Godkjenningsstatus" value={filter} onChange={e=>setFilter(e.target.value)} className="rounded-md border border-input bg-background p-2 text-sm"><option value="all">Alle statuser</option>{Object.entries(moderationLabels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></div>
