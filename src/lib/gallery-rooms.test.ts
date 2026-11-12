@@ -1,5 +1,30 @@
 import { describe, expect, it } from 'vitest';
-import { GALLERY_ROOMS, GALLERY_WALL_BOTTOM, fitGalleryArt } from './gallery-rooms';
+import { GALLERY_ROOMS, GALLERY_WALL_BOTTOM, fitGalleryArt, galleryPreviewPrice } from './gallery-rooms';
+
+describe('Gallery room pricing', () => {
+  it('starts room 1 at 399 kr for seven days', () => {
+    expect(galleryPreviewPrice(1, 7)).toBe(399);
+  });
+  it.each([
+    [1, 399, 699, 1099],
+    [2, 249, 449, 749],
+    [3, 149, 249, 399],
+  ])('uses the same room %i prices regardless of slot tier', (room, week, fortnight, month) => {
+    expect([7, 14, 30].map(days => galleryPreviewPrice(room, days as 7 | 14 | 30))).toEqual([week, fortnight, month]);
+  });
+  it('charges more for longer periods in every room', () => {
+    for (const room of [1, 2, 3]) {
+      expect(galleryPreviewPrice(room, 14)).toBeGreaterThan(galleryPreviewPrice(room, 7));
+      expect(galleryPreviewPrice(room, 30)).toBeGreaterThan(galleryPreviewPrice(room, 14));
+    }
+  });
+  it('charges less in rooms further back for every period', () => {
+    for (const days of [7, 14, 30] as const) {
+      expect(galleryPreviewPrice(1, days)).toBeGreaterThan(galleryPreviewPrice(2, days));
+      expect(galleryPreviewPrice(2, days)).toBeGreaterThan(galleryPreviewPrice(3, days));
+    }
+  });
+});
 
 describe('Gallery wall placement', () => {
   it('keeps every artwork fully on the wall, including extreme image ratios', () => {

@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useStore } from '@/lib/store';
 import { visualArtOptions } from '@/lib/visual-art-query';
 import { visualHead } from '@/lib/visual-art';
-import { GALLERY_ASPECT, GALLERY_ROOMS, GALLERY_TIERS, GALLERY_PREVIEW_PRICES, WALL_CATEGORIES, fitGalleryArt } from '@/lib/gallery-rooms';
+import { GALLERY_ASPECT, GALLERY_ROOMS, GALLERY_TIERS, galleryPreviewPrice, WALL_CATEGORIES, fitGalleryArt } from '@/lib/gallery-rooms';
 import { formatPrice } from '@/data/demo';
 
 export const Route = createFileRoute('/galleriplass')({
@@ -62,7 +62,7 @@ function GalleryPreview() {
         <label className="visual-label">Startdato<Input type="date" value={start} min={localDate()} onChange={(e) => setStart(e.target.value)} /></label>
         {!validDate && <p role="alert" className="text-sm text-destructive">Velg dagens dato eller en senere dato.</p>}
         <div><p className="mb-2 text-xs font-semibold">Periode</p><div className="flex gap-2" role="group" aria-label="Periode">{([7, 14, 30] as const).map((d) => <Button key={d} variant={days === d ? 'default' : 'outline'} aria-pressed={days === d} onClick={() => setDays(d)}>{d} dager</Button>)}</div></div>
-        {slot && <section className="space-y-2 border-t border-border pt-4" aria-label="Oppsummering"><h3 className="font-medium">Oppsummering</h3><p className="text-sm">{art?.title ?? 'Kunstverk ikke valgt'}</p><p className="text-sm">Rom {roomNumber} · Plass {room.slots.indexOf(slot) + 1} · {GALLERY_TIERS[slot.tier]}</p>{validDate && <p className="text-sm">{dateText(new Date(`${start}T12:00:00`))} – {dateText(end)}</p>}<p className="text-xl font-semibold">{formatPrice(GALLERY_PREVIEW_PRICES[slot.tier][days])}</p><p className="text-xs text-muted-foreground">Totalpris inkludert eventuell mva · Ingen automatisk fornyelse</p></section>}
+        {slot && <section className="space-y-2 border-t border-border pt-4" aria-label="Oppsummering"><h3 className="font-medium">Oppsummering</h3><p className="text-sm">{art?.title ?? 'Kunstverk ikke valgt'}</p><p className="text-sm">Rom {roomNumber} · Plass {room.slots.indexOf(slot) + 1} · {GALLERY_TIERS[slot.tier]}</p>{validDate && <p className="text-sm">{dateText(new Date(`${start}T12:00:00`))} – {dateText(end)}</p>}<p className="text-xl font-semibold">{formatPrice(galleryPreviewPrice(roomNumber, days))}</p><p className="text-xs text-muted-foreground">Totalpris inkludert eventuell mva · Ingen automatisk fornyelse</p></section>}
         <div className="border-t border-border pt-4"><p className="text-sm font-medium">Betaling er ikke åpnet ennå</p><p className="mt-1 text-xs text-muted-foreground">Forhåndsvisningen er gratis og oppretter ingen bestilling.</p></div>
         <p className="text-xs text-muted-foreground">Du betaler for plassering i galleriet. Plasseringen garanterer ikke visninger eller salg. Diargios ordinære salgsprovisjon gjelder dersom kunstverket blir solgt.</p>
         <Button asChild variant="link" className="h-auto whitespace-normal px-0"><Link to="/info/$page" params={{ page: 'priser-og-gebyrer' }}>Se Diargios salgsprovisjon</Link></Button>
