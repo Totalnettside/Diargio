@@ -36,6 +36,7 @@
 - Preserve trade and conversation history by blocking destructive account deletion when counterparties have records; do not recreate self-service deletion.
 - Route payment account creation and status through the shared gateway, with live checkout and transfers blocked until operational and legal requirements are approved.
 - Listing moderation uses immutable reviewed revisions, locked owner/admin RPC transitions and a separate public approved snapshot; RLS and trade triggers prevent unreviewed content from entering commerce.
+- Catalog reads use the generated lightweight image-URL projection; original image data remains unchanged, and moderation loads revisions by selected status to avoid repeatedly transferring reviewed photos.
 - Review events persist decisions and single-recipient email outcomes with managed API idempotency keys; internal notes and private storage documentation remain separate from seller-facing messages.
 - Use one ActionDialogs provider for consequential confirmations and typed input, with locked submissions and safe errors; never invoke browser alert, confirm or prompt.
 - Archive listings through the locked owner/admin visibility RPC; deleted and blocked listings cannot enter commerce, and referenced files remain intact for reviewed and financial history.

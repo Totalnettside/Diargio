@@ -12,8 +12,8 @@ export function ModerationQueue() {
   const fetchQueue=useServerFn(getModerationQueue);
   const decide=useServerFn(reviewListing);
   const send=useServerFn(sendReviewNotice);
-  const [filter,setFilter]=useState<'all'|'draft'|'pending'|'changes_requested'|'published'|'rejected'|'withdrawn'|'sold'>('pending');
-  const {data,error,isLoading,refetch}=useQuery({queryKey:['moderation-queue',filter],queryFn:()=>fetchQueue({data:{status:filter}}),refetchInterval:30000,staleTime:15000});
+  const [filter,setFilter]=useState('pending');
+  const {data,error,isLoading,refetch}=useQuery({queryKey:['moderation-queue',filter],queryFn:()=>fetchQueue({data:{status:filter as 'pending'}}),refetchInterval:30000,staleTime:15000});
   const [search,setSearch]=useState('');
   const [selected,setSelected]=useState<string|null>(null);
   const [reason,setReason]=useState('');
