@@ -158,14 +158,12 @@ function Index() {
         <h2 className="text-sm font-bold">Fremhevede annonser</h2>
         <span className="rounded-full bg-brandink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Fremhevet</span>
       </div>
-      <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
+      <div className="home-inventory-grid mt-3">
         {featuredArtworks.length === 0 ? (
           <p className="text-xs text-ink/50">Ingen annonser lagt ut ennå – bli den første!</p>
         ) : (
           featuredArtworks.map((a) => (
-            <div key={a.id} className="rounded-2xl ring-2 ring-brandink/30">
-              <ArtworkCard artwork={a} />
-            </div>
+            <ArtworkCard key={a.id} artwork={a} />
           ))
         )}
       </div>
@@ -173,11 +171,9 @@ function Index() {
       {recent.length > 0 && (
         <>
           <h2 className="mt-6 text-sm font-bold">Nylig sett</h2>
-          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+          <div className="home-inventory-grid mt-3">
             {recent.map((a) => (
-              <div key={a.id} className="w-44 shrink-0">
-                <ArtworkCard artwork={a} />
-              </div>
+              <ArtworkCard key={a.id} artwork={a} />
             ))}
           </div>
         </>
@@ -189,7 +185,7 @@ function Index() {
           Se alle
         </Link>
       </div>
-      <div className="mt-3 grid grid-cols-2 items-start gap-3 md:grid-cols-3">
+      <div className="home-inventory-grid mt-3">
         {nyeste.map((a) => (
           <ArtworkCard key={a.id} artwork={a} />
         ))}
@@ -231,11 +227,9 @@ function Index() {
       </div>
 
       <h2 className="mt-6 text-sm font-bold">Utvalgte verk</h2>
-      <div className="mt-3 flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+      <div className="home-inventory-grid mt-3">
         {utvalgte.map((a) => (
-          <div key={a.id} className="w-56 shrink-0">
-            <ArtworkCard artwork={a} />
-          </div>
+          <ArtworkCard key={a.id} artwork={a} />
         ))}
       </div>
 
