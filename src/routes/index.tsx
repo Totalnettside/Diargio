@@ -1,13 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { AnimatedSearchInput } from "@/components/AnimatedSearchInput";
-import { artists, artworksByArtist, categories, formatPrice, type Artwork } from "@/data/demo";
+import { artists, artworksByArtist, categories, type Artwork } from "@/data/demo";
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
-import { investorArtworks } from '@/data/investor-art';
-import { InvestorArtCard, InvestorArtDetails } from '@/components/InvestorArt';
+import { heroArtworks } from '@/data/hero-art';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { pageHead } from '@/lib/seo';
@@ -20,21 +19,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-function WhenNear({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) setShow(true);
-    }, { rootMargin: "200px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return <div ref={ref}>{show ? children : <div className="min-h-64" aria-hidden="true" />}</div>;
-}
 
 function Index() {
 
@@ -54,13 +38,7 @@ function Index() {
 
 
   const heroRef = useRef<HTMLElement>(null);
-  // «Speil i Nidelva» er det midterste bildet; fyll opp med andre fremhevede verk.
-  const heroCandidates = [...featuredArtworks, ...investorArtworks];
-  const nidelva = heroCandidates.find((a) => a.title.toLowerCase() === "speil i nidelva");
-  const heroFrames = [
-    ...(nidelva ? [nidelva] : []),
-    ...heroCandidates.filter((a) => a.id !== nidelva?.id),
-  ].slice(0, 3);
+  const heroFrames = heroArtworks;
 
   const onHeroMove = (e: React.MouseEvent) => {
     const el = heroRef.current;
@@ -131,42 +109,17 @@ function Index() {
                     className="hero-float"
                     style={{ animationDelay: `${i * 1.2}s`, ["--r" as string]: `${[-1.5, -6, 3][i]}deg` }}
                   >
-                    {a.id.startsWith("investor-demo") ? (
-                      <button
-                        type="button"
-                        aria-label={`Se demoverk ${a.title}`}
-                        onClick={() => setHeroDemo(a)}
-                        className="hero-frame home-art-card relative block w-full text-left"
-                      >
-                        <img
-                          src={a.image}
-                          alt={a.title}
-                          loading="eager"
-                          fetchPriority={i === 0 ? "high" : "auto"}
-                          className="block h-auto w-full object-contain"
-                        />
-                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
-                          {formatPrice(a.price)}
-                        </span>
-                      </button>
-                    ) : (
-                      <Link
-                        to="/kunst/$slug"
-                        params={{ slug: a.slug }}
-                        className="hero-frame home-art-card relative block"
-                      >
-                        <img
-                          src={a.image}
-                          alt={a.title}
-                          loading="eager"
-                          fetchPriority={i === 0 ? "high" : "auto"}
-                          className="block h-auto w-full object-contain"
-                        />
-                        <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-lg backdrop-blur-sm sm:text-[11px]`}>
-                          {formatPrice(a.price)}
-                        </span>
-                      </Link>
-                    )}
+                    <Button
+                      variant="ghost"
+                      aria-label={`Se illustrasjon ${a.title}`}
+                      onClick={() => setHeroDemo(a)}
+                      className="hero-frame home-art-card relative block h-auto w-full rounded-none p-0 text-left hover:bg-transparent"
+                    >
+                      <img src={a.image} alt={a.title} loading="eager" fetchPriority={i === 0 ? "high" : "auto"} className="block h-auto w-full object-contain" />
+                      <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground sm:text-[11px]`}>
+                        Illustrasjon · Ikke til salgs
+                      </span>
+                    </Button>
                   </div>
                 </div>
               );
@@ -183,8 +136,8 @@ function Index() {
 
       <Dialog open={Boolean(heroDemo)} onOpenChange={(open) => { if (!open) setHeroDemo(null); }}>
         <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
-          <DialogHeader><DialogTitle>Investorvisning</DialogTitle><DialogDescription>Fiktivt eksempel, ikke en salgsannonse.</DialogDescription></DialogHeader>
-          {heroDemo && <InvestorArtDetails artwork={heroDemo} />}
+          <DialogHeader><DialogTitle>{heroDemo?.title}</DialogTitle><DialogDescription>AI-generert illustrasjon · Ikke til salgs.</DialogDescription></DialogHeader>
+          {heroDemo && <img src={heroDemo.image} alt={heroDemo.title} className="h-auto w-full object-contain" />}
         </DialogContent>
       </Dialog>
 
@@ -203,14 +156,6 @@ function Index() {
           </Link>
         ))}
       </div>
-
-      <section className="mt-8 border-y border-border py-6" aria-label="Investorvisning">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div><h2 className="font-display text-lg font-medium">Investorvisning — ti demoverk</h2><p className="mt-1 text-xs text-muted-foreground">AI-genererte illustrasjoner · Eksempelpriser · Ikke til salgs</p></div>
-          <Button asChild variant="outline"><Link to="/utstillinger" search={{ investor: true }}>Se demoutstillingen</Link></Button>
-        </div>
-        <WhenNear><div className="grid grid-cols-2 items-start gap-4 md:grid-cols-3 lg:grid-cols-5">{investorArtworks.map((artwork) => <InvestorArtCard key={artwork.id} artwork={artwork} />)}</div></WhenNear>
-      </section>
 
       <div className="mt-6 flex items-center justify-between">
         <h2 className="text-sm font-bold">Fremhevede annonser</h2>

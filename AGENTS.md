@@ -19,7 +19,7 @@
 - Gallery room geometry and preview pricing are shared across exhibition and placement previews; previews never persist bookings or claim payment until a server-confirmed payment integration exists.
 - Scope messaging visual tokens and typography to the messages page; preserve shared chat persistence and read-status logic to avoid redesign changes affecting other pages.
 - Use react-image-crop with browser canvas for seller-selected photo crops, retaining the source photo during listing creation so crops can be reset without altering the artwork.
-- Keep investor artwork in a separate presentation-only catalog and explicit exhibition search mode; never merge it into listings, commerce, favorites, or user records, so demo content cannot be mistaken for available inventory.
+- Keep fixed homepage illustrations in a separate presentation-only module without seller IDs or listing links; public inventory and exhibitions use approved user listings only, so decorative art cannot enter commerce.
 - Scope authentication presentation to `.auth-page` and preserve existing sign-in and signup calls so visual changes cannot alter account access.
 - Keep homepage gallery scenery in non-interactive CSS background pseudo-elements scoped to the welcome field; this preserves content geometry and independent artwork animation.
 - Keep homepage text and artwork in separate minmax grid columns and switch the top navigation before it collides; reference styling must not change artwork links or commerce behavior.

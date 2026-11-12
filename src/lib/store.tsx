@@ -3,7 +3,6 @@ import { saveListingDraft, submitListing, sendReviewNotice, changeListingVisibil
 import { submissionConfirmation } from './moderation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
-import { artworks as demoArtworks } from "@/data/demo";
 import { withPublicImages } from "@/lib/listing-image-url";
 import { priceFromPayout } from "@/lib/fees";
 import { supabase } from "@/integrations/supabase/client";
@@ -240,7 +239,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return [{ id: `nw-${l.id}`, title: "Nytt verk fra en kunstner du følger", body: `«${l.data.title}»`, read: l.created_at <= f.last_seen_at, createdAt: new Date(l.created_at).getTime(), slug: l.data.slug }];
       }), ...state.notifications].sort((a, b) => b.createdAt - a.createdAt),
       myListings: ownListings,
-      allArtworks: [...dbListings.map((l) => l.data), ...demoArtworks],
+      allArtworks: dbListings.map((l) => l.data),
       isFavorite: (id) => state.favorites.includes(id),
       toggleFavorite: (id) => {
         if(!userId)return notify("Innlogging kreves","Logg inn for å lagre favoritter.");
