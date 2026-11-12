@@ -7,7 +7,7 @@ import { artists, artworksByArtist, categories, type Artwork } from "@/data/demo
 import { useStore } from "@/lib/store";
 import { useRecent } from "@/lib/recent";
 import { heroArtworks } from '@/data/hero-art';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { pageHead } from '@/lib/seo';
 
@@ -116,9 +116,6 @@ function Index() {
                       className="hero-frame home-art-card relative block h-auto w-full rounded-none p-0 text-left hover:bg-transparent"
                     >
                       <img src={a.image} alt={a.title} loading="eager" fetchPriority={i === 0 ? "high" : "auto"} className="block h-auto w-full object-contain" />
-                      <span className={`absolute bottom-2 ${i === 1 ? "left-2" : "right-2"} rounded-full border border-nav-highlight/70 bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground sm:text-[11px]`}>
-                        Illustrasjon · Ikke til salgs
-                      </span>
                     </Button>
                   </div>
                 </div>
@@ -136,7 +133,7 @@ function Index() {
 
       <Dialog open={Boolean(heroDemo)} onOpenChange={(open) => { if (!open) setHeroDemo(null); }}>
         <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
-          <DialogHeader><DialogTitle>{heroDemo?.title}</DialogTitle><DialogDescription>AI-generert illustrasjon · Ikke til salgs.</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>{heroDemo?.title}</DialogTitle></DialogHeader>
           {heroDemo && <img src={heroDemo.image} alt={heroDemo.title} className="h-auto w-full object-contain" />}
         </DialogContent>
       </Dialog>
