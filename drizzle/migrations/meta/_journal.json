@@ -190,6 +190,13 @@
       "when": 1794325299836,
       "tag": "0026_scope_selected_profile_review_and_storage_access",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1794513737077,
+      "tag": "0027_lightweight_listing_catalog",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { notifySeller } from "@/lib/seller-notice.functions";
 import { saveListingDraft, submitListing, sendReviewNotice, changeListingVisibility } from './moderation.functions';
 import { submissionConfirmation } from './moderation';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type Context } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type Context } from "react";
 import type { Artwork } from "@/data/demo";
 import { withPublicImages } from "@/lib/listing-image-url";
 import { priceFromPayout } from "@/lib/fees";
@@ -134,10 +134,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => { void supabase.removeChannel(channel); window.removeEventListener("focus", refresh); };
   }, [userId, loadBids]);
 
+  const listingsLoading=useRef(false);
   const loadListings = useCallback(async () => {
+    if(listingsLoading.current)return;
+    listingsLoading.current=true;
+    try {
     const { data, error } = await supabase
       .from("listings")
-      .select("id,user_id,data,created_at,moderation_status,updated_at")
+      .select("id,user_id,data:catalog_data,created_at,moderation_status,updated_at")
       .eq('moderation_status','published')
       .is('deleted_at',null).eq('blocked',false)
       .order("created_at", { ascending: false });
@@ -156,12 +160,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return unchanged?current:next;
       });
     }
+    } finally {listingsLoading.current=false;}
   }, []);
 
   const loadReviewNotifications = useCallback(async () => {
     if(!userId){setReviewNotifications([]);return;}
     const [events,adminNotices] = await Promise.all([
-      supabase.from('listing_review_events').select('*').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
+      supabase.from('listing_review_events').select('id,title,decision,reason,read_at,created_at').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
       supabase.rpc('my_administrative_notices'),
     ]);
     setReviewNotifications([...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
@@ -170,7 +175,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if(!userId) {setOwnListings([]);return;}
     const [listings,revisions] = await Promise.all([
       supabase.from('listings').select('id,data,moderation_status').eq('user_id',userId).is('deleted_at',null),
-      supabase.from('listing_revisions').select('*').eq('user_id',userId).order('created_at',{ascending:false}),
+      supabase.from('listing_revisions').select('id,listing_id,data,status,seller_message,version').eq('user_id',userId).in('status',['draft','pending','changes_requested','rejected']).order('created_at',{ascending:false}),
     ]);
     setOwnListings((listings.data??[]).map(l=>{
       const rs=(revisions.data??[]).filter(r=>r.listing_id===l.id);
@@ -191,7 +196,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     void loadListings();
-    const timer=setInterval(()=>void loadListings(),15000);
+    const timer=setInterval(()=>{if(document.visibilityState==='visible')void loadListings();},30000);
     void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUserId(session?.user.id ?? null);

@@ -27,16 +27,20 @@ export const changeListingVisibility = createServerFn({method:'POST'}).middlewar
     return {ok:true};
   });
 export const getModerationQueue = createServerFn({method:'GET'}).middleware([requireSupabaseAuth])
-  .handler(async({context}) => {
+  .inputValidator(d => z.object({status:z.enum(['all','draft','pending','changes_requested','published','rejected','withdrawn','sold']).default('pending')}).parse(d))
+  .handler(async({data,context}) => {
     const {data:admin} = await context.supabase.rpc('has_role',{_user_id:context.userId,_role:'admin'});
     if(!admin) throw new Error('Ingen administratortilgang.');
+    const {supabaseAdmin:a}=await import('@/integrations/supabase/client.server');
+    let revisionQuery=a.from('listing_revisions').select('*').order('submitted_at',{ascending:true,nullsFirst:false});
+    if(data.status!=='all')revisionQuery=revisionQuery.eq('status',data.status);
     const [revisions,profiles,events,notes] = await Promise.all([
-      context.supabase.from('listing_revisions').select('*').order('submitted_at',{ascending:true,nullsFirst:false}),
-      context.supabase.from('profiles').select('id,display_name'),
-      context.supabase.from('listing_review_events').select('*').order('created_at',{ascending:false}),
-      context.supabase.from('listing_review_notes').select('*'),
+      revisionQuery,
+      a.from('profiles').select('id,display_name'),
+      a.from('listing_review_events').select('*').order('created_at',{ascending:false}),
+      a.from('listing_review_notes').select('*'),
     ]);
-    if([revisions,profiles,events,notes].some(r=>r.error)) throw new Error('Godkjenningskøen kunne ikke lastes.');
+    if([revisions,profiles,events,notes].some(r=>r.error)) {console.error('Moderation queue failed', [revisions,profiles,events,notes].map(r=>r.error?.code));throw new Error('Godkjenningskøen kunne ikke lastes. Prøv å oppdatere.');}
     return {revisions:revisions.data??[],profiles:profiles.data??[],events:events.data??[],notes:notes.data??[]};
   });
 export const reviewListing = createServerFn({method:'POST'}).middleware([requireSupabaseAuth])

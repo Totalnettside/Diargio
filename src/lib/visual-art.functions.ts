@@ -10,7 +10,7 @@ export const getVisualArt = createServerFn({ method: 'GET' }).handler(async () =
   const { publicArtClient } = await import('./visual-art-public.server');
   const c = publicArtClient();
   const [listings, exhibitions, unavailable] = await Promise.all([
-    c.from('listings').select('id,user_id,data,updated_at').eq('moderation_status','published').order('created_at', { ascending: false }),
+    c.from('listings').select('id,user_id,data:catalog_data,updated_at').eq('moderation_status','published').order('created_at', { ascending: false }),
     c.from('art_exhibitions').select('id,title,rooms,published').eq('published', true).order('created_at'),
     c.rpc('unavailable_artwork_ids'),
   ]);
