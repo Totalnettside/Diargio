@@ -127,13 +127,13 @@ function ArtworkView({ artwork }: { artwork: Artwork }) {
 
       <div className="mt-3 grid gap-5 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <div className="overflow-hidden rounded-3xl glass-lift">
+          <div className="flex justify-center overflow-hidden">
             <img
               src={artwork.image}
               alt={`${artwork.title} av ${artist.name}`}
               width={1024}
               height={1024}
-              className="aspect-square w-full object-cover"
+              className="block h-auto max-h-[min(60svh,460px)] w-auto max-w-full object-contain"
             />
           </div>
 
