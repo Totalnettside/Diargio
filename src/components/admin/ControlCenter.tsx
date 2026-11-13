@@ -268,31 +268,30 @@ function Listings({ d, reload }: { d: D; reload: () => void }) {
   const [q, setQ] = useState("");
   const sold = new Set(d.purchases.map((p) => p.listing_id));
   const rows = d.listings.filter((l) => `${l.title} ${nameOf(d, l.user_id)} ${l.category}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => b.created_at.localeCompare(a.created_at));
+  const statusOf = (l: D["listings"][number]) => l.deletedAt ? "Slettet" : l.blocked ? "Sperret" : l.status === "withdrawn" ? "Avpublisert" : l.status === "published" ? "Publisert" : l.status === "sold" ? "Solgt" : "Utkast";
+  const statusTone = (l: D["listings"][number]) => l.deletedAt || l.blocked ? "bg-destructive/10 text-destructive" : sold.has(l.id) ? "bg-sage text-primary-foreground" : l.status === "published" ? "bg-sagelight text-sage" : "bg-muted text-muted-foreground";
+  const imageCount = (l: D["listings"][number]) => { const c = l.content as { images?: string[]; image?: string }; return Array.isArray(c.images) ? c.images.length : c.image ? 1 : 0; };
   return (
     <div className="space-y-3">
       <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Søk tittel, kunstner, kategori…" className="w-full rounded-full border border-border bg-card px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-sage" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <p className="text-xs text-muted-foreground">{rows.length} annonser</p>
+      <div className="space-y-2">
         {rows.map((l) => {
           const nb = d.bids.filter((b) => b.listing_id === l.id);
           const top = Math.max(0, ...nb.map((b) => Number(b.amount)));
+          const images = imageCount(l);
           return (
-            <div key={l.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-              <div className="relative aspect-[4/3] bg-muted">
-                {l.image ? <img src={l.image} alt={l.title} className="size-full object-cover" /> : <p className="grid size-full place-items-center text-xs text-destructive">Mangler bilde</p>}
-                {sold.has(l.id) && <span className="absolute left-2 top-2 rounded-full bg-sage px-2 py-0.5 text-[10px] font-bold text-primary-foreground">SOLGT</span>}
+            <div key={l.id} className={`${card} space-y-2`}>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${statusTone(l)}`}>{statusOf(l)}</span>
+                <p className="min-w-0 flex-1 truncate text-sm font-semibold">{l.title}</p>
+                <p className="shrink-0 text-sm font-bold">{kr(l.price)}</p>
               </div>
-              <div className="p-3">
-                <p className="truncate text-sm font-semibold">{l.title}</p>
-                <p className="text-xs text-primary">{l.deletedAt?'Slettet':l.blocked?'Sperret':l.status==='withdrawn'?'Avpublisert':l.status==='published'?'Publisert':l.status==='sold'?'Solgt':'Utkast'}</p>
-                <p className="text-xs text-muted-foreground">{nameOf(d, l.user_id)} · {ago(l.created_at)}</p>
-                <p className="mt-1 text-sm font-bold">{kr(l.price)}</p>
-                <p className="text-xs text-muted-foreground">{nb.length} bud{top ? ` · høyeste ${kr(top)}` : ""}</p>
-                {!l.deletedAt&&!l.blocked&&l.status!=='sold'&&<><Button variant="outline" size="sm" onClick={()=>dialog({title:'Rediger annonsetittel',description:'Endringen lagres som utkast og må godkjennes før offentlig visning.',inputLabel:'Annonsetittel',initialValue:l.title,required:true,confirmLabel:'Lagre utkast',success:'Endringen er lagret som utkast',action:async title=>{await edit({data:{id:l.id,title}});reload();}})}>Rediger annonse</Button><div className="mt-2 flex flex-wrap gap-2">{((l.content as {images?:string[];image?:string}).images??[l.image??'']).map((src,i)=><Button key={i} variant="ghost" size="sm" onClick={()=>dialog({title:'Slette bildet?',description:`Vil du fjerne bilde ${i+1} fra annonsen? Endringen må godkjennes før offentlig visning.`,confirmLabel:'Slett bildet',busyLabel:'Sletter …',destructive:true,success:'Bildet er slettet fra den nye versjonen',action:async()=>{await edit({data:{id:l.id,removeImage:i}});reload();}})}><img src={src} alt={`Bilde ${i+1}`} className="size-8 object-contain"/>Slett bilde {i+1}</Button>)}</div></>}
-                <div className="mt-2 flex gap-1.5">
-                  <Link to="/kunst/$slug" params={{ slug: l.slug }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Vis</Link>
-                  <Button variant="outline" onClick={()=>dialog({title:'Avpublisere annonsen?',description:'Annonsen tas ut av offentlig visning og salg. Handelshistorikken bevares.',confirmLabel:'Avpubliser',success:'Annonsen er avpublisert',action:async()=>{await visibility({data:{id:l.id,action:'withdrawn'}});reload();}})}>Avpubliser</Button>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">{(['block','delete','restore','unblock'] as const).filter(a=>a==='restore'?!!l.deletedAt:a==='unblock'?l.blocked:a==='delete'?!l.deletedAt:a==='block'?!l.blocked&&!l.deletedAt:false).map(a=><Button key={a} size="sm" variant={['block','delete'].includes(a)?'destructive':'outline'} onClick={()=>dialog({title:a==='delete'?'Slette annonsen?':a==='block'?'Sperre annonsen?':a==='restore'?'Gjenopprette annonsen?':'Oppheve sperringen?',description:a==='delete'?listingDeletionDescription(l.title):'Annonsen forblir ute av salg til en ny versjon er godkjent.',inputLabel:'Begrunnelse til brukeren',required:['block','delete'].includes(a),confirmLabel:a==='delete'?'Slett annonsen':a==='block'?'Sperr annonsen':a==='restore'?'Gjenopprett':'Opphev sperring',destructive:['block','delete'].includes(a),busyLabel:a==='delete'?'Sletter …':'Behandler …',success:'Annonsestatusen er oppdatert',action:async reason=>{await visibility({data:{id:l.id,action:a,reason}});reload();}})}>{a==='delete'?'Slett':a==='block'?'Sperr':a==='restore'?'Gjenopprett':'Opphev sperring'}</Button>)}</div>
+              <p className="text-xs text-muted-foreground">{nameOf(d, l.user_id)} · {l.category || "uten kategori"} · {ago(l.created_at)} · {nb.length} bud{top ? ` · høyeste ${kr(top)}` : ""} · {images ? `${images} bilde${images > 1 ? "r" : ""}` : "mangler bilde"}</p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Link to="/kunst/$slug" params={{ slug: l.slug }} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted">Vis</Link>
+                {!l.deletedAt&&!l.blocked&&l.status!=='sold'&&<><Button variant="outline" size="sm" onClick={()=>dialog({title:'Rediger annonsetittel',description:'Endringen lagres som utkast og må godkjennes før offentlig visning.',inputLabel:'Annonsetittel',initialValue:l.title,required:true,confirmLabel:'Lagre utkast',success:'Endringen er lagret som utkast',action:async title=>{await edit({data:{id:l.id,title}});reload();}})}>Rediger annonse</Button>{Array.from({length:images}).map((_,i)=><Button key={i} variant="ghost" size="sm" onClick={()=>dialog({title:'Slette bildet?',description:`Vil du fjerne bilde ${i+1} av ${images} fra annonsen? Endringen må godkjennes før offentlig visning.`,confirmLabel:'Slett bildet',busyLabel:'Sletter …',destructive:true,success:'Bildet er slettet fra den nye versjonen',action:async()=>{await edit({data:{id:l.id,removeImage:i}});reload();}})}>Fjern bilde {i+1}</Button>)}<Button variant="outline" size="sm" onClick={()=>dialog({title:'Avpublisere annonsen?',description:'Annonsen tas ut av offentlig visning og salg. Handelshistorikken bevares.',confirmLabel:'Avpubliser',success:'Annonsen er avpublisert',action:async()=>{await visibility({data:{id:l.id,action:'withdrawn'}});reload();}})}>Avpubliser</Button></>}
+                {(['block','delete','restore','unblock'] as const).filter(a=>a==='restore'?!!l.deletedAt:a==='unblock'?l.blocked:a==='delete'?!l.deletedAt:a==='block'?!l.blocked&&!l.deletedAt:false).map(a=><Button key={a} size="sm" variant={['block','delete'].includes(a)?'destructive':'outline'} onClick={()=>dialog({title:a==='delete'?'Slette annonsen?':a==='block'?'Sperre annonsen?':a==='restore'?'Gjenopprette annonsen?':'Oppheve sperringen?',description:a==='delete'?listingDeletionDescription(l.title):'Annonsen forblir ute av salg til en ny versjon er godkjent.',inputLabel:'Begrunnelse til brukeren',required:['block','delete'].includes(a),confirmLabel:a==='delete'?'Slett annonsen':a==='block'?'Sperr annonsen':a==='restore'?'Gjenopprett':'Opphev sperring',destructive:['block','delete'].includes(a),busyLabel:a==='delete'?'Sletter …':'Behandler …',success:'Annonsestatusen er oppdatert',action:async reason=>{await visibility({data:{id:l.id,action:a,reason}});reload();}})}>{a==='delete'?'Slett':a==='block'?'Sperr':a==='restore'?'Gjenopprett':'Opphev sperring'}</Button>)}
               </div>
             </div>
           );
