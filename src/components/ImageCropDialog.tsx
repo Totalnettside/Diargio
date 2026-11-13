@@ -44,10 +44,8 @@ export function ImageCropDialog({ image, onSave, onClose }: {
     const frame = requestAnimationFrame(() => {
       void rotateImage(source, degrees).then((result) => {
         if (!active) return;
-        setPreview((previous) => {
-          if (previous !== result) setReady(false);
-          return result;
-        });
+        if (imageRef.current?.src !== result) setReady(false);
+        setPreview(result);
         setRenderedDegrees(degrees);
       }).catch(() => {
         if (active) setError('Bildet kunne ikke roteres. Prøv igjen.');
