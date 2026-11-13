@@ -451,7 +451,7 @@ function SellPage() {
                   <PopoverContent align="start" className="max-h-[min(360px,var(--radix-popover-content-available-height))] w-[var(--radix-popover-trigger-width)] overflow-y-auto rounded-lg p-1" aria-label="Velg teknikker">
                     {techniques.map((item) => (
                       <label key={item} className="flex min-h-10 cursor-pointer items-center gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent focus-within:bg-accent">
-                        <Checkbox className="rounded-sm!" checked={selectedTechniques.includes(item)} onCheckedChange={() => setSelectedTechniques((selected) => toggleTechnique(selected, item))} />
+                        <Checkbox className="rounded-none!" checked={selectedTechniques.includes(item)} onCheckedChange={() => setSelectedTechniques((selected) => toggleTechnique(selected, item))} />
                         <span>{item}</span>
                       </label>
                     ))}
