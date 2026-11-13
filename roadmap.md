@@ -1,4 +1,5 @@
 # Budvarsler
+- [x] Trinnløs bilderotasjon med glidebryter og gradfelt; syv tester og innlogget kontroll av 2°, −5°, 17°, beskjæring, lagring og tilbakestilling på mobil og pc, uten publisering.
 - [x] Legg til rotasjon sammen med beskjæring og flere avkryssbare teknikker; åtte tester og innlogget kontroll på mobil og pc uten å publisere testannonser.
 - [ ] Norsk aktiverings-e-post fra Diargio: mal og avsender satt opp; krever publisering og at automatisk e-postbekreftelse slås av i kontoinnstillingene, deretter faktisk lenketest.
 - [x] Reduser annonseoversikt fra 4,8 MB til 14 KB uten å endre originalbilder; filtrer godkjenningskø og unngå blokkert oppfriskning. 75 tester og bygg OK.

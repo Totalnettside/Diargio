@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactCrop, { type PercentCrop } from "react-image-crop";
-import { Crop, RotateCcw, RotateCw, Undo2 } from "lucide-react";
+import { Crop, Undo2 } from "lucide-react";
 import { rotateImage } from '@/lib/image-edit';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const fullImage: PercentCrop = { unit: "%", x: 0, y: 0, width: 100, height: 100 };
@@ -17,25 +20,45 @@ export function ImageCropDialog({ image, onSave, onClose }: {
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
   const [preview, setPreview] = useState(image);
-  const [turns, setTurns] = useState(0);
-  const [rotating, setRotating] = useState(false);
+  const [degrees, setDegrees] = useState(0);
+  const [angleInput, setAngleInput] = useState('0');
+  const [renderedDegrees, setRenderedDegrees] = useState(0);
+  const [source, setSource] = useState<HTMLImageElement | null>(null);
+  const rotating = renderedDegrees !== degrees;
 
-  async function rotate(direction: number) {
-    if (rotating) return;
-    setRotating(true);
+  useEffect(() => {
+    let active = true;
+    const original = new Image();
+    original.src = image;
+    void original.decode().then(() => {
+      if (active) setSource(original);
+    }).catch(() => {
+      if (active) setError('Bildet kunne ikke åpnes.');
+    });
+    return () => { active = false; };
+  }, [image]);
+
+  useEffect(() => {
+    if (!source) return;
+    let active = true;
+    const frame = requestAnimationFrame(() => {
+      void rotateImage(source, degrees).then((result) => {
+        if (!active) return;
+        if (imageRef.current?.src !== result) setReady(false);
+        setPreview(result);
+        setRenderedDegrees(degrees);
+      }).catch(() => {
+        if (active) setError('Bildet kunne ikke roteres. Prøv igjen.');
+      });
+    });
+    return () => { active = false; cancelAnimationFrame(frame); };
+  }, [source, degrees]);
+
+  function changeAngle(value: number) {
+    const next = Math.max(-180, Math.min(180, value));
+    setDegrees(next);
+    setAngleInput(String(next));
     setError('');
-    try {
-      const next = turns + direction;
-      const result = await rotateImage(image, next);
-      setReady(false);
-      setPreview(result);
-      setTurns(next);
-      setCrop(fullImage);
-    } catch {
-      setError('Bildet kunne ikke roteres. Prøv igjen.');
-    } finally {
-      setRotating(false);
-    }
   }
 
   function save() {
@@ -66,9 +89,19 @@ export function ImageCropDialog({ image, onSave, onClose }: {
           <DialogTitle>Roter og beskjær bildet</DialogTitle>
           <DialogDescription>Tilpass bildet</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <Button type="button" variant="outline" disabled={!ready || rotating} onClick={() => void rotate(-1)} title="Roter 90° mot venstre" aria-label="Roter 90° mot venstre"><RotateCcw /> Venstre</Button>
-          <Button type="button" variant="outline" disabled={!ready || rotating} onClick={() => void rotate(1)} title="Roter 90° mot høyre" aria-label="Roter 90° mot høyre"><RotateCw /> Høyre</Button>
+        <div className="grid grid-cols-[minmax(0,1fr)_6rem] items-center gap-x-4 gap-y-2">
+          <Label htmlFor="image-rotation">Rotasjon</Label>
+          <Label htmlFor="image-rotation-degrees">Grader (°)</Label>
+          <Slider id="image-rotation" aria-label="Rotasjon" min={-180} max={180} step={0.1} value={[degrees]} onValueChange={([value]) => { if (value !== undefined) changeAngle(value); }} disabled={!source} />
+          <Input id="image-rotation-degrees" type="number" min={-180} max={180} step="any" value={angleInput} disabled={!source} onChange={(event) => {
+            const raw = event.target.value;
+            setAngleInput(raw);
+            const value = event.target.valueAsNumber;
+            if (Number.isFinite(value)) {
+              setDegrees(Math.max(-180, Math.min(180, value)));
+              setError('');
+            }
+          }} onBlur={() => setAngleInput(String(degrees))} />
         </div>
         <div className="flex min-h-0 justify-center overflow-hidden rounded-md bg-muted p-2">
           <ReactCrop crop={crop} onChange={(_, percent) => setCrop(percent)} minWidth={5} minHeight={5} keepSelection ariaLabels={{ cropArea: "Bildeutsnitt", nwDragHandle: "Øvre venstre hjørne", nDragHandle: "Øvre kant", neDragHandle: "Øvre høyre hjørne", eDragHandle: "Høyre kant", seDragHandle: "Nedre høyre hjørne", sDragHandle: "Nedre kant", swDragHandle: "Nedre venstre hjørne", wDragHandle: "Venstre kant" }}>
@@ -77,7 +110,7 @@ export function ImageCropDialog({ image, onSave, onClose }: {
         </div>
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
         <DialogFooter className="gap-2 sm:flex-wrap">
-          <Button type="button" variant="ghost" disabled={rotating} onClick={() => { setPreview(image); setTurns(0); setCrop(fullImage); setError(''); }}><Undo2 /> Tilbakestill</Button>
+          <Button type="button" variant="ghost" onClick={() => { changeAngle(0); setCrop(fullImage); }}><Undo2 /> Tilbakestill</Button>
           <Button type="button" variant="outline" onClick={onClose}>Avbryt</Button>
           <Button type="button" onClick={save} disabled={!ready || rotating || crop.width <= 0 || crop.height <= 0}><Crop /> Bruk bildet</Button>
         </DialogFooter>

@@ -1,14 +1,22 @@
-export function rotationGeometry(width: number, height: number, turns: number) {
-  const normalized = ((turns % 4) + 4) % 4;
-  return { width: normalized % 2 ? height : width, height: normalized % 2 ? width : height, radians: normalized * Math.PI / 2 };
+export function rotationGeometry(width: number, height: number, degrees: number) {
+  const radians = (degrees % 360) * Math.PI / 180;
+  const cosine = Math.abs(Math.cos(radians));
+  const sine = Math.abs(Math.sin(radians));
+  return {
+    width: Math.ceil(width * cosine + height * sine - 1e-9),
+    height: Math.ceil(width * sine + height * cosine - 1e-9),
+    radians,
+  };
 }
 
-export async function rotateImage(image: string, turns: number): Promise<string> {
-  if (turns % 4 === 0) return image;
-  const source = new Image();
-  source.src = image;
-  await source.decode();
-  const geometry = rotationGeometry(source.naturalWidth, source.naturalHeight, turns);
+export async function rotateImage(image: string | HTMLImageElement, degrees: number): Promise<string> {
+  if (degrees % 360 === 0) return typeof image === 'string' ? image : image.src;
+  const source = typeof image === 'string' ? new Image() : image;
+  if (typeof image === 'string') {
+    source.src = image;
+    await source.decode();
+  }
+  const geometry = rotationGeometry(source.naturalWidth, source.naturalHeight, degrees);
   const canvas = document.createElement('canvas');
   canvas.width = geometry.width;
   canvas.height = geometry.height;

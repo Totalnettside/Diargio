@@ -21,7 +21,7 @@
 - Resolve gallery placement prices by room and duration, never slot tier, through the shared gallery pricing helper.
 - Navigate from exhibition slots through TanStack Router, preserving the document and shared query cache to avoid full-page reloads.
 - Scope messaging visual tokens and typography to the messages page; preserve shared chat persistence and read-status logic to avoid redesign changes affecting other pages.
-- Use react-image-crop with browser canvas for seller-selected photo crops and quarter-turn rotation from the retained source photo, so edits can be reset without cumulative image degradation.
+- Use react-image-crop with browser canvas for seller-selected photo crops and arbitrary-degree rotation from the retained source photo; cache the decoded original and crop the rotated preview so reset and repeated edits avoid cumulative image degradation.
 - Serialize multiple selected listing techniques into the existing technique string through the shared helper to preserve listing display and moderation compatibility.
 - Keep fixed homepage illustrations in a separate presentation-only module without seller IDs or listing links; public inventory and exhibitions use approved user listings only, so decorative art cannot enter commerce.
 - Scope authentication presentation to `.auth-page` and preserve existing sign-in and signup calls so visual changes cannot alter account access.
