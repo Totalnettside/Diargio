@@ -2,10 +2,11 @@ import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Crop, Sparkles, Upload, X } from "lucide-react";
+import { Camera, ChevronDown, Crop, Sparkles, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
 import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { serializeTechniques, toggleTechnique } from '@/lib/listing-techniques';
 import {
   artImages,
@@ -438,17 +439,25 @@ function SellPage() {
                   ))}
                 </select>
               </Field>
-              <fieldset className="sm:col-span-2">
-                <legend className="text-xs font-semibold uppercase tracking-wide text-ink/50">Teknikk</legend>
-                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {techniques.map((item) => (
-                    <label key={item} className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-md border px-3 py-2 text-sm ${selectedTechniques.includes(item) ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-card text-foreground'}`}>
-                      <Checkbox checked={selectedTechniques.includes(item)} onCheckedChange={() => setSelectedTechniques((selected) => toggleTechnique(selected, item))} />
-                      <span>{item}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+              <div className="min-w-0">
+                <span id="technique-label" className="text-xs font-semibold uppercase tracking-wide text-ink/50">Teknikk</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button type="button" variant="ghost" aria-labelledby="technique-label technique-value" className={`${inputClass} mt-1 h-12 justify-between font-normal hover:bg-card hover:text-foreground`}>
+                      <span id="technique-value" className="min-w-0 truncate">{technique || 'Velg teknikk'}</span>
+                      <ChevronDown className="size-4 shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="max-h-[min(360px,var(--radix-popover-content-available-height))] w-[var(--radix-popover-trigger-width)] overflow-y-auto rounded-lg p-1" aria-label="Velg teknikker">
+                    {techniques.map((item) => (
+                      <label key={item} className="flex min-h-10 cursor-pointer items-center gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent focus-within:bg-accent">
+                        <Checkbox checked={selectedTechniques.includes(item)} onCheckedChange={() => setSelectedTechniques((selected) => toggleTechnique(selected, item))} />
+                        <span>{item}</span>
+                      </label>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+              </div>
               <Field label="Stil">
                 <select value={style} onChange={(e) => setStyle(e.target.value)} className={inputClass}>
                   {styles.map((c) => (
