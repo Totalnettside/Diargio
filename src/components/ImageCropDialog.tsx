@@ -72,7 +72,7 @@ export function ImageCropDialog({ image, onSave, onClose }: {
         </div>
         <div className="flex min-h-0 justify-center overflow-hidden rounded-md bg-muted p-2">
           <ReactCrop crop={crop} onChange={(_, percent) => setCrop(percent)} minWidth={5} minHeight={5} keepSelection ariaLabels={{ cropArea: "Bildeutsnitt", nwDragHandle: "Øvre venstre hjørne", nDragHandle: "Øvre kant", neDragHandle: "Øvre høyre hjørne", eDragHandle: "Høyre kant", seDragHandle: "Nedre høyre hjørne", sDragHandle: "Nedre kant", swDragHandle: "Nedre venstre hjørne", wDragHandle: "Venstre kant" }}>
-            <img ref={imageRef} src={preview} alt="Bildet som skal beskjæres" onLoad={() => setReady(true)} onError={() => setError("Bildet kunne ikke åpnes.")} className="block max-h-[55dvh] max-w-full object-contain" />
+            <img ref={imageRef} src={preview} alt="Bildet som skal beskjæres" onLoad={() => setReady(true)} onError={() => setError("Bildet kunne ikke åpnes.")} className="block max-h-[45dvh]! max-w-full object-contain" />
           </ReactCrop>
         </div>
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
