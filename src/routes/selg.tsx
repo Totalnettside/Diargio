@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, Crop, Sparkles, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
+import { Checkbox } from '@/components/ui/checkbox';
+import { serializeTechniques, toggleTechnique } from '@/lib/listing-techniques';
 import {
   artImages,
   artTypes,
@@ -149,7 +151,8 @@ function SellPage() {
   }, [artistName]);
   const [year, setYear] = useState("2026");
   const [category, setCategory] = useState(categories[0] ?? "Malerier");
-  const [technique, setTechnique] = useState(techniques[0] ?? "Olje");
+  const [selectedTechniques, setSelectedTechniques] = useState<string[]>([techniques[0] ?? "Olje"]);
+  const technique = serializeTechniques(selectedTechniques);
   const [style, setStyle] = useState(styles[0] ?? "Abstrakt");
   const [type, setType] = useState(artTypes[0] ?? "Original");
   const [width, setWidth] = useState("60");
@@ -186,7 +189,7 @@ function SellPage() {
 
   function writeWithAi() {
     setDescription(
-      `${title || "Verket"} er et ${technique.toLowerCase()}verk${artistName ? ` av ${artistName}` : ""} fra ${year}. ` +
+      `${title || "Verket"}${artistName ? ` av ${artistName}` : ""} er fra ${year}. ${technique ? `Teknikk: ${technique.toLowerCase()}. ` : ""}` +
         `Stilen er ${style.toLowerCase()} og verket måler ${width} × ${height} cm. ` +
         `${signed ? "Verket er signert. " : ""}${framed ? "Det leveres innrammet. " : "Det leveres uinnrammet. "}` +
         `${coa ? "Ekthetsbevis følger med. " : ""}Tilstanden er beskrevet som ${condition.toLowerCase()}. ` +
@@ -355,8 +358,8 @@ function SellPage() {
                     >
                       <X className="size-3" />
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => setCropIndex(i)} aria-label={`Beskjær bilde ${i + 1}`} title="Beskjær bildet" className="mt-2 h-9 w-full gap-1 px-1 text-xs">
-                      <Crop /><span className="hidden sm:inline">Beskjær</span>
+                    <Button type="button" variant="outline" onClick={() => setCropIndex(i)} aria-label={`Roter og beskjær bilde ${i + 1}`} title="Roter og beskjær bildet" className="mt-2 h-auto min-h-9 w-full flex-wrap gap-1 px-1 py-2 text-xs">
+                      <Crop /><span>Roter / beskjær</span>
                     </Button>
                   </div>
                 ))}
@@ -435,13 +438,17 @@ function SellPage() {
                   ))}
                 </select>
               </Field>
-              <Field label="Teknikk">
-                <select value={technique} onChange={(e) => setTechnique(e.target.value)} className={inputClass}>
-                  {techniques.map((c) => (
-                    <option key={c}>{c}</option>
+              <fieldset className="sm:col-span-2">
+                <legend className="text-xs font-semibold uppercase tracking-wide text-ink/50">Teknikk</legend>
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {techniques.map((item) => (
+                    <label key={item} className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-md border px-3 py-2 text-sm ${selectedTechniques.includes(item) ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-card text-foreground'}`}>
+                      <Checkbox checked={selectedTechniques.includes(item)} onCheckedChange={() => setSelectedTechniques((selected) => toggleTechnique(selected, item))} />
+                      <span>{item}</span>
+                    </label>
                   ))}
-                </select>
-              </Field>
+                </div>
+              </fieldset>
               <Field label="Stil">
                 <select value={style} onChange={(e) => setStyle(e.target.value)} className={inputClass}>
                   {styles.map((c) => (
@@ -596,6 +603,7 @@ function SellPage() {
               <div className="p-4">
                 <p className="text-sm font-semibold">{artistName || "Ukjent kunstner"}</p>
                 <p className="font-display text-lg">{title || "Uten tittel"}</p>
+                {technique && <p className="mt-1 text-sm text-muted-foreground">{technique}</p>}
                 <p className="mt-1 text-lg font-bold">
                   {saleType === "Pris på forespørsel"
                     ? "Pris på forespørsel"
