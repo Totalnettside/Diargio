@@ -1,4 +1,5 @@
-# Budvarsler
+# Gjenstående arbeid
+- [ ] Fortsett siste profiltilpasning: Lovable Cloud gjenopptatt etter brukerens godkjenning, men fortsatt under oppstart; profilregler klargjort med fire tester. Nye felt, lagring og innlogget kontroll avventer frisk driftsstatus.
 - [ ] Nye profiltyper og offentlige galleri-/interessefelt — blokkert av utilgjengelig Lovable Cloud; migrasjon ikke anvendt.
 - [ ] Kontomeny, offentlige/private profilfelt og profilbildejustering implementert; ni bilderegler testet, bygg OK. Innlogget lagrings-/mobilkontroll blokkert av utilgjengelig Lovable Cloud.
 - [x] Trinnløs bilderotasjon med glidebryter og gradfelt; syv tester og innlogget kontroll av 2°, −5°, 17°, beskjæring, lagring og tilbakestilling på mobil og pc, uten publisering.
