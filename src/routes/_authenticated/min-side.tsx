@@ -42,6 +42,9 @@ const tabs = [
 ] as const;
 
 const visibleTabs = KUNSTVEGG_ENABLED ? tabs : tabs.filter((t) => t !== "Kunstvegger");
+const sections = ['Oversikt', 'Kjøp', 'Salg', 'Meldinger', 'Min profil', 'Kontoinnstillinger'] as const;
+const purchaseTabs = ['Mine bud', 'Favoritter', 'Lagrede søk', 'Følger'] as const;
+const saleTabs = ['Mine annonser', 'Mottatte bud', 'Statistikk', 'Vurderinger'] as const;
 
 function Dashboard() {
   const dialog=useActionDialog();
@@ -67,7 +70,8 @@ function Dashboard() {
   const sentBids = bids.filter((b) => b.buyerId === user?.id);
   const unreadBids = receivedBids.filter((b) => !b.read).length;
   const initialTab = Route.useSearch().tab;
-  const [tab, setTab] = useState<(typeof tabs)[number]>(() => { const t = initialTab; return (visibleTabs as readonly string[]).includes(t ?? "") ? (t as (typeof tabs)[number]) : "Oversikt"; });
+  const [tab, setTab] = useState<string>(() => (visibleTabs as readonly string[]).includes(initialTab ?? '') ? initialTab === 'Bud' ? 'Mottatte bud' : initialTab ?? 'Oversikt' : 'Oversikt');
+  const section = purchaseTabs.some(t => t === tab) ? 'Kjøp' : saleTabs.some(t => t === tab) || tab === 'Kunstvegger' ? 'Salg' : tab;
   const [decidingBid, setDecidingBid] = useState<string | null>(null);
   const [bidError, setBidError] = useState("");
   const handleDecision = async (id: string, decision: "accepted" | "rejected") => {
@@ -118,19 +122,25 @@ function Dashboard() {
       </header>
 
       <nav aria-label="Min side" className="account-tabs mt-5 flex gap-1 overflow-x-auto no-scrollbar">
-        {visibleTabs.map((t) => (
+        {sections.map((t) => (
           <Button
             variant="ghost"
             key={t}
-            onClick={() => setTab(t)}
-            aria-pressed={tab === t}
-            className={`account-tab shrink-0 ${tab === t ? "is-active" : ""}`}
+            onClick={() => { if (t === 'Meldinger') { void navigate({ to: '/meldinger' }); return; } setTab(t === 'Kjøp' ? 'Mine bud' : t === 'Salg' ? 'Mine annonser' : t); }}
+            aria-pressed={section === t}
+            className={`account-tab shrink-0 ${section === t ? "is-active" : ""}`}
           >
             {t}
-            {t === "Bud" && <UnreadBadge count={unreadBids} />}
+            {t === "Salg" && <UnreadBadge count={unreadBids} />}
           </Button>
         ))}
       </nav>
+      {(section === 'Kjøp' || section === 'Salg') && <nav aria-label={section} className="mt-4 flex flex-wrap gap-2">
+        <Button asChild variant="outline"><Link to="/ordre">{section === 'Kjøp' ? 'Mine kjøp' : 'Salg og oppgjør'}</Link></Button>
+        {(section === 'Kjøp' ? purchaseTabs : saleTabs).filter(t => t !== 'Statistikk' || myActive.length > 0).map(t => <Button key={t} variant={tab === t ? 'default' : 'outline'} onClick={() => setTab(t)}>{t}</Button>)}
+        {section === 'Salg' && <Button asChild variant="outline"><Link to="/kunstneroppgjor">Utbetaling</Link></Button>}
+        {section === 'Salg' && KUNSTVEGG_ENABLED && <Button variant="outline" onClick={() => setTab('Kunstvegger')}>Kunstvegger</Button>}
+      </nav>}
 
       {tab === "Oversikt" && (
         <section className="account-section" aria-labelledby="account-overview-title">
@@ -153,7 +163,7 @@ function Dashboard() {
               <p className="account-kicker">Bud og forhandlinger</p>
               <h3>{receivedBids.length} {receivedBids.length === 1 ? "mottatt bud" : "mottatte bud"}</h3>
               <p>{unreadBids > 0 ? `${unreadBids} nye bud venter på deg.` : "Se status og svar på bud fra interesserte kjøpere."}</p>
-              <Button onClick={() => setTab("Bud")} variant="ghost" className="account-hero-button account-hero-button-primary">Gå til bud <ArrowRight /></Button>
+              <Button onClick={() => setTab("Mottatte bud")} variant="ghost" className="account-hero-button account-hero-button-primary">Gå til bud <ArrowRight /></Button>
             </article>
             <article className="account-panel account-shortcuts">
               <p className="account-kicker">Snarveier</p><h3>Hva vil du gjøre nå?</h3>
@@ -169,12 +179,14 @@ function Dashboard() {
 
       {KUNSTVEGG_ENABLED && tab === "Kunstvegger" && <SavedWalls />}
       {tab === "Min profil" && (
-        <section className="mt-5 max-w-xl rounded-3xl bg-card p-5 shadow-sm">
+        <section className="mt-5 max-w-xl">
           <h2 className="mb-4 font-display text-lg font-semibold">Min profil</h2>
-          <ProfileForm /><AccountSecurity />
+          {user && <Button asChild variant="outline" className="mb-4"><Link to="/selger/$id" params={{ id: user.id }}>Se min offentlige profil <Eye /></Link></Button>}
+          <ProfileForm />
 
         </section>
       )}
+      {tab === 'Kontoinnstillinger' && <section className="mt-5 max-w-xl"><h2 className="mb-4 font-display text-lg font-semibold">Kontoinnstillinger</h2><ProfileForm privateSettings /><AccountSecurity /></section>}
 
       {tab === "Mine annonser" && (
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
@@ -245,10 +257,10 @@ function Dashboard() {
         </div>
       )}
 
-      {tab === "Bud" && (
+      {(tab === "Mottatte bud" || tab === "Mine bud") && (
         <div className="account-section">
           {bidError && <p role="alert" className="mb-4 text-sm text-destructive">{bidError}</p>}
-          {([["Mottatte bud", receivedBids], ["Mine bud", sentBids]] as const).map(([label, list]) => {
+          {([["Mottatte bud", receivedBids], ["Mine bud", sentBids]] as const).filter(([label]) => label === tab).map(([label, list]) => {
             const SectionIcon = label === "Mottatte bud" ? Inbox : Send;
             return (
               <section key={label} className="account-bid-section" aria-labelledby={`bids-${label === "Mottatte bud" ? "received" : "sent"}`}>

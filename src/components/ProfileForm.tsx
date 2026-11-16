@@ -9,12 +9,12 @@ import { AvatarAdjustDialog } from '@/components/AvatarAdjustDialog';
 
 const schema = z.object({
   display_name: z.string().trim().max(120),
-  first_name: z.string().trim().min(1, "Skriv inn fornavn").max(60),
-  last_name: z.string().trim().min(1, "Skriv inn etternavn").max(60),
+  first_name: z.string().trim().max(60),
+  last_name: z.string().trim().max(60),
   phone: z
     .string()
     .trim()
-    .regex(/^\+?[0-9 ]{8,15}$/, "Ugyldig telefonnummer"),
+    .refine(value => !value || /^\+?[0-9 ]{8,15}$/.test(value), "Ugyldig telefonnummer"),
   bio: z.string().trim().max(1000).optional(),
   location: z.string().trim().max(100).optional(),
   website: z.string().trim().max(200).optional(),
@@ -110,6 +110,11 @@ export function ProfileForm({ compact = false, privateSettings = false, onSaved 
     e.preventDefault();
     setError("");
     setMsg("");
+    if (compact || privateSettings) {
+      if (!v.first_name.trim()) return setError('Skriv inn fornavn');
+      if (!v.last_name.trim()) return setError('Skriv inn etternavn');
+      if (!v.phone.trim()) return setError('Skriv inn telefonnummer');
+    }
     const parsed = schema.safeParse(v);
     if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Sjekk feltene");
     if (!user) return;
