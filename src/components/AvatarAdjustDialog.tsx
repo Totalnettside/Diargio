@@ -47,7 +47,7 @@ export function AvatarAdjustDialog({ file, onClose, onSave }: { file: File | nul
         onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }} />
       <label className="space-y-3 text-sm">Zoom<Slider aria-label="Zoom profilbilde" min={0.25} max={4} step={0.01} value={[zoom]} onValueChange={v => setZoom(v[0] ?? 1)} disabled={busy} /></label>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      <div className="flex flex-wrap justify-end gap-2"><Button variant="ghost" disabled={busy} onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}>Tilbakestill</Button><Button variant="outline" disabled={busy} onClick={onClose}>Avbryt</Button><Button disabled={!image || busy} onClick={() => void save()}>{busy ? 'Lagrer …' : 'Lagre'}</Button></div>
+      <div className="flex flex-wrap justify-end gap-2"><Button type="button" variant="ghost" disabled={busy} onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}>Tilbakestill</Button><Button type="button" variant="outline" disabled={busy} onClick={onClose}>Avbryt</Button><Button type="button" disabled={!image || busy} onClick={() => void save()}>{busy ? 'Lagrer …' : 'Lagre'}</Button></div>
     </DialogContent>
   </Dialog>;
 }

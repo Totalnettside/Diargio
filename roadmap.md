@@ -1,6 +1,6 @@
 # Budvarsler
 - [ ] Nye profiltyper og offentlige galleri-/interessefelt — blokkert av utilgjengelig Lovable Cloud; migrasjon ikke anvendt.
-- [ ] Tilpass kontomeny, skill offentlige/private profilfelt og legg til profilbildejustering; innlogget lagringskontroll avventer Lovable Cloud.
+- [ ] Kontomeny, offentlige/private profilfelt og profilbildejustering implementert; ni bilderegler testet, bygg OK. Innlogget lagrings-/mobilkontroll blokkert av utilgjengelig Lovable Cloud.
 - [x] Trinnløs bilderotasjon med glidebryter og gradfelt; syv tester og innlogget kontroll av 2°, −5°, 17°, beskjæring, lagring og tilbakestilling på mobil og pc, uten publisering.
 - [x] Legg til rotasjon sammen med beskjæring og flere avkryssbare teknikker; åtte tester og innlogget kontroll på mobil og pc uten å publisere testannonser.
 - [ ] Norsk aktiverings-e-post fra Diargio: mal og avsender satt opp; krever publisering og at automatisk e-postbekreftelse slås av i kontoinnstillingene, deretter faktisk lenketest.
