@@ -13,12 +13,13 @@ import {changeListingVisibility} from '@/lib/moderation.functions';
 import {toast} from 'sonner';
 import {actionError} from '@/lib/action-errors';
 import {csvRow} from '@/lib/csv';
+import { MaintenanceSettings } from './MaintenanceSettings';
 const feeShare = (t: number) => { const b = breakdownFromTotal(t); return t ? (b.platformFee + b.artFee) / t : 0; };
 const TOTAL_FEE_RATE = feeShare(10000);
 const PLATFORM_FEE_RATE = breakdownFromTotal(10000).platformFee / 10000;
 const ART_FEE_RATE = breakdownFromTotal(10000).artFee / 10000;
 
-const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi", "Historikk"] as const;
+const tabs = ["Oversikt", "Brukere", "Annonser", "Annonser til godkjenning", "Bud & salg", "Toppliste", "Økonomi", "Historikk", "Innstillinger"] as const;
 type Tab = (typeof tabs)[number];
 const kr = (n: number) => new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK", maximumFractionDigits: 0 }).format(n);
 const day = 86400000;
@@ -69,6 +70,7 @@ export function ControlCenter() {
         {tab === "Bud & salg" && <Deals d={data} />}
         {tab === "Toppliste" && <Leaderboard d={data} />}
         {tab === "Økonomi" && <Economy d={data} />}
+        {tab === "Innstillinger" && <MaintenanceSettings />}
       </div>
     </main>
   );

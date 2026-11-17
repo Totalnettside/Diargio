@@ -14,6 +14,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/lib/store";
 import { AuthProvider } from "@/hooks/useAuth";
+import { MaintenanceGate } from '@/components/MaintenanceGate';
+import { getMaintenanceStatus } from '@/lib/maintenance.functions';
 import { ChatProvider } from "@/hooks/useChat";
 import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { TopBar } from "@/components/TopBar";
@@ -81,6 +83,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: () => getMaintenanceStatus(),
   head: ({ matches }) => {
     const path = [...matches].reverse().find((match) => match.pathname)?.pathname ?? "/";
     const notFound = matches.some((match) => match._notFound || match.status === "notFound");
@@ -138,10 +141,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { enabled } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+      <MaintenanceGate initialEnabled={enabled}>
       <StoreProvider>
       <ChatProvider>
       <ActionDialogs>
@@ -156,6 +161,7 @@ function RootComponent() {
       </ActionDialogs>
       </ChatProvider>
       </StoreProvider>
+      </MaintenanceGate>
       </AuthProvider>
     </QueryClientProvider>
   );

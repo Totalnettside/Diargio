@@ -28,6 +28,8 @@ async function resolveOrCreateCustomer(
 const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:environmentSchema,bidId:z.string().uuid().optional(),pickup:z.boolean().optional()});
 export const createArtCheckout=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>checkoutInput.parse(d)).handler(async({data,context}):Promise<{clientSecret:string;orderId:string}|{error:string}>=>{
  try {
+  const { data: allowed, error: maintenanceError } = await context.supabase.rpc('maintenance_allows_actor', { _actor: context.userId });
+  if (maintenanceError || allowed !== true) throw new Error('Diargio klargjøres for lansering. Nye kjøp er midlertidig stengt.');
   if(data.environment==='live') throw new Error('Ekte betaling er stengt til moms, kunstavgift og utsatt kunstneroppgjør er avklart.');
   const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data,updated_at').eq('moderation_status','published').eq('id',data.listingId).single();
   if(error||!l||l.user_id===context.userId) throw new Error('Verket er utilgjengelig eller tilhører deg.');

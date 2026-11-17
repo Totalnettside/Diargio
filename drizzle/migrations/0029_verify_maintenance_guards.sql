@@ -1,0 +1,9 @@
+DO $$ DECLARE blocked boolean; BEGIN
+IF NOT EXISTS(SELECT 1 FROM public.site_maintenance WHERE enabled) THEN RAISE EXCEPTION 'Maintenance must be enabled for verification'; END IF;
+IF public.maintenance_allows_actor(NULL) OR public.maintenance_allows_actor('00000000-0000-0000-0000-000000000000') THEN RAISE EXCEPTION 'Ordinary actors must be blocked'; END IF;
+IF NOT public.maintenance_allows_actor('c68c6876-3045-4902-a10f-c75780ac912f') THEN RAISE EXCEPTION 'Existing admin must retain access'; END IF;
+blocked=false; BEGIN INSERT INTO public.bids(buyer_id,seller_id,listing_id,amount) VALUES('00000000-0000-0000-0000-000000000000','00000000-0000-0000-0000-000000000001','maintenance-verification',1); EXCEPTION WHEN raise_exception THEN IF SQLERRM LIKE 'Diargio klargjøres%' THEN blocked=true; ELSE RAISE; END IF; END; IF NOT blocked THEN RAISE EXCEPTION 'New bid was not blocked'; END IF;
+blocked=false; BEGIN INSERT INTO public.art_orders(buyer_id,seller_id,listing_id,environment,snapshot,artwork_amount,shipping_amount,total_amount) VALUES('00000000-0000-0000-0000-000000000000','00000000-0000-0000-0000-000000000001','maintenance-verification','sandbox','{}',1,0,1); EXCEPTION WHEN raise_exception THEN IF SQLERRM LIKE 'Diargio klargjøres%' THEN blocked=true; ELSE RAISE; END IF; END; IF NOT blocked THEN RAISE EXCEPTION 'New order was not blocked'; END IF;
+blocked=false; BEGIN INSERT INTO public.listings(id,user_id,data) VALUES('maintenance-verification','00000000-0000-0000-0000-000000000000','{}'); EXCEPTION WHEN raise_exception THEN IF SQLERRM LIKE 'Diargio klargjøres%' THEN blocked=true; ELSE RAISE; END IF; END; IF NOT blocked THEN RAISE EXCEPTION 'Listing upload was not blocked'; END IF;
+IF EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid='public.art_orders'::regclass AND tgname LIKE '%maintenance%' AND (tgtype & 16)<>0) THEN RAISE EXCEPTION 'Existing order updates must remain available'; END IF;
+END $$;

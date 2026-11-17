@@ -1,4 +1,5 @@
 # Gjenstående arbeid
+- [x] Midlertidig venteside med hele opplastede bildet, administratorbryter og aktiv handelsstans etter godkjenning. Mobil/PC, direkte lenker, eksisterende adminsesjon, innloggingsvei, avvist uautorisert bryter, transaksjonelt avviste nye bud/ordre/annonser og tilgjengelig signaturkontroll testet; 19 tester bestod. Ikke publisert. Ny faktisk innlogging og ekte betalingshendelse ikke gjennomført.
 - [ ] Fortsett siste profiltilpasning: Lovable Cloud gjenopptatt etter brukerens godkjenning, men fortsatt under oppstart; profilregler klargjort med fire tester. Nye felt, lagring og innlogget kontroll avventer frisk driftsstatus.
 - [ ] Nye profiltyper og offentlige galleri-/interessefelt — blokkert av utilgjengelig Lovable Cloud; migrasjon ikke anvendt.
 - [ ] Kontomeny, offentlige/private profilfelt og profilbildejustering implementert; ni bilderegler testet, bygg OK. Innlogget lagrings-/mobilkontroll blokkert av utilgjengelig Lovable Cloud.

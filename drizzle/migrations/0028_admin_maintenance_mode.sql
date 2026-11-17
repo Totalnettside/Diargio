@@ -1,0 +1,18 @@
+CREATE TABLE public.site_maintenance (id boolean PRIMARY KEY DEFAULT true CHECK(id), enabled boolean NOT NULL DEFAULT false, updated_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.site_maintenance TO anon,authenticated;
+GRANT ALL ON public.site_maintenance TO service_role;
+ALTER TABLE public.site_maintenance ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Maintenance status is public" ON public.site_maintenance FOR SELECT TO anon,authenticated USING(id=true);
+CREATE OR REPLACE FUNCTION public.set_site_maintenance(_enabled boolean) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN IF auth.uid() IS NULL OR NOT public.has_role(auth.uid(),'admin') THEN RAISE EXCEPTION 'Forbidden'; END IF; INSERT INTO public.site_maintenance(id,enabled) VALUES(true,_enabled) ON CONFLICT(id) DO UPDATE SET enabled=EXCLUDED.enabled,updated_at=now(); RETURN _enabled; END; $$;
+REVOKE ALL ON FUNCTION public.set_site_maintenance(boolean) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.set_site_maintenance(boolean) TO authenticated;
+CREATE OR REPLACE FUNCTION public.maintenance_allows_actor(_actor uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT NOT EXISTS(SELECT 1 FROM public.site_maintenance WHERE enabled) OR (_actor IS NOT NULL AND public.has_role(_actor,'admin')); $$;
+REVOKE ALL ON FUNCTION public.maintenance_allows_actor(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.maintenance_allows_actor(uuid) TO anon,authenticated,service_role;
+CREATE OR REPLACE FUNCTION public.guard_maintenance_creation() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE actor uuid; BEGIN IF TG_TABLE_NAME='bids' OR TG_TABLE_NAME='art_orders' THEN actor=NEW.buyer_id; ELSE actor=NEW.user_id; END IF; IF NOT public.maintenance_allows_actor(actor) THEN RAISE EXCEPTION 'Diargio klargjøres for lansering. Nye handler og opplastinger er midlertidig stengt.'; END IF; RETURN NEW; END; $$;
+CREATE TRIGGER aaa_maintenance_new_bids BEFORE INSERT ON public.bids FOR EACH ROW EXECUTE FUNCTION public.guard_maintenance_creation();
+CREATE TRIGGER aaa_maintenance_new_orders BEFORE INSERT ON public.art_orders FOR EACH ROW EXECUTE FUNCTION public.guard_maintenance_creation();
+CREATE TRIGGER aaa_maintenance_listing_uploads BEFORE INSERT OR UPDATE ON public.listings FOR EACH ROW EXECUTE FUNCTION public.guard_maintenance_creation();
+CREATE TRIGGER aaa_maintenance_revision_uploads BEFORE INSERT OR UPDATE ON public.listing_revisions FOR EACH ROW EXECUTE FUNCTION public.guard_maintenance_creation();
+CREATE POLICY "Maintenance blocks new uploads" ON storage.objects AS RESTRICTIVE FOR INSERT TO authenticated WITH CHECK(public.maintenance_allows_actor(auth.uid()));
+CREATE POLICY "Maintenance blocks replacement uploads" ON storage.objects AS RESTRICTIVE FOR UPDATE TO authenticated USING(public.maintenance_allows_actor(auth.uid())) WITH CHECK(public.maintenance_allows_actor(auth.uid()));

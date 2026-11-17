@@ -706,6 +706,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_maintenance: {
+        Row: {
+          enabled: boolean
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -771,6 +789,7 @@ export type Database = {
         Args: { _data: Json; _id: string }
         Returns: Json
       }
+      maintenance_allows_actor: { Args: { _actor: string }; Returns: boolean }
       manage_listing_visibility: {
         Args: { _action: string; _id: string; _note?: string; _reason?: string }
         Returns: undefined
@@ -850,6 +869,7 @@ export type Database = {
         Args: { _data: Json; _id: string }
         Returns: string
       }
+      set_site_maintenance: { Args: { _enabled: boolean }; Returns: boolean }
       sold_listing_ids: { Args: { _seller: string }; Returns: string[] }
       submit_artwork_bid: {
         Args: { _amount: number; _listing_id: string; _message?: string }
