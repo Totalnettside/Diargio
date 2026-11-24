@@ -593,6 +593,7 @@ function SellPage() {
         {step === 5 && (
           <>
             <div className="sell-step-heading"><span>06</span><h2 className="font-display text-2xl font-semibold">Levering</h2></div>
+            <p className="text-sm text-muted-foreground">Du er selv ansvarlig for at verket er som beskrevet og pakkes forsvarlig. Kjøper og selger bærer risikoen for transport og transportskader; Diargio er kun formidler og har ikke ansvar for skade eller tap under frakt.</p>
             {delivery !== "Må hentes" && <>
               <Field label="Frakt"><select className={inputClass} value={shippingMethod} onChange={e => setShippingMethod(e.target.value as 'bring' | 'manual')}><option value="bring">Bring · automatisk pris</option><option value="manual">Annen transport · fast pris</option></select></Field>
               {shippingMethod === 'bring' ? <ShippingFields value={shippingForm} onChange={setShippingForm} /> : <Field label="Fraktpris (kr)"><input type="number" min="0" value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} className={inputClass}/></Field>}

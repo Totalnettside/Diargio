@@ -102,8 +102,9 @@ export const infoPages: Record<string, InfoPage> = {
     lead: "Slik fungerer betaling og frakt.",
     description: "Betaling gjennom Diargio og levering som kjøper og selger avtaler, med sending eller henting.",
     sections: [
-      { h: "Betaling", p: ["Betaling skal skje trygt gjennom Diargio. Kortbetaling via Stripe er under oppkobling."] },
+      { h: "Betaling", p: ["Betaling skal skje trygt gjennom Diargio. Kortbetaling skjer via Stripe. Beløpet holdes til kjøper har bekreftet mottak, og deretter utbetales selgers andel."] },
       { h: "Levering", p: ["Selger oppgir om verket kan sendes eller må hentes. Ved forsendelse avtaler partene transport, for eksempel med Posten eller Bring, og bør velge forsikring.", "For verdifull kunst anbefaler vi spesialisert kunsttransport."] },
+      { h: "Ansvar for vare og transport", p: ["Diargio er utelukkende en formidlingsplattform mellom kjøper og selger.", "Selger har alene ansvar for at verket tilsvarer beskrivelsen og blir forsvarlig pakket.", "Kjøper og selger bærer selv all risiko for transport og eventuelle transportskader, som eventuelt dekkes av valgt transportør eller forsikring.", "Diargio fraskriver seg ethvert økonomisk og juridisk ansvar for skade på eller tap av verk under frakt."] },
     ],
   },
   "priser-og-gebyrer": {

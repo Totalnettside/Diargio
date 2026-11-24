@@ -179,3 +179,11 @@ export const getArtReceipt=createServerFn({method:'POST'}).middleware([requireSu
  return {url:charge.receipt_url};
  }catch(e){return {error:getStripeErrorMessage(e)};}
 });
+export const openArtistStripeDashboard=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>z.object({environment:environmentSchema}).parse(d)).handler(async({data,context})=>{
+ try{
+ const {data:account,error}=await context.supabase.from('artist_payment_accounts').select('stripe_account_id').eq('user_id',context.userId).eq('environment',data.environment).maybeSingle();if(error)throw error;
+ if(!account)throw new Error('Ingen utbetalingskonto er koblet ennå.');
+ const link=await createStripeClient(data.environment).accounts.createLoginLink(account.stripe_account_id);
+ return {url:link.url};
+ }catch(e){return {error:getStripeErrorMessage(e)};}
+});

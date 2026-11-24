@@ -1,3 +1,4 @@
+import { PayoutsPanel } from "@/components/PayoutsPanel";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArtworkCard } from "@/components/ArtworkCard";
@@ -39,12 +40,13 @@ const tabs = [
   "Følger",
   "Statistikk",
   "Vurderinger",
+  "Utbetalinger",
 ] as const;
 
 const visibleTabs = KUNSTVEGG_ENABLED ? tabs : tabs.filter((t) => t !== "Kunstvegger");
 const sections = ['Oversikt', 'Kjøp', 'Salg', 'Meldinger', 'Min profil', 'Kontoinnstillinger'] as const;
 const purchaseTabs = ['Mine bud', 'Favoritter', 'Lagrede søk', 'Følger'] as const;
-const saleTabs = ['Mine annonser', 'Mottatte bud', 'Statistikk', 'Vurderinger'] as const;
+const saleTabs = ['Mine annonser', 'Mottatte bud', 'Statistikk', 'Utbetalinger', 'Vurderinger'] as const;
 
 function Dashboard() {
   const dialog=useActionDialog();
@@ -379,6 +381,7 @@ function Dashboard() {
         </section>
       )}
 
+      {tab === "Utbetalinger" && <PayoutsPanel />}
       {tab === "Vurderinger" && (
         <div className="mt-4 space-y-2">
           {([] as typeof reviews).map((r) => (
