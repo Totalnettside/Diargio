@@ -1,4 +1,5 @@
 # Gjenstående arbeid
+- [x] Apple Pay og Klarna i eksisterende innebygde kasse: Klarna synlig i testkassen med uendret total 6 709,55 kr, testreservasjon avbrutt uten betaling, 20 tester bestod. Apple Pay-domener aktive i test og live; fysisk Apple-enhet ikke testet.
 - [x] Implementert låst selgeroppgjør etter mottak, snapshot-beløp og frakt, duplikatvern, reversering før refusjon, betalingsvarsler, leveringsadresse og avstemming. Testkasse 7 333,95 kr godkjent og refundert; ingen ekte belastning.
 - [ ] Åpne ekte kunstbetaling: avventer selgerens ID-/bankverifisering og full Stripe-overføringstest til verifisert testselger; DIARGIO_LIVE_PAYMENTS_APPROVED er ikke satt. Testmiljøets Connect-opprettelse er fortsatt blokkert hos Stripe. Live onboarding-lenke fungerer, plattformens bankutbetalinger er manuelle; driftskontroll og publisering gjenstår.
 - [x] Varefeil: kjøper kontakter selger først; lovfestede rettigheter beholdes. Diargio godkjente uttrykkelig korttvistrisikoen 24.11.2026.

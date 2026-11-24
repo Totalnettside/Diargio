@@ -1,5 +1,7 @@
 import { z } from 'zod';
 export const environmentSchema = z.enum(['sandbox', 'live']);
+// Apple Pay is a wallet on the card method; Klarna is a separate Checkout method.
+export const artCheckoutPaymentMethods = ['card', 'klarna'] as const;
 export function minorUnits(value: number): number {
   if (!Number.isFinite(value) || value < 0 || value > 1000000000) throw new Error('Ugyldig beløp');
   return Math.round(value * 100);

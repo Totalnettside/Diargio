@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { createStripeClient, getStripeErrorMessage } from '@/lib/stripe.server';
-import { checkoutAmounts, environmentSchema } from './commerce';
+import { artCheckoutPaymentMethods, checkoutAmounts, environmentSchema } from './commerce';
 import {canDeliver} from './payment-state';
 import {breakdownFromTotal,priceFromPayout} from './fees';
 import type { Artwork } from '@/data/demo';
@@ -86,7 +86,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
   const {getRequest}=await import('@tanstack/react-start/server');
   const origin=new URL(getRequest().url).origin;
   const session=await stripe.checkout.sessions.create({
-   customer,mode:'payment',ui_mode:'embedded_page',payment_method_types:['card'],locale:'nb',adaptive_pricing:{enabled:false},billing_address_collection:'required',
+   customer,mode:'payment',ui_mode:'embedded_page',payment_method_types:[...artCheckoutPaymentMethods],locale:'nb',adaptive_pricing:{enabled:false},billing_address_collection:'required',
    line_items:[{price_data:{currency:'nok',unit_amount:order.artwork_amount,product_data:{name:String((order.snapshot as {title?:string}).title??a.title)}},quantity:1},...(order.shipping_amount?[{price_data:{currency:'nok',unit_amount:order.shipping_amount,product_data:{name:'Frakt'}},quantity:1}]:[])],
    payment_intent_data:{...(shippingAddress?{shipping:{name:shippingAddress.name,address:{line1:shippingAddress.line1,postal_code:shippingAddress.postalCode,city:shippingAddress.city,country:'NO'}}}:{}),transfer_group:`art-order-${order.id}`,description:String((order.snapshot as {title?:string}).title??a.title),metadata:{orderId:order.id,userId:context.userId}},
    metadata:{orderId:order.id,userId:context.userId,environment:data.environment},
