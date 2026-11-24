@@ -33,6 +33,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
  try {
   const { data: allowed, error: maintenanceError } = await context.supabase.rpc('maintenance_allows_actor', { _actor: context.userId });
   if (maintenanceError || allowed !== true) throw new Error('Diargio klargjøres for lansering. Nye kjøp er midlertidig stengt.');
+  const {data:me}=await context.supabase.from('profiles').select('bankid_verified').eq('id',context.userId).maybeSingle();if(me?.bankid_verified!==true)throw new Error('Du må verifisere deg med BankID før du kan kjøpe.');
   if(data.environment==='live'){const {livePaymentReadiness}=await import('./settlement.server');const ready=await livePaymentReadiness();if(!ready.ready)throw new Error(ready.reason);}
   const {data:l,error}=await context.supabase.from('listings').select('id,user_id,data,updated_at').eq('moderation_status','published').eq('id',data.listingId).single();
   if(error||!l||l.user_id===context.userId) throw new Error('Verket er utilgjengelig eller tilhører deg.');

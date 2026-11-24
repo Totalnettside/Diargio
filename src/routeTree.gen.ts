@@ -37,6 +37,7 @@ import { Route as KunstnerSlugRouteImport } from './routes/kunstner.$slug'
 import { Route as ProfilSlugRouteImport } from './routes/profil.$slug'
 import { Route as SelgerIdRouteImport } from './routes/selger.$id'
 import { Route as AuthenticatedRedigerSlugRouteImport } from './routes/_authenticated/rediger.$slug'
+import { Route as ApiPublicBankidCallbackRouteImport } from './routes/api/public/bankid/callback'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicSharedWallImageWallIdRouteImport } from './routes/api/public/shared-wall-image.$wallId'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -184,6 +185,11 @@ const AuthenticatedRedigerSlugRoute =
     path: '/rediger/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicBankidCallbackRoute = ApiPublicBankidCallbackRouteImport.update({
+  id: '/api/public/bankid/callback',
+  path: '/api/public/bankid/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -241,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
   '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
+  '/api/public/bankid/callback': typeof ApiPublicBankidCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthIndexRoute
   '/kunst': typeof KunstIndexRoute
   '/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
+  '/api/public/bankid/callback': typeof ApiPublicBankidCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/auth/': typeof AuthIndexRoute
   '/kunst/': typeof KunstIndexRoute
   '/_authenticated/rediger/$slug': typeof AuthenticatedRedigerSlugRoute
+  '/api/public/bankid/callback': typeof ApiPublicBankidCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/shared-wall-image/$wallId': typeof ApiPublicSharedWallImageWallIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -347,6 +356,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/kunst/'
     | '/rediger/$slug'
+    | '/api/public/bankid/callback'
     | '/api/public/payments/webhook'
     | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/auth/preview'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/kunst'
     | '/rediger/$slug'
+    | '/api/public/bankid/callback'
     | '/api/public/payments/webhook'
     | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/auth/preview'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/kunst/'
     | '/_authenticated/rediger/$slug'
+    | '/api/public/bankid/callback'
     | '/api/public/payments/webhook'
     | '/api/public/shared-wall-image/$wallId'
     | '/lovable/email/auth/preview'
@@ -447,6 +459,7 @@ export interface RootRouteChildren {
   SelgerIdRoute: typeof SelgerIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
   KunstIndexRoute: typeof KunstIndexRoute
+  ApiPublicBankidCallbackRoute: typeof ApiPublicBankidCallbackRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicSharedWallImageWallIdRoute: typeof ApiPublicSharedWallImageWallIdRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -652,6 +665,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRedigerSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/bankid/callback': {
+      id: '/api/public/bankid/callback'
+      path: '/api/public/bankid/callback'
+      fullPath: '/api/public/bankid/callback'
+      preLoaderRoute: typeof ApiPublicBankidCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -733,6 +753,7 @@ const rootRouteChildren: RootRouteChildren = {
   SelgerIdRoute: SelgerIdRoute,
   AuthIndexRoute: AuthIndexRoute,
   KunstIndexRoute: KunstIndexRoute,
+  ApiPublicBankidCallbackRoute: ApiPublicBankidCallbackRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicSharedWallImageWallIdRoute: ApiPublicSharedWallImageWallIdRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

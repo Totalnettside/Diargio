@@ -46,3 +46,4 @@
 - Keep authentication emails in the managed signed auth-email handler and bypass document rewriting for /lovable/ routes so verification links and email previews remain intact.
 
 - Use locked idempotent source-linked settlements; show snapshot amounts, not bank-payout claims.
+- BankID (Idura) gates buying/listing; only its callback sets bankid_verified.

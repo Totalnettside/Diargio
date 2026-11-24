@@ -1,3 +1,4 @@
+import { BankIdGate } from "@/components/BankIdGate";
 import { PriceCalculator } from "@/components/PriceCalculator";
 import { priceFromPayout } from "@/lib/fees";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -265,6 +266,7 @@ function SellPage() {
 
   const maxStep = images.length === 0 ? 0 : !title.trim() ? 2 : stepTitles.length - 1;
   return (
+    <BankIdGate action="legge ut kunst for salg">
     <main className="sell-flow mx-auto w-full max-w-6xl px-5 py-6 sm:px-8">
       <header className="sell-flow-hero">
         <div>
@@ -687,6 +689,7 @@ function SellPage() {
         />
       )}
     </main>
+    </BankIdGate>
   );
 }
 
