@@ -6,8 +6,24 @@ export const bringPackageSchema = z.object({
   widthCm: z.number().finite().positive().max(1000),
   heightCm: z.number().finite().positive().max(1000),
   fromPostalCode: z.string().regex(/^\d{4}$/),
+  estimated: z.boolean().optional(),
 });
 export type BringPackage = z.infer<typeof bringPackageSchema>;
+// One-off legacy artwork estimate, not a measurement: 2 kg/m² for the
+// artwork, the requested 1 kg wood frame, and 0.5 kg packaging.
+// Allow 5 cm protection on each edge and 10 cm packed depth.
+export function estimateArtworkPackage(widthCm: number, heightCm: number, fromPostalCode: string): BringPackage {
+  const dimensions = z.object({ widthCm: z.number().finite().positive().max(990), heightCm: z.number().finite().positive().max(990) }).parse({ widthCm, heightCm });
+  const areaM2 = dimensions.widthCm * dimensions.heightCm / 10000;
+  return bringPackageSchema.parse({
+    weightKg: Math.ceil((areaM2 * 2 + 1 + 0.5) * 100) / 100,
+    lengthCm: Math.max(dimensions.widthCm, dimensions.heightCm) + 10,
+    widthCm: Math.min(dimensions.widthCm, dimensions.heightCm) + 10,
+    heightCm: 10,
+    fromPostalCode,
+    estimated: true,
+  });
+}
 export type BringQuote = { amount: number; productId: string; label: string; toPostalCode: string; quotedAt: string };
 export function bringRequest(parcel: BringPackage, toPostalCode: string, customerNumber?: string) {
   const p = bringPackageSchema.parse(parcel);
