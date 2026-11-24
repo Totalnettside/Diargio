@@ -218,6 +218,20 @@
       "when": 1795538001570,
       "tag": "0030_bring_shipping_order_quotes",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795539250719,
+      "tag": "0031_temporary_scoped_bring_backfill_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795539268219,
+      "tag": "0032_restore_maintenance_guard_after_bring_backfill",
+      "breakpoints": true
     }
   ]
 }

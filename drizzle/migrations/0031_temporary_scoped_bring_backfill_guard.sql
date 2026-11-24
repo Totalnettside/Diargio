@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION public.guard_maintenance_creation() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE actor uuid; expected jsonb; BEGIN
+IF TG_TABLE_NAME='listings' AND TG_OP='UPDATE' THEN
+ IF pg_has_role(session_user,'postgres','MEMBER') AND OLD.user_id='423964d5-e60b-4b4d-beee-726a18018639'::uuid AND OLD.id IN ('my1791289698359','my1791290918344','my1794501258221','my1794506946189','my1791466465538','my1794503624734','my1794504381573','my1794505821908','my1794506246811','my1794512676274','my1794510243140','my1794510919863','my1794511948099') AND OLD.moderation_status='published' AND OLD.deleted_at IS NULL AND OLD.blocked IS NOT TRUE AND coalesce(OLD.data->>'shippingMethod','manual')<>'bring' AND OLD.data->>'delivery'<>'Må hentes' AND (to_jsonb(NEW)-'data'-'catalog_data'-'updated_at')=(to_jsonb(OLD)-'data'-'catalog_data'-'updated_at') THEN
+ expected=OLD.data || jsonb_build_object('shippingMethod','bring','shippingPrice',0,'shippingPackage',jsonb_build_object('weightKg',ceil((((OLD.data->>'widthCm')::numeric*(OLD.data->>'heightCm')::numeric/10000)*2+1+0.5)*100)/100,'lengthCm',greatest((OLD.data->>'widthCm')::numeric,(OLD.data->>'heightCm')::numeric)+10,'widthCm',least((OLD.data->>'widthCm')::numeric,(OLD.data->>'heightCm')::numeric)+10,'heightCm',10,'fromPostalCode','8430','estimated',true));
+ IF NEW.data=expected THEN RETURN NEW; END IF;
+ END IF;
+END IF;
+IF TG_TABLE_NAME='bids' OR TG_TABLE_NAME='art_orders' THEN actor=NEW.buyer_id; ELSE actor=NEW.user_id; END IF;
+IF NOT public.maintenance_allows_actor(actor) THEN RAISE EXCEPTION 'Diargio klargjøres for lansering. Nye handler og opplastinger er midlertidig stengt.'; END IF; RETURN NEW; END; $$;
+REVOKE ALL ON FUNCTION public.guard_maintenance_creation() FROM PUBLIC,anon,authenticated;

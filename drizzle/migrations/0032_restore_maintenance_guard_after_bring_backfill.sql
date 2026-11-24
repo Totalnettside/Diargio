@@ -1,0 +1,2 @@
+CREATE OR REPLACE FUNCTION public.guard_maintenance_creation() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE actor uuid; BEGIN IF TG_TABLE_NAME='bids' OR TG_TABLE_NAME='art_orders' THEN actor=NEW.buyer_id; ELSE actor=NEW.user_id; END IF; IF NOT public.maintenance_allows_actor(actor) THEN RAISE EXCEPTION 'Diargio klargjøres for lansering. Nye handler og opplastinger er midlertidig stengt.'; END IF; RETURN NEW; END; $$;
+REVOKE ALL ON FUNCTION public.guard_maintenance_creation() FROM PUBLIC,anon,authenticated;
