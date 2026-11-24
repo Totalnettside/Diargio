@@ -1,0 +1,1 @@
+ALTER TABLE public.artist_payment_accounts ADD COLUMN api_generation text NOT NULL DEFAULT 'v1' CHECK(api_generation IN ('v1','v2'));

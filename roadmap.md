@@ -1,5 +1,6 @@
 # Gjenstående arbeid
-- [ ] Lanseringsklar kunstbetaling: selgerverifisering, låst og idempotent oppgjør etter mottak, refusjons-/tvistavstemming, korrekte utbetalingsbeløp og ende-til-ende-kontroll; ekte åpning avventer dokumentert drifts- og ansvarsgodkjenning.
+- [x] Implementert låst selgeroppgjør etter mottak, snapshot-beløp og frakt, duplikatvern, reversering før refusjon, betalingsvarsler, leveringsadresse og avstemming. Testkasse 7 333,95 kr godkjent og refundert; ingen ekte belastning.
+- [ ] Åpne ekte kunstbetaling: avventer selgerens ID-/bankverifisering og full Stripe-overføringstest til verifisert testselger; DIARGIO_LIVE_PAYMENTS_APPROVED er ikke satt. Testmiljøets Connect-opprettelse er fortsatt blokkert hos Stripe. Live onboarding-lenke fungerer, plattformens bankutbetalinger er manuelle; driftskontroll og publisering gjenstår.
 - [x] Varefeil: kjøper kontakter selger først; lovfestede rettigheter beholdes. Diargio godkjente uttrykkelig korttvistrisikoen 24.11.2026.
 - [x] Bring på selgerens 13 eksisterende annonser fra 8430 Myre med godkjent engangsunntak: vektanslag (2 kg/m² + 1 kg treramme + 0,5 kg emballasje), estimerte pakkemål og veiledende merking. Alle 13 lagret; opprinnelig ventesidesperre gjenopprettet. Seks tester består; innlogget kjøpsside hentet ekte Bring-pris 333,95 kr til 7010 og total 2 133,95 kr uten kjøp. Bring kan avvise pakker som er for store; fysisk veiing, alle mottakeradresser og betaling ikke testet.
 - [x] Automatisk Bring-frakt fra pakket vekt, mål og postnumre; annonsefelter, automatisk pris i kassen og serverkontroll før betaling. Ekte Bring-svar 345,07 kr og mobilfelter kontrollert uten lagring; 34 tester bestod. Full kjøpstest avventer en ekte annonse med utfylte pakkeopplysninger; betaling er fortsatt stengt som før.
@@ -23,9 +24,9 @@
 - [x] Legg til lang gang og eget fargehjul under kunstveggens rom- og veggfargevalg; kontroller på pc og mobil.
 - [x] Gjennomgå kjøps-, betalings-, konto- og tilgangsflyter med kode, gjeldende tilgangsregler og innlogget nettleserkontroll.
 - [x] Avklare betalingsomfang, frakt og mottak/oppgjør: kunst først, selger oppgir frakt, admin avgjør uavklarte saker.
-- [ ] Avklare moms og kunstavgiftsmottaker — ingen avklaring oppgitt; blokkerer ekte betalinger.
+- [x] Pris inkluderer alt; Diargio beholder kunstavgiften og betaler den videre selv, som avklart av brukeren.
 - [x] Gjennomføre testkasse, kontosikkerhet, ordrestatus, refusjon, 15 tester og testveiledning.
-- [ ] Ekte oppgjør og operativ sluttkontroll — blokkert av Stripe claim/Connect, avgiftsavklaring og godkjent likviditets-/oppgjørspolicy.
+- [ ] Ekte oppgjør og operativ sluttkontroll — selgerverifisering og full overføringstest gjenstår; ansvaret overfor Stripe er godkjent. Se lanseringspunktet øverst.
 - [ ] Bekrefte e-postgjenoppretting og varslingslevering — avventer godkjente offentlige returadresser og testlenker fra e-post.
 - [x] Legg til ti merkede investorverk på forsiden og i utstillingene, og kontroller visningen.
 - [x] Din kunstvegg: rom, originalbilder, plassering, kalibrering, filtre, lagring og deling.
@@ -51,8 +52,8 @@
 - [x] Fjern «Diargio» og slagordet fra gallerifeltet på innloggingssiden; innlogging med e-post kontrollert på mobil.
 - [x] Koble til betalingsløsning i testmiljø.
 - [x] Testkasse med én belastning, gebyrer inkludert og frakt separat; 7 000 kr testbetaling godkjent og fullt refundert.
-- [ ] Utbetaling til selger og avklart Diargio-provisjon etter at kjøper godkjenner varen — krever egne betalingskontoer for kunstnerne.
-- [ ] Ekte betalinger: eierne må fullføre oppfølgingen i Betalinger-fanen (claim, aktivisering, installasjon).
+- [x] Utbetalingslogikk og Diargio-provisjon etter godkjent mottak implementert; bankutbetaling vises separat fra selgeroverføring. Full Stripe-overføringstest gjenstår som angitt øverst.
+- [x] Stripe go-live claim, aktivering og installasjon fullført; ekte kjøp forblir sperret til operativ sluttkontroll.
 
 - [x] Rett forsidens proporsjoner etter referansen, med overlappende kunstkort, ryddig navigasjon og rolig lysspill; kontroller mobil, nettbrett og pc.
 - [x] Fjern den separate gullfargede navigasjonsraden; samle logo, riktige brukerlenker og kontovalg i én kompakt grønn toppmeny. Kontrollert utlogget ved 390/768/861/1280 px og innlogget ved 861/1080/1280 px uten overlapp eller nettleserfeil.

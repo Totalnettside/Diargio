@@ -377,7 +377,7 @@ export const infoPages: Record<string, InfoPage> = {
       {
         h: "Pris, avgifter og levering",
         p: [
-          "Prisen som vises i annonsen, er det samlede kjøpesummen for deg som kjøper. Den inkluderer Diargios provisjon og eventuell kunstavgift, og provisjonen trekkes derfor fra selgerens oppgjør i stedet for å komme som et eget gebyr til kjøper. Eventuell kunstavgift er allerede inkludert og legges ikke til på nytt i kassen.",
+          "Prisen som vises i annonsen, er det samlede kjøpesummen for deg som kjøper. Den inkluderer Diargios provisjon og eventuell kunstavgift, og provisjonen trekkes derfor fra selgerens oppgjør i stedet for å komme som et eget gebyr til kjøper. Kunstavgift gjelder bare ved selgerpris over 2 000 kr og er allerede inkludert; den legges ikke til på nytt i kassen.",
           "Eventuell kunstavgift, frakt og transportforsikring skal opplyses før kjøpet bekreftes.",
           "Kjøper og selger avtaler om verket skal sendes, hentes eller overleveres personlig. De skal også avklare fraktkostnad og eventuell forsikring før handelen fullføres. Ved sending bør verket pakkes forsvarlig og sendes sporbart. For verdifulle eller skjøre verk bør partene vurdere transportforsikring eller spesialisert kunsttransport.",
         ],

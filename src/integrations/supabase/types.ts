@@ -173,6 +173,44 @@ export type Database = {
         }
         Relationships: []
       }
+      art_payment_notices: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          read_at: string | null
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          read_at?: string | null
+          status: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          read_at?: string | null
+          status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "art_payment_notices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "art_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       art_settlements: {
         Row: {
           amount: number
@@ -282,18 +320,21 @@ export type Database = {
       }
       artist_payment_accounts: {
         Row: {
+          api_generation: string
           created_at: string
           environment: string
           stripe_account_id: string
           user_id: string
         }
         Insert: {
+          api_generation?: string
           created_at?: string
           environment: string
           stripe_account_id: string
           user_id: string
         }
         Update: {
+          api_generation?: string
           created_at?: string
           environment?: string
           stripe_account_id?: string
@@ -963,6 +1004,10 @@ export type Database = {
       }
       save_listing_revision: {
         Args: { _data: Json; _id: string }
+        Returns: string
+      }
+      send_art_order_message: {
+        Args: { _body: string; _order: string }
         Returns: string
       }
       set_site_maintenance: { Args: { _enabled: boolean }; Returns: boolean }

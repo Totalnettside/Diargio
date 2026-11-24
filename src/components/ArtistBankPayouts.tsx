@@ -1,8 +1,10 @@
+import {useAuth} from '@/hooks/useAuth';
 import {useQuery} from '@tanstack/react-query';
 import {getArtistPayoutOverview} from '@/lib/payments.functions';
 import {formatPrice} from '@/data/demo';
 export function ArtistBankPayouts({environment}:{environment:'sandbox'|'live'}){
- const q=useQuery({queryKey:['artist-bank-payouts',environment],queryFn:()=>getArtistPayoutOverview({data:{environment}}),refetchInterval:30000});
+ const {user}=useAuth();
+ const q=useQuery({queryKey:['artist-bank-payouts',user?.id,environment],enabled:!!user,queryFn:()=>getArtistPayoutOverview({data:{environment}}),refetchInterval:30000});
  if(q.isPending)return <p className="text-sm text-muted-foreground">Henter Stripe-saldo …</p>;
  if(q.error||!q.data)return <p role="alert">Kunne ikke hente bankutbetalinger.</p>;
  if('error' in q.data)return <p role="alert" className="text-destructive">{q.data.error}</p>;

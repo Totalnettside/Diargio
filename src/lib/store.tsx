@@ -45,6 +45,7 @@ export type AppNotification = {
   createdAt: number;
   conversationId?: string | undefined;
   slug?: string | undefined;
+  orderId?: string | undefined;
 };
 
 type State = {
@@ -165,11 +166,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const loadReviewNotifications = useCallback(async () => {
     if(!userId){setReviewNotifications([]);return;}
-    const [events,adminNotices] = await Promise.all([
+    const [events,adminNotices,paymentNotices] = await Promise.all([
       supabase.from('listing_review_events').select('id,title,decision,reason,read_at,created_at').eq('user_id',userId).neq('decision','submitted').order('created_at',{ascending:false}),
       supabase.rpc('my_administrative_notices'),
+      supabase.from('art_payment_notices').select('id,order_id,title,read_at,created_at').eq('user_id',userId).order('created_at',{ascending:false}).limit(100),
     ]);
-    setReviewNotifications([...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
+    setReviewNotifications([...(paymentNotices.data??[]).map(e=>({id:e.id,orderId:e.order_id,title:e.title,body:'Se ordren for betalings- og leveringsstatus.',read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()})),...(adminNotices.data??[]).map(e=>({id:e.id,title:'Beskjed fra Diargio',body:`${e.title}: ${e.reason}`,read:true,createdAt:new Date(e.created_at).getTime()})),...(events.data??[]).map(e=>({id:e.id,title:e.decision==='published'?'Annonsen er publisert':e.decision==='changes_requested'?'Endringer kreves':'Annonsen er avslått',body:`«${e.title}»${e.reason?`: ${e.reason}`:''}`,read:Boolean(e.read_at),createdAt:new Date(e.created_at).getTime()}))]);
   },[userId]);
   const loadOwnListings = useCallback(async () => {
     if(!userId) {setOwnListings([]);return;}
@@ -318,6 +320,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         notify("Søk lagret", `Du finner «${label}» under lagrede søk.`);
       },
       markAllRead: () => {
+        if(userId)void supabase.from('art_payment_notices').update({read_at:new Date().toISOString()}).eq('user_id',userId).is('read_at',null).then(()=>loadReviewNotifications());
         void supabase.rpc('mark_review_events_read').then(()=>loadReviewNotifications());
         setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) }));
         if (userId) void supabase.from("artist_follows").update({ last_seen_at: new Date().toISOString() }).eq("follower_id", userId).then(() => loadFollows());

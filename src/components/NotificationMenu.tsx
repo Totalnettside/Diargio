@@ -48,6 +48,7 @@ export function NotificationMenu() {
                   <div className={notification.read ? "w-full" : "min-w-0 flex-1"}>
                     <p className="text-sm font-semibold">{notification.title}</p>
                     <p className="mt-0.5 line-clamp-2 text-xs leading-5 text-muted-foreground">{notification.body}</p>
+                    {notification.orderId&&<Link to="/ordre" search={{order:notification.orderId}} className="text-xs underline">Se ordren</Link>}
                     <p className="mt-1 text-[11px] text-muted-foreground">
                       {new Date(notification.createdAt).toLocaleString("nb-NO", { dateStyle: "short", timeStyle: "short" })}
                     </p>

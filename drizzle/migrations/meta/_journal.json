@@ -246,6 +246,34 @@
       "when": 1795543094595,
       "tag": "0034_normalize_settlement_confirmation",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1795543446985,
+      "tag": "0035_artist_account_api_generation",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1795543578657,
+      "tag": "0036_persistent_art_payment_notices",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795543855245,
+      "tag": "0037_order_conversation_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795543940294,
+      "tag": "0038_restrict_settlement_notice_grants",
+      "breakpoints": true
     }
   ]
 }
