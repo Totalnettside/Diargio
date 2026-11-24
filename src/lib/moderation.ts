@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { bringPackageSchema } from './bring';
 
 export const moderationLabels = {
   draft: 'Utkast', pending: 'Til godkjenning', changes_requested: 'Endringer kreves',
@@ -24,6 +25,8 @@ const editableListingShape = {
   widthCm: z.number().positive().optional(), heightCm: z.number().positive().optional(),
   type: z.string().min(1).max(200).optional(), condition: z.string().min(1).max(200).optional(),
   delivery: z.enum(['Må hentes','Kan sendes','Begge deler']).optional(),
+  shippingMethod: z.enum(['manual', 'bring']).optional(),
+  shippingPackage: bringPackageSchema.optional(),
 };
 const draftRequiredShape = {
   id: z.string().min(1).max(200), slug: z.string().min(1).max(240),

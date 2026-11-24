@@ -6,6 +6,8 @@ import { checkoutAmounts, environmentSchema } from './commerce';
 import {canDeliver} from './payment-state';
 import {breakdownFromTotal,priceFromPayout} from './fees';
 import type { Artwork } from '@/data/demo';
+import { bringPackageSchema, type BringQuote } from './bring';
+import { fetchBringQuote } from './bring.server';
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
@@ -25,7 +27,7 @@ async function resolveOrCreateCustomer(
   const created = await stripe.customers.create({ ...(options.email && { email: options.email }), ...(options.userId && { metadata: { userId: options.userId } }) });
   return created.id;
 }
-const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:environmentSchema,bidId:z.string().uuid().optional(),pickup:z.boolean().optional()});
+const checkoutInput=z.object({listingId:z.string().min(1).max(200),environment:environmentSchema,bidId:z.string().uuid().optional(),pickup:z.boolean().optional(),toPostalCode:z.string().regex(/^\d{4}$/).optional(),expectedShipping:z.number().int().positive().optional()});
 export const createArtCheckout=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(d=>checkoutInput.parse(d)).handler(async({data,context}):Promise<{clientSecret:string;orderId:string}|{error:string}>=>{
  try {
   const { data: allowed, error: maintenanceError } = await context.supabase.rpc('maintenance_allows_actor', { _actor: context.userId });
@@ -43,8 +45,16 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
   } else if(a.saleType!=='Fastpris') throw new Error('Dette verket krever et godkjent bud før betaling. Auksjonsoppgjør er ikke åpnet.');
   if(a.saleType==='Auksjon')throw new Error('Auksjonsoppgjør er ikke åpnet.');
   const pickup=a.delivery==='Må hentes'||(a.delivery==='Begge deler'&&data.pickup===true);
+  let shippingQuote: BringQuote | undefined;
+  if (!pickup && a.shippingMethod === 'bring') {
+    if (!data.toPostalCode || data.expectedShipping == null) throw new Error('Beregn Bring-frakt før du åpner betaling.');
+    const parcel = bringPackageSchema.safeParse(a.shippingPackage);
+    if (!parcel.success) throw new Error('Selger må fylle inn pakkeopplysninger først.');
+    shippingQuote = await fetchBringQuote(parcel.data, data.toPostalCode);
+    if (shippingQuote.amount !== data.expectedShipping) throw new Error('Fraktprisen har endret seg. Beregn frakten på nytt før du betaler.');
+  }
   if(!pickup && typeof a.shippingPrice!=='number') throw new Error('Selger må oppgi fraktpris eller henting før betaling.');
-  const amounts=checkoutAmounts(total,pickup?0:a.shippingPrice??0);
+  const amounts=checkoutAmounts(total,pickup?0:shippingQuote ? shippingQuote.amount / 100 : a.shippingPrice??0);
   const {supabaseAdmin:admin}=await import('@/integrations/supabase/client.server');
   const {data:held}=await admin.from('art_orders').select('*').eq('listing_id',l.id).eq('environment',data.environment).eq('status','reserved').maybeSingle();
   if(held?.stripe_session_id&&new Date(held.expires_at).getTime()<Date.now()){
@@ -52,7 +62,7 @@ export const createArtCheckout=createServerFn({method:'POST'}).middleware([requi
     const {applyCheckoutSession}=await import('./payment-fulfillment.server');await applyCheckoutSession(prior,data.environment);
   }
   if(held&&!held.stripe_session_id&&new Date(held.expires_at).getTime()<Date.now())throw new Error('Betalingsoppretting må avstemmes av admin før reservasjonen kan frigjøres.');
-  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,listingVersion:l.updated_at,deliveryMode:pickup?'pickup':'shipping',id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
+  const {data:order,error:reserveError}=await admin.rpc('reserve_art_order',{_buyer:context.userId,_listing:l.id,_environment:data.environment,_snapshot:{...a,...(shippingQuote ? {shippingQuote} : {}),listingVersion:l.updated_at,deliveryMode:pickup?'pickup':'shipping',id:l.id,sellerId:l.user_id,price:total,fees:!data.bidId&&a.sellerPayout!=null&&priceFromPayout(a.sellerPayout,a.artFeeApplies??true).total===total?priceFromPayout(a.sellerPayout,a.artFeeApplies??true):breakdownFromTotal(total,a.artFeeApplies??true),bidId:data.bidId??null},_artwork:amounts.artwork,_shipping:amounts.shipping});
   if(reserveError||!order)throw new Error(reserveError?.message??'Kunne ikke reservere verket.');
   const stripe=createStripeClient(data.environment);
   if(order.stripe_session_id){

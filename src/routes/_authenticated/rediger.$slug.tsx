@@ -23,6 +23,8 @@ import {toast} from 'sonner';
 import {actionError} from '@/lib/action-errors';
 import {removeListingImage,selectMainImage} from '@/lib/listing-images';
 import { privateHead, privatePageFor } from '@/lib/seo';
+import { ShippingFields, shippingFormFrom, shippingParcel } from '@/components/ShippingFields';
+import { bringPackageSchema } from '@/lib/bring';
 
 export const Route = createFileRoute("/_authenticated/rediger/$slug")({
   head: () => {
@@ -52,6 +54,9 @@ function EditListingPage() {
   const listing = myListings.find((l) => l.slug === slug);
 
   const [shippingPrice,setShippingPrice]=useState(String(listing?.shippingPrice??0));
+  const [shippingMethod, setShippingMethod] = useState<'bring' | 'manual'>(listing?.shippingMethod ?? 'manual');
+  const [shippingForm, setShippingForm] = useState(shippingFormFrom(listing?.shippingPackage));
+  useEffect(() => { if (listing) { setShippingMethod(listing.shippingMethod ?? 'manual'); setShippingForm(shippingFormFrom(listing.shippingPackage)); } }, [listing?.id]);
   const [saveError,setSaveError]=useState("");
   const [title, setTitle] = useState(listing?.title ?? "");
   const [price, setPrice] = useState(String(listing ? (listing.sellerPayout ?? breakdownFromTotal(listing.price, listing.artFeeApplies ?? true).payout) : ""));
@@ -93,6 +98,8 @@ function EditListingPage() {
 
   async function save(submit = false) {
     if(!listing||saving)return;
+    const parcel = bringPackageSchema.safeParse(shippingParcel(shippingForm));
+    if (listing.delivery !== 'Må hentes' && shippingMethod === 'bring' && !parcel.success) { setSaveError('Fyll inn pakket vekt, pakkemål og senders postnummer.'); return; }
     if(!title.trim()||!images.length){setSaveError('Legg til et bilde og fyll inn verkets navn før du lagrer.');return;}
     setSaving(true);setSaveError('');
     try {await updateListing({
@@ -108,6 +115,8 @@ function EditListingPage() {
       saleType,
       county,
       shippingPrice:Number(shippingPrice),
+      shippingMethod,
+      ...(parcel.success ? { shippingPackage: parcel.data } : {}),
       description: description || listing.description,
     });
     if(submit)await submitListing(listing.id);
@@ -158,7 +167,10 @@ function EditListingPage() {
             </select>
           </Field>
         </div>
-        <Field label="Fraktpris (kr)"><input type="number" min="0" className={inputClass} value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} /></Field>
+        {listing.delivery !== 'Må hentes' && <>
+          <Field label="Frakt"><select className={inputClass} value={shippingMethod} onChange={e => setShippingMethod(e.target.value as 'bring' | 'manual')}><option value="bring">Bring · automatisk pris</option><option value="manual">Annen transport · fast pris</option></select></Field>
+          {shippingMethod === 'bring' ? <ShippingFields value={shippingForm} onChange={setShippingForm} /> : <Field label="Fraktpris (kr)"><input type="number" min="0" className={inputClass} value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} /></Field>}
+        </>}
         <PriceCalculator payout={Number(price) || 0} artFeeApplies={artFeeApplies} onArtFeeChange={setArtFeeApplies} />
         <div className="grid grid-cols-2 gap-3">
           <Field label="Kategori">

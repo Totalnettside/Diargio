@@ -9,6 +9,13 @@ describe('Listing review rules',()=>{
     it(`${key} needs a content review`,()=>expect(contentChanged({[key]:'before'},{[key]:'after'})).toBe(true));
   }
   it('price and delivery may change without content review',()=>expect(contentChanged({title:'A',price:2000,delivery:'Må hentes'},{title:'A',price:3000,delivery:'Kan sendes'})).toBe(false));
+  it('packed weight changes require review before a Bring quote uses them',()=>expect(contentChanged({shippingPackage:{weightKg:2.5}},{shippingPackage:{weightKg:5}})).toBe(true));
+  it('Bring package details survive draft validation',()=>{
+    const shippingPackage={weightKg:2.5,lengthCm:80,widthCm:60,heightCm:10,fromPostalCode:'7010'};
+    const parsed=listingDraftSchema.parse({id:'a',slug:'a',title:'A',image:'data:image/jpeg;base64,a',price:2000,shippingPrice:0,shippingMethod:'bring',shippingPackage});
+    expect(parsed.shippingPackage).toEqual(shippingPackage);
+    expect(parsed.shippingMethod).toBe('bring');
+  });
   it('mandatory content cannot be omitted',()=>expect(listingContentSchema.safeParse({id:'a',title:'A'}).success).toBe(false));
   it('drafts can omit description and dimensions',()=>expect(listingDraftSchema.safeParse({id:'a',slug:'a',title:'A',image:'data:image/jpeg;base64,a',price:0,shippingPrice:0}).success).toBe(true));
   it('drafts reject arbitrary fields and strip protected ownership fields',()=>{

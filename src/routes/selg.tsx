@@ -28,6 +28,8 @@ import { submissionDisclosure } from '@/lib/moderation';
 import {useActionDialog} from '@/components/ActionDialogs';
 import { pageHead } from '@/lib/seo';
 import { clearResolvedTitleError, missingTitleMessage } from '@/lib/sell-validation';
+import { ShippingFields, emptyShippingForm, shippingParcel } from '@/components/ShippingFields';
+import { bringPackageSchema } from '@/lib/bring';
 
 export const Route = createFileRoute("/selg")({
   head: () => pageHead({
@@ -169,6 +171,8 @@ function SellPage() {
   const [price, setPrice] = useState("15000");
   const [artFeeApplies, setArtFeeApplies] = useState(true);
   const [shippingPrice,setShippingPrice]=useState("0");
+  const [shippingMethod, setShippingMethod] = useState<'bring' | 'manual'>('bring');
+  const [shippingForm, setShippingForm] = useState({ ...emptyShippingForm });
   const [publishing,setPublishing]=useState(false);
   const [delivery, setDelivery] = useState("Begge deler");
   const [county, setCounty] = useState(counties[0] ?? "Oslo");
@@ -201,6 +205,10 @@ function SellPage() {
   if (!user) return <SellLanding />;
   async function publish(draft = false) {
     if(!user)return;
+    const parcel = bringPackageSchema.safeParse(shippingParcel(shippingForm));
+    if (!draft && delivery !== 'Må hentes' && shippingMethod === 'bring' && !parcel.success) {
+      setImageError('Fyll inn pakket vekt, alle pakkemål og senders fire-sifrede postnummer.'); setStep(5); return;
+    }
     if (images.length === 0 || !title.trim()) { setImageError('Last opp minst ett bilde og fyll inn verkets navn.'); return; }
     if (!draft && (!toCm(width) || !toCm(height))) {
       setImageError('Fyll inn gyldig bredde og høyde (f.eks. 42,5).');setStep(2);
@@ -248,6 +256,8 @@ function SellPage() {
       description: description.trim(),
       delivery,
       shippingPrice: delivery === "Må hentes" ? 0 : Number(shippingPrice),
+      shippingMethod,
+      ...(parcel.success ? { shippingPackage: parcel.data } : {}),
     };
     setPublishing(true);
     try { await addListing(listing,draft); await navigate({ to: "/min-side",search:{tab:'Mine annonser'} }); } catch(e) {setImageError(e instanceof Error?e.message:"Kunne ikke sende inn");} finally {setPublishing(false); }
@@ -583,7 +593,10 @@ function SellPage() {
         {step === 5 && (
           <>
             <div className="sell-step-heading"><span>06</span><h2 className="font-display text-2xl font-semibold">Levering</h2></div>
-            {delivery !== "Må hentes" && <Field label="Fraktpris (kr)"><input type="number" min="0" value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} className={inputClass}/></Field>}
+            {delivery !== "Må hentes" && <>
+              <Field label="Frakt"><select className={inputClass} value={shippingMethod} onChange={e => setShippingMethod(e.target.value as 'bring' | 'manual')}><option value="bring">Bring · automatisk pris</option><option value="manual">Annen transport · fast pris</option></select></Field>
+              {shippingMethod === 'bring' ? <ShippingFields value={shippingForm} onChange={setShippingForm} /> : <Field label="Fraktpris (kr)"><input type="number" min="0" value={shippingPrice} onChange={e=>setShippingPrice(e.target.value)} className={inputClass}/></Field>}
+            </>}
             <div className="flex flex-wrap gap-2">
               {["Kan sendes", "Må hentes", "Begge deler"].map((d) => (
                 <button

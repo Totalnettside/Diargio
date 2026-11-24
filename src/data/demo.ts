@@ -72,6 +72,8 @@ export type Artwork = {
   price: number;
   sellerPayout?: number;
   shippingPrice?: number;
+  shippingMethod?: 'manual' | 'bring';
+  shippingPackage?: import('@/lib/bring').BringPackage;
   artFeeApplies?: boolean;
   currentBid?: number;
   bidCount?: number;

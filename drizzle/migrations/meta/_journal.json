@@ -211,6 +211,13 @@
       "when": 1794935836454,
       "tag": "0029_verify_maintenance_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1795538001570,
+      "tag": "0030_bring_shipping_order_quotes",
+      "breakpoints": true
     }
   ]
 }
