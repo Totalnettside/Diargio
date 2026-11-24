@@ -1,0 +1,2 @@
+import {z} from 'zod';
+export const deliveryAddressSchema=z.object({name:z.string().trim().min(2).max(120),line1:z.string().trim().min(3).max(180),postalCode:z.string().regex(/^\d{4}$/),city:z.string().trim().min(2).max(100)});

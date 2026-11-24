@@ -44,3 +44,5 @@
 - Archive listings through the locked owner/admin visibility RPC; deleted and blocked listings cannot enter commerce, and referenced files remain intact for reviewed and financial history.
 - Store profile restrictions and administrative action history separately from editable profiles; enforce blocking in publication, trade, messaging and upload rules, exposing only seller-safe notices.
 - Keep authentication emails in the managed signed auth-email handler and bypass document rewriting for /lovable/ routes so verification links and email previews remain intact.
+
+- Use locked idempotent source-linked settlements; show snapshot amounts, not bank-payout claims.

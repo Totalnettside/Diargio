@@ -232,6 +232,20 @@
       "when": 1795539268219,
       "tag": "0032_restore_maintenance_guard_after_bring_backfill",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795542963688,
+      "tag": "0033_locked_art_settlements",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795543094595,
+      "tag": "0034_normalize_settlement_confirmation",
+      "breakpoints": true
     }
   ]
 }

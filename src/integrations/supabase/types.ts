@@ -173,6 +173,62 @@ export type Database = {
         }
         Relationships: []
       }
+      art_settlements: {
+        Row: {
+          amount: number
+          created_at: string
+          destination: string
+          environment: string
+          last_error: string | null
+          lease_token: string | null
+          lease_until: string | null
+          operation: string | null
+          order_id: string
+          reversal_id: string | null
+          seller_id: string
+          transfer_id: string | null
+          transferred_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          destination: string
+          environment: string
+          last_error?: string | null
+          lease_token?: string | null
+          lease_until?: string | null
+          operation?: string | null
+          order_id: string
+          reversal_id?: string | null
+          seller_id: string
+          transfer_id?: string | null
+          transferred_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          destination?: string
+          environment?: string
+          last_error?: string | null
+          lease_token?: string | null
+          lease_until?: string | null
+          operation?: string | null
+          order_id?: string
+          reversal_id?: string | null
+          seller_id?: string
+          transfer_id?: string | null
+          transferred_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "art_settlements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "art_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       art_walls: {
         Row: {
           created_at: string
@@ -756,6 +812,35 @@ export type Database = {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
+      claim_art_settlement: {
+        Args: {
+          _amount: number
+          _destination: string
+          _operation: string
+          _order: string
+        }
+        Returns: {
+          amount: number
+          created_at: string
+          destination: string
+          environment: string
+          last_error: string | null
+          lease_token: string | null
+          lease_until: string | null
+          operation: string | null
+          order_id: string
+          reversal_id: string | null
+          seller_id: string
+          transfer_id: string | null
+          transferred_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "art_settlements"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       claim_payment_event: {
         Args: { _environment: string; _event: string }
         Returns: boolean
@@ -772,6 +857,17 @@ export type Database = {
       }
       decide_artwork_bid: {
         Args: { _bid_id: string; _decision: string }
+        Returns: undefined
+      }
+      finish_art_settlement: {
+        Args: {
+          _order: string
+          _refund: string
+          _reversal: string
+          _status: string
+          _token: string
+          _transfer: string
+        }
         Returns: undefined
       }
       has_role: {

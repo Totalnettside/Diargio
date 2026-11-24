@@ -92,7 +92,7 @@ export const infoPages: Record<string, InfoPage> = {
     lead: "Vi vil at både kjøper og selger skal føle seg trygge.",
     description: "Betaling gjennom Diargio, registrerte brukere og tips for trygg handel mellom kjøper og selger.",
     sections: [
-      { h: "Sikker betaling", p: ["Betaling skal gå gjennom Diargio med Stripe, slik at pengene ikke utveksles direkte mellom partene. Betalingsløsningen kobles på snart."] },
+      { h: "Sikker betaling", p: ["Betaling skal gå gjennom Diargio med Stripe, slik at pengene ikke utveksles direkte mellom partene. Selgers andel overføres først etter godkjent mottak."] },
       { h: "Ekte brukere", p: ["Alle annonser kommer fra registrerte brukere. Kun de som har kjøpt av en selger kan skrive omtale."] },
       { h: "Tips", p: ["Hold kommunikasjon og betaling inne på Diargio, og kontakt oss på post@diargio.com ved mistanke om svindel."] },
     ],
@@ -104,7 +104,7 @@ export const infoPages: Record<string, InfoPage> = {
     sections: [
       { h: "Betaling", p: ["Betaling skal skje trygt gjennom Diargio. Kortbetaling skjer via Stripe. Beløpet holdes til kjøper har bekreftet mottak, og deretter utbetales selgers andel."] },
       { h: "Levering", p: ["Selger oppgir om verket kan sendes eller må hentes. Ved forsendelse avtaler partene transport, for eksempel med Posten eller Bring, og bør velge forsikring.", "For verdifull kunst anbefaler vi spesialisert kunsttransport."] },
-      { h: "Ansvar for vare og transport", p: ["Diargio er utelukkende en formidlingsplattform mellom kjøper og selger.", "Selger har alene ansvar for at verket tilsvarer beskrivelsen og blir forsvarlig pakket.", "Kjøper og selger bærer selv all risiko for transport og eventuelle transportskader, som eventuelt dekkes av valgt transportør eller forsikring.", "Diargio fraskriver seg ethvert økonomisk og juridisk ansvar for skade på eller tap av verk under frakt."] },
+      { h: "Ansvar for vare og transport", p: ["Diargio er utelukkende en formidlingsplattform mellom kjøper og selger.", "Selger har alene ansvar for at verket tilsvarer beskrivelsen og blir forsvarlig pakket.", "Ansvar for transport og eventuelle skader følger avtalen og gjeldende lov. Partene bør kontrollere transportørens vilkår og eventuell forsikring.", "Kontakt selger først ved varefeil eller transportskade. Lovfestede rettigheter og Diargios forpliktelser overfor betalingsleverandøren begrenses ikke av disse vilkårene."] },
     ],
   },
   "priser-og-gebyrer": {
@@ -121,7 +121,7 @@ export const infoPages: Record<string, InfoPage> = {
       {
         h: "Kunstavgift",
         p: [
-          "Ved salg av kunstverk som omfattes av kunstavgiftsordningen, med en salgspris over 2 000 kr, legges det normalt til 5 % kunstavgift. Avgiften beregnes av hele salgsprisen og betales av kjøperen i tillegg til denne.",
+          "Ved salg av kunstverk som omfattes av kunstavgiftsordningen, med en salgspris over 2 000 kr, legges det normalt til 5 % kunstavgift. Avgiften beregnes inkludert provisjonen og inngår i totalprisen kjøperen ser. Diargio betaler avgiften videre.",
           "Kunstavgiften er en lovpålagt avgift som går til kunstnere og rettighetshavere gjennom kunstavgiftsordningen. Den er ikke en del av Diargios provisjon. Ved enkelte videresalg med høy salgssum kan andre satser gjelde.",
         ],
       },
@@ -377,7 +377,7 @@ export const infoPages: Record<string, InfoPage> = {
       {
         h: "Pris, avgifter og levering",
         p: [
-          "Prisen som vises i annonsen, er det samlede kjøpesummen for deg som kjøper. Den inkluderer Diargios provisjon og eventuell kunstavgift, og provisjonen trekkes derfor fra selgerens oppgjør i stedet for å komme som et eget gebyr til kjøper. Kunstavgift kommer i tillegg for verk over 2 000 kr.",
+          "Prisen som vises i annonsen, er det samlede kjøpesummen for deg som kjøper. Den inkluderer Diargios provisjon og eventuell kunstavgift, og provisjonen trekkes derfor fra selgerens oppgjør i stedet for å komme som et eget gebyr til kjøper. Eventuell kunstavgift er allerede inkludert og legges ikke til på nytt i kassen.",
           "Eventuell kunstavgift, frakt og transportforsikring skal opplyses før kjøpet bekreftes.",
           "Kjøper og selger avtaler om verket skal sendes, hentes eller overleveres personlig. De skal også avklare fraktkostnad og eventuell forsikring før handelen fullføres. Ved sending bør verket pakkes forsvarlig og sendes sporbart. For verdifulle eller skjøre verk bør partene vurdere transportforsikring eller spesialisert kunsttransport.",
         ],
